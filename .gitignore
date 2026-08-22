@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+_extract_cell_10.py
+_extract_*.py

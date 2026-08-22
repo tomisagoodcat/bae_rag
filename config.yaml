@@ -1,0 +1,47 @@
+# KG Build Pipeline configuration
+# Secrets: set NEO4J_PASSWORD, DEEPSEEK_API_KEY, QWEN_API_KEY in env or .env
+
+paths:
+  schema_dir: kg_build_pipeline/schema
+  markdown_dir: data/markdown/forTest
+  custom_prompt: custom_prompt.md
+  embedding_model: C:/model/bce-embedding-base_v1
+
+neo4j:
+  uri: bolt://localhost:7687
+  user: neo4j
+  password: ${NEO4J_PASSWORD}
+  database: neo4j
+
+llm:
+  deepseek_api_key: ${DEEPSEEK_API_KEY}
+  deepseek_base_url: https://api.deepseek.com/v1
+  deepseek_model: deepseek-chat
+
+stages:
+  dc_metadata: false
+  clear_neo4j: true
+  build_kg: true
+  subgraph_annotate: true
+  chunk_merge: true
+  entity_merge: false
+  pagerank: true
+  metapath: true
+
+build_kg:
+  max_docs: all
+  perform_entity_resolution: false
+  auto_extract_metadata: false
+  pause_between_schemas: 1.0
+  pause_between_docs: 3.0
+  doc_max_retries: 2
+  chunk_size: 300
+  similarity_threshold: 0.72
+
+metapath:
+  skip_f2_without_qwen: true
+  embedding_model: C:/model/bce-embedding-base_v1
+
+entity_merge:
+  exact_match_property: WHU_HASNAME
+  wcc_attribution_master: true

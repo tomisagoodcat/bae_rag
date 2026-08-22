@@ -1,0 +1,60 @@
+{
+  "description": "BAE实体与EBM/EEM/MPU语义视图的抽取映射；本版本与v4映射内容一致，仅与恢复后的关系/三元组Schema同步发布。",
+  "version": "1.2",
+  "mappings": {
+    "MPU": [
+      "mp_References",
+      "whu_DataSet",
+      "mp_Claim",
+      "mp_Statement",
+      "mp_Method",
+      "mp_Attribution",
+      "whu_SupportGraph",
+      "whu_ScienceEvidence"
+    ],
+    "EBM": [
+      "whu_EnvironmentFeature",
+      "envo_EnvironmentMaterial",
+      "whu_SpecimenCollection",
+      "whu_SpecimenPreprocessing",
+      "whu_ResearchStep",
+      "whu_Specimen",
+      "whu_ProcessedSpecimen",
+      "obi_organism",
+      "whu_ChemicalEntity",
+      "mp_Method",
+      "whu_Device",
+      "whu_Reagent"
+    ],
+    "EEM": [
+      "whu_ProcessedSpecimen",
+      "whu_Specimen",
+      "whu_BioChemical_Experiment",
+      "whu_Computational_Experiment",
+      "whu_ResearchStep",
+      "mp_Method",
+      "whu_Device",
+      "whu_Reagent",
+      "whu_Software",
+      "whu_Goal",
+      "whu_TargetVariable",
+      "whu_ChemicalEntity",
+      "whu_DataSet",
+      "iao_DataItem",
+      "iao_ScalarMeasurementDatum"
+    ]
+  },
+  "notes": {
+    "cross_subgraph_entities": [
+      "whu_DataSet",
+      "mp_Method",
+      "whu_ProcessedSpecimen",
+      "whu_ResearchStep",
+      "whu_Specimen",
+      "whu_ChemicalEntity",
+      "whu_Device",
+      "whu_Reagent"
+    ],
+    "description": "这些实体承担跨语义视图共享参与对象的作用。映射用于缩小LLM候选实体空间，不表示同一实体在本体论上只能属于一个模块。Goal、Software、DataItem和ScalarMeasurementDatum等仅在其主要语义视图中开放，以减少跨模块误抽取。"
+  }
+}

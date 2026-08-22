@@ -1,0 +1,42 @@
+{
+  "version": "correction-2026-08-19",
+  "basis": "User-confirmed corrections to the previous revision.",
+  "changes": [
+    {
+      "type": "relationship_correction",
+      "item": "whu_SpecimenCollection -> whu_EnvironmentFeature",
+      "action": "Use whu_hasContext; remove whu_fellow for this pair.",
+      "reason": "EnvironmentFeature is the collection context, not a predecessor Plan/Experiment in the whu_fellow chain."
+    },
+    {
+      "type": "restoration",
+      "item": "whu_Specimen -> prov_wasDerivedFrom -> whu_EnvironmentFeature",
+      "action": "Restored.",
+      "reason": "User-confirmed provenance option: when the passage gives the environmental feature/site itself as the source, retain the direct derivation triple."
+    },
+    {
+      "type": "restoration",
+      "item": "p_plan_isInputVarOf / p_plan_isOutputVarOf",
+      "action": "Restored both relations and all 5 prior plan-level shortcut triples.",
+      "reason": "They are retained as plan-level shortcut/projection edges that skip ResearchStep, while declaredInput/declaredOutput preserve step-level detail."
+    },
+    {
+      "type": "restoration",
+      "item": "DataSet -> iao_is_about -> Reagent/Specimen/ProcessedSpecimen",
+      "action": "Restored all 3 triples.",
+      "reason": "User-confirmed resource-oriented aboutness remains alongside TargetVariable-oriented aboutness."
+    }
+  ],
+  "counts": {
+    "entities": 26,
+    "relations": 21,
+    "potential_schema_triples": 79
+  },
+  "validation": {
+    "all_schema_entities_exist": true,
+    "all_schema_relations_exist": true,
+    "SpecimenCollection_fellow_EnvironmentFeature_removed": true,
+    "SpecimenCollection_hasContext_EnvironmentFeature_present": true,
+    "restored_items_present": true
+  }
+}

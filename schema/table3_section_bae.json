@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "description": "Table 3: section_role to DoCO/Deo structural type and prior BAE semantic roles (not fixed mapping).",
+  "mappings": {
+    "Abstract": {
+      "doco_deo_type": "doco_Abstract",
+      "document_function": "概括研究背景、过程和结论",
+      "bae_roles_prior": ["EBM", "EEM", "MPU"],
+      "typical_content": "研究背景、方法概述、主要发现"
+    },
+    "Introduction": {
+      "doco_deo_type": "deo_Introduction",
+      "document_function": "说明研究背景、问题及目标",
+      "bae_roles_prior": ["EBM", "MPU"],
+      "typical_content": "环境语境、研究缺口、研究主张"
+    },
+    "Methods_Materials": {
+      "doco_deo_type": "deo_Materials_and_Methods",
+      "document_function": "描述样本、实验和计算过程",
+      "bae_roles_prior": ["EBM", "EEM"],
+      "typical_content": "样本采集、预处理、实验步骤、计算方法"
+    },
+    "Results": {
+      "doco_deo_type": "deo_Results",
+      "document_function": "报告数据及主要发现",
+      "bae_roles_prior": ["EBM", "EEM", "MPU"],
+      "typical_content": "数据生成结果、测量结果、初步解释"
+    },
+    "Discussion": {
+      "doco_deo_type": "deo_Discussion",
+      "document_function": "解释结果并形成论证",
+      "bae_roles_prior": ["MPU"],
+      "typical_content": "证据解释、比较分析、支持或质疑主张"
+    },
+    "Conclusion": {
+      "doco_deo_type": "deo_Conclusion",
+      "document_function": "总结结论和研究贡献",
+      "bae_roles_prior": ["MPU"],
+      "typical_content": "核心主张、结论及研究意义"
+    },
+    "References": {
+      "doco_deo_type": "doco_Bibliography",
+      "document_function": "引文模块",
+      "bae_roles_prior": ["MPU"],
+      "typical_content": "论文引文内容"
+    },
+    "Other": {
+      "doco_deo_type": null,
+      "document_function": null,
+      "bae_roles_prior": [],
+      "typical_content": null
+    }
+  }
+}

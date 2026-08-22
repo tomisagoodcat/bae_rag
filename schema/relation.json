@@ -1,0 +1,95 @@
+{
+  "relations": [
+    {
+      "label": "mp_supports",
+      "description": "### Definition\n`mp_supports` is the positive argumentative relation corresponding to `mp:supports`. It links a supporting Representation to the Representation whose proposition, evidential role, or argument graph it affirmatively supports.\n\n### Direction\nsupporting Representation -> `mp_supports` -> supported Representation.\n\n### Extract when\nEmit only when the passage explicitly or unambiguously expresses positive evidential/argumentative backing (e.g. supports, demonstrates, confirms, provides evidence for, is consistent with, indicates/suggests in an argumentative context). Mere co-occurrence, citation, method use, or data production does not by itself imply `mp_supports`.\n\n### Allowed schema patterns\nUse only source-target type combinations present in `potential_schema`. In this BAE schema these include Attribution -> Representation; Reference -> Claim/Statement when the cited source is used as backing; DataSet -> Claim/Statement; Statement -> Claim; Claim -> Claim; and ScienceEvidence -> Claim/Statement/SupportGraph.\n\n### Example\n“The measured decrease in grain MeHg supports the conclusion that modified biochar reduces Hg bioavailability.” -> DataSet/ScienceEvidence `mp_supports` Claim."
+    },
+    {
+      "label": "whu_declaredUsed",
+      "description": "### Definition\nLinks a `whu_ResearchStep` to a Method, Device, Reagent, or Software explicitly stated as used in that step.\n\n### Direction\nResearchStep -> `whu_declaredUsed` -> Method/Device/Reagent/Software.\n\n### Extract when\nEmit only when the text assigns the resource to the specific step. Do not attach a resource to an Experiment-level node when the using ResearchStep can be identified.\n\n### Example\n“Hg was measured by CVAFS using an F-732 analyzer.” -> ResearchStep declaredUsed Method[CVAFS] and Device[F-732]."
+    },
+    {
+      "label": "p_plan_correspondsToStep",
+      "description": "### Definition\nCorresponds to P-PLAN `correspondsToStep`: links an explicitly executed provenance activity to the plan-level/textual `whu_ResearchStep` it realizes.\n\n### Extraction policy\nThis relation is reserved for an external provenance/execution stage that supplies a `prov:Activity` (e.g. run log, execution timestamp, instrument-run identifier). It is not emitted from ordinary Methods prose when only the described ResearchStep is available.\n\n### Direction\nprov:Activity -> `p_plan_correspondsToStep` -> whu:ResearchStep."
+    },
+    {
+      "label": "prov_atLocation",
+      "description": "### Definition\n`prov_atLocation` associates an explicitly locatable entity or recorded research step with the environmental/site feature at which it is located or occurs.\n\n### Allowed schema patterns\n- `obi_organism -> prov_atLocation -> whu_EnvironmentFeature`\n- `whu_ResearchStep -> prov_atLocation -> whu_EnvironmentFeature`\n\n### Extract when\nEmit only when the passage explicitly identifies the relevant site/environment for the organism or ResearchStep. Prefer `whu_hasContext` for linking a SpecimenCollection Plan to its broader environmental context.\n\n### Example\n“Topsoil was sampled from the SWU paddy field.” -> ResearchStep[sampling] atLocation EnvironmentFeature[SWU paddy field]."
+    },
+    {
+      "label": "cito_isCitedBy",
+      "description": "### Definition\n`cito_isCitedBy` corresponds to CiTO `cito:isCitedBy`, the inverse of `cito:cites`. In this schema, the subject is the cited `mp_References` source and the object is the Representation that cites that source.\n\n### Direction\nReference (cited source) -> `cito_isCitedBy` -> Claim/Statement/DataSet/Method (citing Representation).\n\n### Extract when\nEmit when the text explicitly ties the Representation to an identifiable citation. Do not infer `mp_supports` from citation alone; add support only when the citation is used as evidential backing.\n\n### Example\n“Biochar reduces Hg bioavailability (Smith et al., 2020).” -> Reference[Smith et al., 2020] isCitedBy Statement/Claim."
+    },
+    {
+      "label": "whu_hasGoal",
+      "description": "### Definition\nLinks a BioChemical or Computational Experiment to an explicitly stated scientific Goal.\n\n### Direction\nBioChemical_Experiment/Computational_Experiment -> `whu_hasGoal` -> Goal.\n\n### Extract when\nUse explicit objective language such as “to quantify”, “to assess”, “to compare”, “to determine”, or “to predict”. Do not infer a Goal from general background motivation."
+    },
+    {
+      "label": "p_plan_isPrecededBy",
+      "description": "### Definition\nStandard P-PLAN ordering relation used between `whu_ResearchStep` instances.\n\n### Direction\nlater/downstream ResearchStep -> `p_plan_isPrecededBy` -> earlier/upstream ResearchStep.\n\n### Extract when\nEmit for explicit temporal/logical ordering cues (after, following, then, subsequently, before) or an unambiguous immediate dependency between recorded steps.\n\n### Example\n“After sieving, samples were digested.” -> ResearchStep[digestion] isPrecededBy ResearchStep[sieving]."
+    },
+    {
+      "label": "whu_fellow",
+      "description": "### Definition\n`whu_fellow(X,Y)` is the BAE mid-level adjacency/dependency relation: Y is the immediate upstream predecessor or provider for X.\n\n### Direction\ndownstream/later X -> `whu_fellow` -> upstream/earlier Y.\n\n### Allowed signatures\n1. SpecimenPreprocessing -> SpecimenCollection\n2. BioChemical_Experiment -> SpecimenPreprocessing\n3. Computational_Experiment -> BioChemical_Experiment\n4. BioChemical_Experiment -> BioChemical_Experiment\n5. Computational_Experiment -> Computational_Experiment\n\n### Extract when\nUse explicit temporal/dependency evidence or a clear shared-output/input transition. Do not use `whu_fellow` to connect SpecimenCollection with EnvironmentFeature; that contextual link is represented by `whu_hasContext`.\n\n### Direction rule\n“X follows/depends on Y” is always X -> `whu_fellow` -> Y.\n\n### Example\n“After sample preprocessing, Hg was determined by CVAFS.” -> BioChemical_Experiment fellow SpecimenPreprocessing."
+    },
+    {
+      "label": "whu_hasTarget",
+      "description": "### Definition\nLinks a research Goal to the specific TargetVariable toward which the goal is directed.\n\n### Direction\nGoal -> `whu_hasTarget` -> TargetVariable.\n\n### Extract when\nThe target quantity is explicitly named or unambiguously recoverable from the stated objective.\n\n### Example\n“The experiment aimed to quantify Hg concentration.” -> Goal hasTarget TargetVariable[Hg concentration]."
+    },
+    {
+      "label": "p_plan_isInputVarOf",
+      "description": "### Definition\nPlan-level shortcut relation corresponding to P-PLAN `isInputVarOf`, used in this extraction schema to connect a concrete Specimen or ProcessedSpecimen directly to the Plan/Experiment for which it serves as input.\n\n### Purpose\nThis is a plan-level projection that skips the intermediate ResearchStep for concise retrieval and MetaPath construction. The detailed step-level input relation remains `ResearchStep -> whu_declaredInput -> domain entity`.\n\n### Direction\ninput entity -> `p_plan_isInputVarOf` -> Plan/Experiment.\n\n### Allowed schema patterns\n- Specimen -> SpecimenPreprocessing\n- ProcessedSpecimen -> BioChemical_Experiment\n\n### Extract when\nEmit only when the passage directly supports that the entity is used as input to the named preprocessing/experiment module.\n\n### Example\n“Processed powder was used for ICP-MS analysis.” -> ProcessedSpecimen `p_plan_isInputVarOf` BioChemical_Experiment."
+    },
+    {
+      "label": "p_plan_isOutputVarOf",
+      "description": "### Definition\nPlan-level shortcut relation corresponding to P-PLAN `isOutputVarOf`, used in this extraction schema to connect a concrete output entity directly to the Plan/Experiment that produces it.\n\n### Purpose\nThis is a plan-level projection that skips the intermediate ResearchStep for concise retrieval and MetaPath construction. The detailed step-level output relation remains `ResearchStep -> whu_declaredOutput -> domain entity`.\n\n### Direction\noutput entity -> `p_plan_isOutputVarOf` -> Plan/Experiment.\n\n### Allowed schema patterns\n- Specimen -> SpecimenCollection\n- ProcessedSpecimen -> SpecimenPreprocessing\n- DataSet -> Computational_Experiment\n\n### Extract when\nEmit only when the text directly supports that the entity is an output of the corresponding plan/experiment module.\n\n### Example\n“The preprocessing produced a filtered digest.” -> ProcessedSpecimen `p_plan_isOutputVarOf` SpecimenPreprocessing."
+    },
+    {
+      "label": "prov_wasDerivedFrom",
+      "description": "### Definition\n`prov_wasDerivedFrom` records material/provenance derivation between a resulting entity and its source entity.\n\n### Allowed schema patterns\n- Specimen -> EnvironmentFeature\n- Specimen -> envo_EnvironmentMaterial\n- Specimen -> obi_organism\n- ProcessedSpecimen -> Specimen\n\n### Extraction rule\nUse the most specific source explicitly supported by the passage. A Specimen may derive from the environmental feature/site as a whole, from a specific environmental material within it, or from a living organism. Do not invent a more specific source than the text provides.\n\n### Examples\n“Soil samples were collected from the paddy field.” -> Specimen wasDerivedFrom EnvironmentFeature[paddy field] when only the site is explicit.\n“Soil samples were taken from surface soil.” -> Specimen wasDerivedFrom EnvironmentMaterial[surface soil].\n“Rice grain was sampled from rice plants.” -> Specimen wasDerivedFrom organism[rice plant]."
+    },
+    {
+      "label": "dcterms_hasPart",
+      "description": "### Definition\nUses `dcterms:hasPart` to represent a DataSet containing one or more `iao_DataItem` records.\n\n### Direction\nDataSet -> `dcterms_hasPart` -> DataItem.\n\n### Extraction note\n`iao_ScalarMeasurementDatum` is a subtype of DataItem. If the extraction runtime types a member specifically as ScalarMeasurementDatum, do not create an additional duplicate generic DataItem node solely to satisfy this relation."
+    },
+    {
+      "label": "mp_challenges",
+      "description": "### Definition\n`mp_challenges` is the negative argumentative relation corresponding to `mp:challenges`. It links a challenging Representation to the Representation whose proposition or argument graph it contradicts, refutes, weakens, or undermines.\n\n### Direction\nchallenging Representation -> `mp_challenges` -> challenged Representation.\n\n### Extract when\nEmit only when contradiction/challenge is explicit or unambiguous (e.g. contradicts, refutes, does not support, inconsistent with, fails to confirm, undermines). Absence of support is not automatically a challenge.\n\n### Allowed schema patterns\nUse only source-target combinations present in `potential_schema`, including DataSet -> Claim/Statement, Statement -> Claim, Claim -> Claim, and ScienceEvidence -> Claim/Statement/SupportGraph.\n\n### Example\n“The observed lack of treatment effect contradicts the proposed mechanism.” -> DataSet/ScienceEvidence challenges Claim/Statement."
+    },
+    {
+      "label": "iao_is_about",
+      "description": "### Definition\n`iao_is_about` expresses aboutness between an information-content entity and the entity or variable it describes.\n\n### Allowed schema patterns\nResource-oriented aboutness:\n- DataSet -> Reagent\n- DataSet -> Specimen\n- DataSet -> ProcessedSpecimen\n\nTarget-variable aboutness:\n- TargetVariable -> ChemicalEntity\n- DataSet -> TargetVariable\n- DataItem -> TargetVariable\n- ScalarMeasurementDatum -> TargetVariable\n\n### Granularity rule\nChoose the pairing that matches the text's actual semantic granularity. Do not force extraction to TargetVariable when the passage only states that a dataset concerns a reagent or specimen, and do not replace a specific TargetVariable link with a broader resource link when the measured variable is explicit. Multiple aboutness links may coexist when independently supported.\n\n### Examples\n“The dataset reports responses of rice grain samples to selenium treatment.” -> DataSet is_about Specimen[rice grain] and, when explicitly represented, Reagent[selenium treatment].\n“The dataset reflects Hg content.” -> DataSet is_about TargetVariable[Hg content].\n“Mean Hg content was 28.4 ng/g.” -> ScalarMeasurementDatum[28.4 ng/g] is_about TargetVariable[Hg content].\n“Hg content” -> TargetVariable[Hg content] is_about ChemicalEntity[Hg].",
+      "properties": [
+        {
+          "name": "whu_is_about_dimension",
+          "type": "STRING",
+          "description": "Optional controlled measurement-dimension tag for the aboutness relation. Choose only from an implementation-controlled vocabulary such as mass, volume, count, concentration, mass_concentration, molar_concentration, absorbance, intensity, ratio, rate, pH, conductivity, or turbidity. Assign only when the dimension is explicit or unambiguous from the reported unit/measure; otherwise omit."
+        }
+      ]
+    },
+    {
+      "label": "p_plan_isStepOfPlan",
+      "description": "### Definition\nStandard P-PLAN membership relation associating a `whu_ResearchStep` with the mid-level Plan/Experiment that organizes it.\n\n### Allowed targets\nSpecimenCollection, SpecimenPreprocessing, BioChemical_Experiment, or Computational_Experiment.\n\n### Direction\nResearchStep -> `p_plan_isStepOfPlan` -> Plan/Experiment.\n\n### Constraint\nThe target must be consistent with `WHU_RESEARCHTYPE`."
+    },
+    {
+      "label": "prov_hadMember",
+      "description": "### Definition\nPROV-O collection-membership relation used to aggregate components into BAE evidence and argumentation collections.\n\n### Allowed schema patterns\n- ScienceEvidence -> DataSet\n- ScienceEvidence -> Method\n- SupportGraph -> Claim\n- SupportGraph -> Statement\n- SupportGraph -> Attribution\n- SupportGraph -> Reference\n- SupportGraph -> ScienceEvidence\n\n### Semantics\nThis relation encodes membership only. It does not encode positive/negative argumentative polarity; use `mp_supports` or `mp_challenges` for polarity.\n\n### Example\nScienceEvidence hadMember DataSet; ScienceEvidence hadMember Method."
+    },
+    {
+      "label": "bfo_has_part",
+      "description": "### Definition\nBFO mereological relation used when one material/environmental entity physically contains another as a part.\n\n### Allowed schema patterns\n- EnvironmentFeature -> EnvironmentMaterial\n- Specimen -> ChemicalEntity\n- organism -> ChemicalEntity\n- EnvironmentMaterial -> ChemicalEntity\n\n### Extract when\nEmit only when the passage supports a part/constituent relation. Do not use `bfo_has_part` for mere location, provenance, or analytical aboutness."
+    },
+    {
+      "label": "whu_declaredInput",
+      "description": "### Definition\nBAE-defined relation linking a ResearchStep directly to an actual domain entity explicitly functioning as that step's input.\n\n### Direction\nResearchStep -> `whu_declaredInput` -> Specimen/ProcessedSpecimen/DataSet.\n\n### Extraction policy\nBAE reuses P-PLAN for Plan/Step organization and ordering; domain-specific input/output entities are connected through `whu_declaredInput`/`whu_declaredOutput`. Emit only when the input role is textually supported.\n\n### Example\n“Air-dried soil was sieved before digestion.” -> ResearchStep[sieving] declaredInput Specimen[air-dried soil]."
+    },
+    {
+      "label": "whu_declaredOutput",
+      "description": "### Definition\nBAE-defined relation linking a ResearchStep directly to an actual domain entity explicitly generated or produced by that step.\n\n### Direction\nResearchStep -> `whu_declaredOutput` -> Specimen/ProcessedSpecimen/DataSet.\n\n### Extract when\nEmit only when the passage supports an output/product relation for the specific step.\n\n### Example\n“Hg was measured by CVAFS.” -> ResearchStep[Hg measurement] declaredOutput DataSet[Hg measurements]."
+    },
+    {
+      "label": "whu_hasContext",
+      "description": "### Definition\nBAE-defined relation linking a SpecimenCollection Plan to the environmental feature that provides its explicit sampling/research context.\n\n### Direction\nSpecimenCollection -> `whu_hasContext` -> EnvironmentFeature.\n\n### Extract when\nEmit when the collection procedure is explicitly tied to a bounded environmental setting/site. Use `prov_atLocation` for the location of a particular ResearchStep or organism.\n\n### Example\n“Topsoil samples were collected from the SWU paddy field.” -> SpecimenCollection hasContext EnvironmentFeature[SWU paddy field]."
+    }
+  ]
+}
