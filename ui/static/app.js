@@ -10,6 +10,10 @@
   const papersProgress = document.getElementById("papers-progress");
   const papersResult = document.getElementById("papers-result");
   const papersDir = document.getElementById("papers-dir");
+  const papersList = document.getElementById("papers-list");
+  const papersSelected = document.getElementById("papers-selected");
+  const btnSelectAll = document.getElementById("btn-select-all");
+  const btnDeselectAll = document.getElementById("btn-deselect-all");
   const modalOverlay = document.getElementById("modal-overlay");
   const modalTitle = document.getElementById("modal-title");
   const modalBody = document.getElementById("modal-body");
@@ -41,6 +45,11 @@
     stageGrid.querySelectorAll("input").forEach((el) => {
       el.disabled = active;
     });
+    papersList.querySelectorAll("input").forEach((el) => {
+      el.disabled = active;
+    });
+    btnSelectAll.disabled = active;
+    btnDeselectAll.disabled = active;
   }
 
   function showModal(kind, title, body) {
@@ -53,7 +62,7 @@
   function hideModal() {
     modalOverlay.classList.add("hidden");
     refreshNeo4jStats();
-    loadDocumentCount();
+    loadDocuments();
   }
 
   modalClose.addEventListener("click", hideModal);
@@ -90,17 +99,72 @@
     });
   }
 
-  async function loadDocumentCount() {
+  function updateSelectedCount() {
+    const inputs = papersList.querySelectorAll("input[type=checkbox]");
+    const total = inputs.length;
+    let selected = 0;
+    inputs.forEach((input) => {
+      if (input.checked) selected += 1;
+    });
+    papersSelected.textContent = "Selected: " + selected + " / " + total;
+    papersTotal.textContent = String(selected);
+  }
+
+  function getSelectedFiles() {
+    const files = [];
+    papersList.querySelectorAll("input[type=checkbox]").forEach((input) => {
+      if (input.checked) files.push(input.value);
+    });
+    return files;
+  }
+
+  function setAllPapersChecked(checked) {
+    papersList.querySelectorAll("input[type=checkbox]").forEach((input) => {
+      input.checked = checked;
+    });
+    updateSelectedCount();
+  }
+
+  async function loadDocuments() {
     try {
-      const data = await fetchJson("/api/documents/count");
-      papersTotal.textContent = data.effective_count;
-      papersDir.textContent = "Source: " + data.markdown_dir + " (total files: " + data.total_files + ")";
+      const data = await fetchJson("/api/documents");
+      const files = data.files || [];
+      papersDir.textContent =
+        "Source: " + data.markdown_dir + " (total files: " + data.total_files + ")";
+      papersList.innerHTML = "";
+      if (files.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "papers-list-empty";
+        empty.textContent = "No markdown papers found in this folder.";
+        papersList.appendChild(empty);
+      } else {
+        files.forEach((filename) => {
+          const label = document.createElement("label");
+          label.className = "paper-row";
+          const input = document.createElement("input");
+          input.type = "checkbox";
+          input.value = filename;
+          input.checked = true;
+          input.disabled = building;
+          input.addEventListener("change", updateSelectedCount);
+          const span = document.createElement("span");
+          span.className = "paper-name";
+          span.textContent = filename;
+          span.title = filename;
+          label.appendChild(input);
+          label.appendChild(span);
+          papersList.appendChild(label);
+        });
+      }
+      updateSelectedCount();
       if (!building) {
         papersProgress.textContent = "—";
       }
     } catch (e) {
       papersTotal.textContent = "—";
-      papersDir.textContent = "Could not load document count: " + e.message;
+      papersDir.textContent = "Could not load documents: " + e.message;
+      papersList.innerHTML = "";
+      papersSelected.textContent = "Selected: 0 / 0";
     }
   }
 
@@ -247,8 +311,20 @@
     return lines.join("\n") || "Pipeline completed successfully.";
   }
 
+  btnSelectAll.addEventListener("click", () => setAllPapersChecked(true));
+  btnDeselectAll.addEventListener("click", () => setAllPapersChecked(false));
+
   btnStart.addEventListener("click", async () => {
     const stages = getSelectedStages();
+    const selected_files = getSelectedFiles();
+    if (stages.build_kg && selected_files.length === 0) {
+      showModal(
+        "warning",
+        "No Papers Selected",
+        "Select at least one paper when Build Knowledge Graph is enabled."
+      );
+      return;
+    }
     if (stages.clear_neo4j) {
       const ok = confirm(
         "This will delete all data in the current Neo4j database.\n\nAre you sure you want to continue?"
@@ -263,7 +339,7 @@
       await fetchJson("/api/build", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stages }),
+        body: JSON.stringify({ stages, selected_files }),
       });
     } catch (e) {
       setBuilding(false);
@@ -283,12 +359,11 @@
 
   refreshStats.addEventListener("click", () => {
     refreshNeo4jStats();
-    loadDocumentCount();
+    loadDocuments();
   });
 
   loadStages();
-  loadDocumentCount();
+  loadDocuments();
   refreshNeo4jStats();
   connectWebSocket();
 })();
-

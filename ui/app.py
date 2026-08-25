@@ -20,8 +20,8 @@ from kg_build_pipeline.src.neo4j_util import build_neo4j_driver, get_db_stats
 from kg_build_pipeline.src.paths import DEFAULT_CONFIG, REPO_ROOT, ensure_repo_on_syspath
 from kg_build_pipeline.src.runner import PipelineRunner, STAGE_ORDER
 from kg_build_pipeline.src.stages.document_loader import (
-    count_markdown_documents,
     effective_document_count,
+    list_markdown_documents,
 )
 
 ensure_repo_on_syspath()
@@ -36,6 +36,7 @@ app = FastAPI(title="KG Build Pipeline UI")
 
 class BuildRequest(BaseModel):
     stages: Dict[str, bool] = Field(default_factory=dict)
+    selected_files: List[str] = Field(default_factory=list)
 
 
 class FileLogWriter:
@@ -44,10 +45,20 @@ class FileLogWriter:
         self.path = path
         self._file: TextIO = path.open("a", encoding="utf-8")
 
-    def write_header(self, stages: Dict[str, bool], config_path: Path) -> None:
+    def write_header(
+        self,
+        stages: Dict[str, bool],
+        config_path: Path,
+        selected_files: Optional[List[str]] = None,
+    ) -> None:
         self._file.write(f"=== KG Build Log {datetime.now().isoformat()} ===\n")
         self._file.write(f"Config: {config_path}\n")
         self._file.write(f"Stages: {json.dumps(stages, ensure_ascii=False)}\n")
+        if selected_files is not None:
+            self._file.write(
+                f"Selected files ({len(selected_files)}): "
+                f"{json.dumps(selected_files, ensure_ascii=False)}\n"
+            )
         self._file.write("---\n")
         self._file.flush()
 
@@ -121,7 +132,10 @@ class BuildManager:
             self.current_stage = None
         self._broadcast(event)
 
-    def start_build(self, stages: Dict[str, bool]) -> None:
+    def start_build(
+        self, stages: Dict[str, bool], selected_files: Optional[List[str]] = None
+    ) -> None:
+        selected_files = list(selected_files or [])
         with self._lock:
             if self.running:
                 raise HTTPException(status_code=409, detail="A build is already running")
@@ -136,9 +150,11 @@ class BuildManager:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             self.current_log_path = LOGS_DIR / f"build_{timestamp}.log"
             self._file_logger = FileLogWriter(self.current_log_path)
-            self._file_logger.write_header(stages, DEFAULT_CONFIG)
+            self._file_logger.write_header(stages, DEFAULT_CONFIG, selected_files)
 
-        thread = threading.Thread(target=self._run_build, args=(stages,), daemon=True)
+        thread = threading.Thread(
+            target=self._run_build, args=(stages, selected_files), daemon=True
+        )
         thread.start()
 
     def cancel_build(self) -> bool:
@@ -148,7 +164,9 @@ class BuildManager:
             self.cancel_event.set()
             return True
 
-    def _run_build(self, stages: Dict[str, bool]) -> None:
+    def _run_build(
+        self, stages: Dict[str, bool], selected_files: Optional[List[str]] = None
+    ) -> None:
         summary: Optional[Dict[str, Any]] = None
         try:
             cfg = PipelineConfig.load(DEFAULT_CONFIG)
@@ -157,6 +175,8 @@ class BuildManager:
                 if key in STAGE_ORDER:
                     merged[key] = bool(enabled)
             cfg.stages = merged
+            if selected_files:
+                cfg.build_kg = {**cfg.build_kg, "selected_files": list(selected_files)}
 
             runner = PipelineRunner(
                 cfg,
@@ -186,11 +206,12 @@ def _default_stages() -> Dict[str, bool]:
     return {item["id"]: cfg.stage_enabled(item["id"]) for item in _load_manifest()}
 
 
-def _document_count_payload() -> Dict[str, Any]:
+def _document_payload() -> Dict[str, Any]:
     cfg = PipelineConfig.load(DEFAULT_CONFIG)
     markdown_dir = cfg.markdown_dir
     max_docs = cfg.build_kg.get("max_docs", "all")
-    total_files = count_markdown_documents(str(markdown_dir))
+    files = list_markdown_documents(str(markdown_dir))
+    total_files = len(files)
     effective = effective_document_count(str(markdown_dir), max_docs)
     try:
         rel_dir = markdown_dir.relative_to(REPO_ROOT)
@@ -202,6 +223,7 @@ def _document_count_payload() -> Dict[str, Any]:
         "total_files": total_files,
         "max_docs": max_docs,
         "effective_count": effective,
+        "files": files,
     }
 
 
@@ -215,9 +237,14 @@ def api_stages() -> Dict[str, Any]:
     return {"stages": _load_manifest(), "defaults": _default_stages()}
 
 
+@app.get("/api/documents")
+def api_documents() -> Dict[str, Any]:
+    return _document_payload()
+
+
 @app.get("/api/documents/count")
 def api_documents_count() -> Dict[str, Any]:
-    return _document_count_payload()
+    return _document_payload()
 
 
 @app.get("/api/neo4j/stats")
@@ -235,7 +262,13 @@ def api_neo4j_stats() -> Dict[str, Any]:
 
 @app.post("/api/build")
 def api_build(req: BuildRequest) -> Dict[str, str]:
-    build_manager.start_build(req.stages)
+    build_kg_enabled = bool(req.stages.get("build_kg", False))
+    if build_kg_enabled and not req.selected_files:
+        raise HTTPException(
+            status_code=400,
+            detail="Select at least one paper when Build Knowledge Graph is enabled",
+        )
+    build_manager.start_build(req.stages, req.selected_files)
     return {"status": "started"}
 
 

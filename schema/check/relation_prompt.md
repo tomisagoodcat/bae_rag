@@ -1056,11 +1056,11 @@ ScienceEvidence 与 SupportGraph 聚合体的 PROV-O 集合成员关系。
 
 **English**
 
-ScienceEvidence -> DataSet/Method; SupportGraph -> Claim/Statement/Attribution/Reference/ScienceEvidence
+ScienceEvidence -> DataSet/Method; SupportGraph -> Claim/Statement/Attribution/Reference
 
 **中文**
 
-ScienceEvidence → DataSet/Method；SupportGraph → Claim/Statement/Attribution/Reference/ScienceEvidence
+ScienceEvidence → DataSet/Method；SupportGraph → Claim/Statement/Attribution/Reference
 
 
 #### Co-occurrence gates / 共现门控
@@ -1068,14 +1068,23 @@ ScienceEvidence → DataSet/Method；SupportGraph → Claim/Statement/Attributio
 **English**
 
 - SupportGraph -> Claim: **required** when SupportGraph is created
-- SupportGraph -> ScienceEvidence: **required** when ScienceEvidence is created in the same pass
 - ScienceEvidence -> DataSet and/or Method: required for ScienceEvidence establishment
 
 **中文**
 
 - SupportGraph → Claim：创建 SupportGraph 时**必需**
-- SupportGraph → ScienceEvidence：同一轮次创建 ScienceEvidence 时**必需**
 - ScienceEvidence → DataSet 和/或 Method：ScienceEvidence 建立所必需
+
+
+#### Not allowed / Not allowed
+
+**English**
+
+Do **not** use SupportGraph -> `prov_hadMember` -> ScienceEvidence. Link ScienceEvidence to the graph or Claim via `mp_supports`/`mp_challenges` instead.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
 
 
 #### Semantics / 语义
@@ -1086,7 +1095,7 @@ Membership only; polarity is mp_supports/mp_challenges, not hadMember.
 
 **中文**
 
-仅表示成员关系；极性由 mp_supports/mp_challenges 表达，而非 hadMember。
+仅表示成员关系；极性由 mp_supports/mp_challenges 表达，而非 hadMember。禁止 SupportGraph → `prov_hadMember` → ScienceEvidence。
 
 
 #### Do not / 禁止

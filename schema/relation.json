@@ -73,7 +73,7 @@
     },
     {
       "label": "prov_hadMember",
-      "description": "### Definition\nPROV-O collection membership for ScienceEvidence and SupportGraph aggregates.\n\n### Allowed schema patterns\nScienceEvidence -> DataSet/Method; SupportGraph -> Claim/Statement/Attribution/Reference/ScienceEvidence\n\n### Co-occurrence gates\n- SupportGraph -> Claim: **required** when SupportGraph is created\n- SupportGraph -> ScienceEvidence: **required** when ScienceEvidence is created in the same pass\n- ScienceEvidence -> DataSet and/or Method: required for ScienceEvidence establishment\n\n### Semantics\nMembership only; polarity is mp_supports/mp_challenges, not hadMember.\n\n### Do not\nCreate hadMember links to hallucinated members not supported in the same original_text."
+      "description": "### Definition\nPROV-O collection membership for ScienceEvidence and SupportGraph aggregates.\n\n### Allowed schema patterns\nScienceEvidence -> DataSet/Method; SupportGraph -> Claim/Statement/Attribution/Reference\n\n### Co-occurrence gates\n- SupportGraph -> Claim: **required** when SupportGraph is created\n- ScienceEvidence -> DataSet and/or Method: required for ScienceEvidence establishment\n\n### Not allowed\nDo **not** use SupportGraph -> `prov_hadMember` -> ScienceEvidence. Link ScienceEvidence to the graph or Claim via `mp_supports`/`mp_challenges` instead.\n\n### Semantics\nMembership only; polarity is mp_supports/mp_challenges, not hadMember.\n\n### Do not\nCreate hadMember links to hallucinated members not supported in the same original_text."
     },
     {
       "label": "bfo_has_part",

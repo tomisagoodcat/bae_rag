@@ -75,11 +75,20 @@ def load_agent_metadata(markdown_path: str) -> dict:
     }
 
 
+def list_markdown_documents(directory_path: str) -> List[str]:
+    """Return sorted .md filenames in a directory without loading content."""
+    if not os.path.isdir(directory_path):
+        return []
+    return sorted(
+        filename
+        for filename in os.listdir(directory_path)
+        if filename.endswith(".md")
+    )
+
+
 def count_markdown_documents(directory_path: str) -> int:
     """Count .md files in a directory without loading content."""
-    if not os.path.isdir(directory_path):
-        return 0
-    return sum(1 for filename in os.listdir(directory_path) if filename.endswith(".md"))
+    return len(list_markdown_documents(directory_path))
 
 
 def effective_document_count(directory_path: str, max_docs: Any) -> int:

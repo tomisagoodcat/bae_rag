@@ -270,9 +270,14 @@ async def build_knowledge_graph_async(
             custom_prompt = "Extract entities and relations from the text."
 
         documents = load_markdown_with_agent_metadata(str(cfg.markdown_dir))
-        max_docs = cfg.build_kg.get("max_docs", "all")
-        if isinstance(max_docs, int) and max_docs > 0:
-            documents = documents[:max_docs]
+        selected = cfg.build_kg.get("selected_files")
+        if selected:
+            allow = set(selected)
+            documents = [d for d in documents if d.metadata.get("filename") in allow]
+        else:
+            max_docs = cfg.build_kg.get("max_docs", "all")
+            if isinstance(max_docs, int) and max_docs > 0:
+                documents = documents[:max_docs]
 
         pause_docs = float(cfg.build_kg.get("pause_between_docs", 3.0))
         total_processed = 0

@@ -2213,7 +2213,7 @@ Create only when **all** hold in the same argumentative original_text:
 1. identifiable DataSet or results reference
 2. identifiable Method or analytical basis
 3. explicit argumentative connector (support, demonstrate, indicate, contradict, challenge, etc.)
-4. a co-created `whu_SupportGraph` in the same pass, with ScienceEvidence linked via `prov_hadMember` and/or `mp_supports`/`mp_challenges`
+4. a co-created `whu_SupportGraph` in the same pass, with ScienceEvidence linked via `mp_supports`/`mp_challenges` to that SupportGraph and/or its focal Claim (not via `prov_hadMember`)
 
 **中文**
 
@@ -2221,7 +2221,7 @@ Create only when **all** hold in the same argumentative original_text:
 1. 可识别 DataSet 或结果引用
 2. 可识别 Method 或分析基础
 3. 明确论证连接词（support、demonstrate、indicate、contradict、challenge 等）
-4. 同一轮次共创建 `whu_SupportGraph`，且 ScienceEvidence 经 `prov_hadMember` 和/或 `mp_supports`/`mp_challenges` 链接
+4. 同一轮次共创建 `whu_SupportGraph`，且 ScienceEvidence 经 `mp_supports`/`mp_challenges` 链接到该 SupportGraph 和/或其焦点 Claim（**不要**用 `prov_hadMember`）
 
 
 #### Do not extract when / 何时不抽取
@@ -2243,11 +2243,11 @@ Create only when **all** hold in the same argumentative original_text:
 
 **English**
 
-Do not create ScienceEvidence first and add SupportGraph later. Do not hallucinate members to complete evidence.
+Do not create ScienceEvidence first and add SupportGraph later. Do not hallucinate members to complete evidence. Do not use SupportGraph -> `prov_hadMember` -> ScienceEvidence.
 
 **中文**
 
-不要先建 ScienceEvidence 后补 SupportGraph。不要臆造成员以补全证据。
+不要先建 ScienceEvidence 后补 SupportGraph。不要臆造成员以补全证据。不要使用 SupportGraph → `prov_hadMember` → ScienceEvidence。
 
 
 #### WHU_HASORIGINALTEXT / WHU_HASORIGINALTEXT
@@ -2265,11 +2265,11 @@ Smallest contiguous span containing evidential content **and** the argumentative
 
 **English**
 
-“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar hypothesis.” -> ScienceEvidence within a SupportGraph containing the focal Claim.
+“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar hypothesis.” -> ScienceEvidence mp_supports Claim/SupportGraph; SupportGraph hadMember Claim (not ScienceEvidence).
 
 **中文**
 
-“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar hypothesis.” → 含焦点 Claim 的 SupportGraph 中的 ScienceEvidence。
+“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar hypothesis.” → ScienceEvidence mp_supports Claim/SupportGraph；SupportGraph hadMember Claim（不是 ScienceEvidence）。
 
 
 ### 属性 Properties 属性描述
@@ -2690,24 +2690,24 @@ A `whu_SupportGraph` is an argumentative aggregate organized around one focal `m
 
 Create only when:
 1. a focal `mp_Claim` is identified in the same extraction pass, and
-2. at least one additional argumentative member candidate exists (Statement, ScienceEvidence, Reference, Attribution)
+2. at least one additional argumentative participant exists (Statement, ScienceEvidence linked by mp_supports/mp_challenges, Reference, Attribution)
 
 **中文**
 
 仅当同时满足时创建：
 1. 同一抽取轮次识别出焦点 `mp_Claim`，且
-2. 存在至少一个额外论证成员候选（Statement、ScienceEvidence、Reference、Attribution）
+2. 存在至少一个额外论证参与者（Statement、经 mp_supports/mp_challenges 链接的 ScienceEvidence、Reference、Attribution）
 
 
 #### Mandatory members / 必选成员
 
 **English**
 
-SupportGraph -> `prov_hadMember` -> Claim (required). If ScienceEvidence is created, SupportGraph must `prov_hadMember` ScienceEvidence.
+SupportGraph -> `prov_hadMember` -> Claim (required). ScienceEvidence is **not** a `prov_hadMember` of SupportGraph; attach it with `mp_supports`/`mp_challenges` instead.
 
 **中文**
 
-SupportGraph → `prov_hadMember` → Claim（必需）。若创建 ScienceEvidence，SupportGraph 必须 `prov_hadMember` ScienceEvidence。
+SupportGraph → `prov_hadMember` → Claim（必需）。ScienceEvidence **不是** SupportGraph 的 `prov_hadMember`；应使用 `mp_supports`/`mp_challenges` 挂接。
 
 
 #### Do not extract when / 何时不抽取
@@ -2738,22 +2738,22 @@ Span covering the focal Claim and its immediate argumentative neighbors in one c
 
 **English**
 
-prov_hadMember to Claim/Statement/Attribution/Reference/ScienceEvidence; polarity via mp_supports/mp_challenges, not via membership alone.
+`prov_hadMember` to Claim/Statement/Attribution/Reference only. ScienceEvidence polarity via `mp_supports`/`mp_challenges` (ScienceEvidence -> SupportGraph or Claim).
 
 **中文**
 
-prov_hadMember 链接 Claim/Statement/Attribution/Reference/ScienceEvidence；极性经 mp_supports/mp_challenges，而非仅凭成员关系。
+`prov_hadMember` 仅链接 Claim/Statement/Attribution/Reference。ScienceEvidence 极性经 `mp_supports`/`mp_challenges`（ScienceEvidence → SupportGraph 或 Claim）。
 
 
 #### Example / 示例
 
 **English**
 
-Claim about biochar reducing MeHg with supporting ScienceEvidence and cited References in one SupportGraph.
+Claim about biochar reducing MeHg with ScienceEvidence mp_supports Claim, and cited References as SupportGraph members.
 
 **中文**
 
-关于 biochar 降低 MeHg 的 Claim，含 supporting ScienceEvidence 与 cited References，共处于一个 SupportGraph。
+关于 biochar 降低 MeHg 的 Claim，由 ScienceEvidence mp_supports Claim，引用文献作为 SupportGraph 成员。
 
 
 ### 属性 Properties 属性描述

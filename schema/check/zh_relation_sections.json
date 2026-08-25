@@ -104,9 +104,9 @@
   },
   "prov_hadMember": {
     "Definition": "ScienceEvidence 与 SupportGraph 聚合体的 PROV-O 集合成员关系。",
-    "Allowed schema patterns": "ScienceEvidence → DataSet/Method；SupportGraph → Claim/Statement/Attribution/Reference/ScienceEvidence",
-    "Co-occurrence gates": "- SupportGraph → Claim：创建 SupportGraph 时**必需**\n- SupportGraph → ScienceEvidence：同一轮次创建 ScienceEvidence 时**必需**\n- ScienceEvidence → DataSet 和/或 Method：ScienceEvidence 建立所必需",
-    "Semantics": "仅表示成员关系；极性由 mp_supports/mp_challenges 表达，而非 hadMember。",
+    "Allowed schema patterns": "ScienceEvidence → DataSet/Method；SupportGraph → Claim/Statement/Attribution/Reference",
+    "Co-occurrence gates": "- SupportGraph → Claim：创建 SupportGraph 时**必需**\n- ScienceEvidence → DataSet 和/或 Method：ScienceEvidence 建立所必需",
+    "Semantics": "仅表示成员关系；极性由 mp_supports/mp_challenges 表达，而非 hadMember。禁止 SupportGraph → `prov_hadMember` → ScienceEvidence。",
     "Do not": "不要链接到同一 original_text 中无支撑的成员的臆造成员。"
   },
   "bfo_has_part": {

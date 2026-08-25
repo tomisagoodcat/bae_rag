@@ -157,11 +157,11 @@
   "whu_ScienceEvidence": {
     "Tier": "中层论证复合体。需要共现的论证结构。",
     "Definition": "`whu_ScienceEvidence` 在明确论证角色中将可识别数据/结果与方法/分析基础绑定。",
-    "Establishment gate": "仅当同一论证 original_text 中**全部**满足时创建：\n1. 可识别 DataSet 或结果引用\n2. 可识别 Method 或分析基础\n3. 明确论证连接词（support、demonstrate、indicate、contradict、challenge 等）\n4. 同一轮次共创建 `whu_SupportGraph`，且 ScienceEvidence 经 `prov_hadMember` 和/或 `mp_supports`/`mp_challenges` 链接",
+    "Establishment gate": "仅当同一论证 original_text 中**全部**满足时创建：\n1. 可识别 DataSet 或结果引用\n2. 可识别 Method 或分析基础\n3. 明确论证连接词（support、demonstrate、indicate、contradict、challenge 等）\n4. 同一轮次共创建 `whu_SupportGraph`，且 ScienceEvidence 经 `mp_supports`/`mp_challenges` 链接到该 SupportGraph 和/或其焦点 Claim（**不要**用 `prov_hadMember`）",
     "Do not extract when": "- 仅报告数据而无论证角色 → 仅 DataSet\n- 无法共创建焦点 Claim 与 SupportGraph\n- Method 与 DataSet 仅共现而无论证语言",
-    "No orphan rule": "不要先建 ScienceEvidence 后补 SupportGraph。不要臆造成员以补全证据。",
+    "No orphan rule": "不要先建 ScienceEvidence 后补 SupportGraph。不要臆造成员以补全证据。不要使用 SupportGraph → `prov_hadMember` → ScienceEvidence。",
     "WHU_HASORIGINALTEXT": "包含证据内容与论证连接词的最小连续片段。",
-    "Example": "“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar hypothesis.” → 含焦点 Claim 的 SupportGraph 中的 ScienceEvidence。"
+    "Example": "“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar hypothesis.” → ScienceEvidence mp_supports Claim/SupportGraph；SupportGraph hadMember Claim（不是 ScienceEvidence）。"
   },
   "whu_ResearchStep": {
     "Tier": "相对父 Plan/Experiment 为基层。仅从父级中层 WHU_HASORIGINALTEXT 抽取。",
@@ -193,12 +193,12 @@
   "whu_SupportGraph": {
     "Tier": "中层论证容器。",
     "Definition": "`whu_SupportGraph` 是围绕一个焦点 `mp_Claim` 组织的论证聚合体。",
-    "Establishment gate": "仅当同时满足时创建：\n1. 同一抽取轮次识别出焦点 `mp_Claim`，且\n2. 存在至少一个额外论证成员候选（Statement、ScienceEvidence、Reference、Attribution）",
-    "Mandatory members": "SupportGraph → `prov_hadMember` → Claim（必需）。若创建 ScienceEvidence，SupportGraph 必须 `prov_hadMember` ScienceEvidence。",
+    "Establishment gate": "仅当同时满足时创建：\n1. 同一抽取轮次识别出焦点 `mp_Claim`，且\n2. 存在至少一个额外论证参与者（Statement、经 mp_supports/mp_challenges 链接的 ScienceEvidence、Reference、Attribution）",
+    "Mandatory members": "SupportGraph → `prov_hadMember` → Claim（必需）。ScienceEvidence **不是** SupportGraph 的 `prov_hadMember`；应使用 `mp_supports`/`mp_challenges` 挂接。",
     "Do not extract when": "- 仅有孤立 Claim 而无支持/挑战材料\n- 仅有 DataSet/结果而无焦点 Claim",
     "WHU_HASORIGINALTEXT": "覆盖焦点 Claim 及其直接论证邻居的单段连续片段。",
-    "Relations": "prov_hadMember 链接 Claim/Statement/Attribution/Reference/ScienceEvidence；极性经 mp_supports/mp_challenges，而非仅凭成员关系。",
-    "Example": "关于 biochar 降低 MeHg 的 Claim，含 supporting ScienceEvidence 与 cited References，共处于一个 SupportGraph。"
+    "Relations": "`prov_hadMember` 仅链接 Claim/Statement/Attribution/Reference。ScienceEvidence 极性经 `mp_supports`/`mp_challenges`（ScienceEvidence → SupportGraph 或 Claim）。",
+    "Example": "关于 biochar 降低 MeHg 的 Claim，由 ScienceEvidence mp_supports Claim，引用文献作为 SupportGraph 成员。"
   },
   "iao_DataItem": {
     "Definition": "`iao_DataItem` 是 DataSet 内可单独报告的信息内容项，含分类记录、计数、浓度、统计摘要或其他数据记录。更具体的单值+单位情形用 `iao_ScalarMeasurementDatum`。",
