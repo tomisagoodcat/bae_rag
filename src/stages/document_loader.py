@@ -75,6 +75,21 @@ def load_agent_metadata(markdown_path: str) -> dict:
     }
 
 
+def count_markdown_documents(directory_path: str) -> int:
+    """Count .md files in a directory without loading content."""
+    if not os.path.isdir(directory_path):
+        return 0
+    return sum(1 for filename in os.listdir(directory_path) if filename.endswith(".md"))
+
+
+def effective_document_count(directory_path: str, max_docs: Any) -> int:
+    """Apply max_docs cap to the markdown file count."""
+    total = count_markdown_documents(directory_path)
+    if isinstance(max_docs, int) and max_docs > 0:
+        return min(total, max_docs)
+    return total
+
+
 def load_markdown_with_agent_metadata(directory_path: str) -> List[Document]:
     """
     加载Markdown文件并使用Agent生成的元数据

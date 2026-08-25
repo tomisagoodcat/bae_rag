@@ -8,3 +8,6 @@ __pycache__/
 
 _extract_cell_10.py
 _extract_*.py
+
+logs/*.log
+!logs/.gitkeep

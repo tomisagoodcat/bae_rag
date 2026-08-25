@@ -42,3 +42,18 @@ def wait_for_neo4j(driver: Driver, database: str, max_wait_sec: int = 120) -> bo
 def clear_neo4j(driver: Driver, database: str) -> None:
     with driver.session(database=database) as session:
         session.run("MATCH (n) DETACH DELETE n").consume()
+
+
+def get_db_stats(driver: Driver, database: str) -> dict[str, int]:
+    """Return node and relationship counts for the given database."""
+    with driver.session(database=database) as session:
+        nodes = session.run("MATCH (n) RETURN count(n) AS c").single()["c"]
+        relationships = session.run("MATCH ()-[r]->() RETURN count(r) AS c").single()["c"]
+        chunks = session.run("MATCH (c:Chunk) RETURN count(c) AS c").single()["c"]
+        metapaths = session.run("MATCH (mp:MetaPath) RETURN count(mp) AS c").single()["c"]
+    return {
+        "nodes": nodes,
+        "relationships": relationships,
+        "chunks": chunks,
+        "metapaths": metapaths,
+    }

@@ -12,22 +12,18 @@ import yaml
 from kg_build_pipeline.src.paths import DEFAULT_CONFIG, REPO_ROOT, resolve_repo_path
 
 _ENV_PATTERN = re.compile(r"\$\{([^}]+)\}")
-_DOTENV_LOADED = False
 
 
 def _load_repo_dotenv() -> None:
-    global _DOTENV_LOADED
-    if _DOTENV_LOADED:
-        return
+    """Load repo-root .env into os.environ (override so password updates take effect)."""
     env_path = REPO_ROOT / ".env"
     if env_path.is_file():
         try:
             from dotenv import load_dotenv
 
-            load_dotenv(env_path)
+            load_dotenv(env_path, override=True)
         except ImportError:
             pass
-    _DOTENV_LOADED = True
 
 
 def _subst_env(value: Any) -> Any:

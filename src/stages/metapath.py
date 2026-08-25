@@ -10,6 +10,7 @@ from neo4j import Driver
 from kg_build_pipeline.src.config import PipelineConfig
 from kg_build_pipeline.src.paths import ensure_repo_on_syspath
 from kg_build_pipeline.src.schema_loader import load_metapath_relations
+from kg_build_pipeline.src.stages.metapath_validate import validate_f1_prerequisites
 
 
 def run_metapath(cfg: PipelineConfig, driver: Driver) -> Dict[str, Any]:
@@ -25,9 +26,10 @@ def run_metapath(cfg: PipelineConfig, driver: Driver) -> Dict[str, Any]:
     )
 
     subgraph_relations, pagerank_prop = load_metapath_relations(cfg.schema_dir)
+    db = cfg.neo4j_database
     stats: Dict[str, Any] = {}
 
-    with driver.session(database=cfg.neo4j_database) as session:
+    with driver.session(database=db) as session:
         n_before = session.run("MATCH (mp:MetaPath) RETURN count(mp) AS c").single()["c"]
         session.run("MATCH (mp:MetaPath) DETACH DELETE mp")
         stats["deleted_metapaths"] = n_before
@@ -40,16 +42,22 @@ def run_metapath(cfg: PipelineConfig, driver: Driver) -> Dict[str, Any]:
     except Exception as e:
         stats["index_drop_warning"] = str(e)
 
-    stats["f1"] = build_all_metapaths(driver, subgraph_relations, pagerank_prop)
-    verify_metapath_path_level(driver, require_mid=False)
+    stats["f1_preflight"] = validate_f1_prerequisites(
+        cfg, driver, subgraph_relations=subgraph_relations
+    )
+
+    stats["f1"] = build_all_metapaths(
+        driver, subgraph_relations, pagerank_prop, database=db
+    )
+    verify_metapath_path_level(driver, require_mid=False, database=db)
 
     mid_counters = {"MPU": 1, "EBM": 1, "EEM": 1}
-    mid_counters = build_mid_metapaths_for_plans(driver, mid_counters)
-    mid_counters = build_mid_metapaths_for_containers(driver, mid_counters)
-    stats["link"] = link_mid_to_low(driver)
-    verify_metapath_path_level(driver, require_mid=True)
+    mid_counters = build_mid_metapaths_for_plans(driver, mid_counters, database=db)
+    mid_counters = build_mid_metapaths_for_containers(driver, mid_counters, database=db)
+    stats["link"] = link_mid_to_low(driver, database=db)
+    verify_metapath_path_level(driver, require_mid=True, database=db)
     stats["pagerank"] = refresh_and_verify_metapath_max_pagerank(
-        driver, pagerank_prop=pagerank_prop
+        driver, pagerank_prop=pagerank_prop, database=db
     )
 
     skip_f2 = bool(cfg.metapath.get("skip_f2_without_qwen", True))
@@ -61,7 +69,7 @@ def run_metapath(cfg: PipelineConfig, driver: Driver) -> Dict[str, Any]:
         stats["f2"] = _run_f2(cfg, driver)
         stats["f3"] = _run_f3(cfg, driver)
 
-    with driver.session(database=cfg.neo4j_database) as session:
+    with driver.session(database=db) as session:
         stats["metapath_low"] = session.run(
             "MATCH (mp:MetaPath {path_level:'low'}) RETURN count(mp) AS c"
         ).single()["c"]
@@ -125,7 +133,6 @@ def _run_f2(cfg: PipelineConfig, driver: Driver) -> Dict[str, Any]:
 
 
 def _run_f3(cfg: PipelineConfig, driver: Driver) -> Dict[str, Any]:
-    import numpy as np
     from neo4j_graphrag.embeddings.sentence_transformers import SentenceTransformerEmbeddings
     from neo4j_graphrag.indexes import create_fulltext_index, create_vector_index, drop_index_if_exists
 
@@ -155,11 +162,20 @@ def _run_f3(cfg: PipelineConfig, driver: Driver) -> Dict[str, Any]:
     dim = len(embedder.embed_query("test"))
     for name in ("metapath_embedding_index", "metapath_fulltext_index"):
         drop_index_if_exists(driver, name)
-    create_vector_index(driver, "MetaPath", "embedding", "metapath_embedding_index", dimension=dim)
+    create_vector_index(
+        driver,
+        "metapath_embedding_index",
+        label="MetaPath",
+        embedding_property="embedding",
+        dimensions=dim,
+        similarity_fn="cosine",
+        neo4j_database=cfg.neo4j_database,
+    )
     create_fulltext_index(
         driver,
-        "MetaPath",
-        ["metaPathQuery", "metaPathText"],
         "metapath_fulltext_index",
+        label="MetaPath",
+        node_properties=["metaPathQuery", "metaPathText"],
+        neo4j_database=cfg.neo4j_database,
     )
     return {"embeddings_written": written, "dimension": dim}

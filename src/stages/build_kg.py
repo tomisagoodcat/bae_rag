@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 
 import nest_asyncio
 from llama_index.core import Document
@@ -163,7 +163,8 @@ async def _process_document_once(
             processed += 1
             await asyncio.sleep(pause_schemas)
         except Exception as e:
-            print(f"Schema {schema[:3]} failed: {e}")
+            err_msg = f"Schema {schema[:3]} failed: {e}"
+            print(err_msg)
             continue
 
     try:
@@ -180,30 +181,50 @@ async def _process_document_once(
     return processed
 
 
-async def _process_document_with_retry(doc, cfg: PipelineConfig, **kwargs) -> int:
+async def _process_document_with_retry(doc, cfg: PipelineConfig, on_event: Optional[EventCallback] = None, **kwargs) -> int:
     neo4j_driver = kwargs["neo4j_driver"]
     filename = doc.metadata.get("filename", "Unknown")
     max_retries = int(cfg.build_kg.get("doc_max_retries", 2))
+
+    def _emit(event: Dict[str, Any]) -> None:
+        if on_event:
+            on_event(event)
+
     for attempt in range(1, max_retries + 2):
         try:
             return await _process_document_once(doc=doc, cfg=cfg, **kwargs)
         except (ServiceUnavailable, SessionExpired, TransientError) as e:
-            print(f"[{filename}] Neo4j error attempt {attempt}: {e}")
+            msg = f"[{filename}] Neo4j error attempt {attempt}: {e}"
+            print(msg)
+            _emit({"type": "log", "message": msg})
             if attempt > max_retries:
                 return 0
             if not wait_for_neo4j(neo4j_driver, cfg.neo4j_database, 180):
                 return 0
         except Exception as e:
-            print(f"[{filename}] fatal: {e}")
+            msg = f"[{filename}] fatal: {e}"
+            print(msg)
+            _emit({"type": "log", "message": msg})
             return 0
     return 0
 
 
-async def build_knowledge_graph_async(cfg: PipelineConfig, driver: Driver | None = None) -> Dict[str, Any]:
+EventCallback = Callable[[Dict[str, Any]], None]
+
+
+async def build_knowledge_graph_async(
+    cfg: PipelineConfig,
+    driver: Driver | None = None,
+    on_event: Optional[EventCallback] = None,
+) -> Dict[str, Any]:
     """Schema-guided triple extraction into Neo4j (logic aligned with 1_2_0_2)."""
     own_driver = driver is None
     neo4j_driver = driver or build_neo4j_driver(cfg)
     stats: Dict[str, Any] = {"succeeded_docs": 0, "failed_docs": [], "schemas_processed": 0}
+
+    def _emit(event: Dict[str, Any]) -> None:
+        if on_event:
+            on_event(event)
 
     try:
         neo4j_driver.verify_connectivity()
@@ -255,13 +276,24 @@ async def build_knowledge_graph_async(cfg: PipelineConfig, driver: Driver | None
 
         pause_docs = float(cfg.build_kg.get("pause_between_docs", 3.0))
         total_processed = 0
+        doc_total = len(documents)
         for idx, doc in enumerate(tqdm(documents, desc="build_kg"), start=1):
+            filename = doc.metadata.get("filename", "Unknown")
+            _emit(
+                {
+                    "type": "document_progress",
+                    "current": idx,
+                    "total": doc_total,
+                    "filename": filename,
+                }
+            )
             if not neo4j_is_alive(neo4j_driver, cfg.neo4j_database):
                 if not wait_for_neo4j(neo4j_driver, cfg.neo4j_database, 180):
                     break
             processed = await _process_document_with_retry(
                 doc=doc,
                 cfg=cfg,
+                on_event=on_event,
                 splitter=splitter,
                 custom_prompt=custom_prompt,
                 potential_schema=potential_schema,
@@ -273,11 +305,31 @@ async def build_knowledge_graph_async(cfg: PipelineConfig, driver: Driver | None
                 weight_llm=weight_llm,
                 table3=table3,
             )
-            if processed > 0:
+            if processed == 0:
+                _emit(
+                    {
+                        "type": "log",
+                        "message": (
+                            f"[{filename}] extracted 0 schemas — check DeepSeek balance / API errors "
+                            "(see server console for Schema ... failed lines)"
+                        ),
+                    }
+                )
+            success = processed > 0
+            if success:
                 total_processed += processed
                 stats["succeeded_docs"] += 1
             else:
-                stats["failed_docs"].append(doc.metadata.get("filename", "Unknown"))
+                stats["failed_docs"].append(filename)
+            _emit(
+                {
+                    "type": "document_done",
+                    "filename": filename,
+                    "success": success,
+                    "current": idx,
+                    "total": doc_total,
+                }
+            )
             if idx < len(documents):
                 await asyncio.sleep(pause_docs)
 
@@ -292,5 +344,9 @@ async def build_knowledge_graph_async(cfg: PipelineConfig, driver: Driver | None
             neo4j_driver.close()
 
 
-def run_build_kg(cfg: PipelineConfig, driver: Driver | None = None) -> Dict[str, Any]:
-    return asyncio.run(build_knowledge_graph_async(cfg, driver=driver))
+def run_build_kg(
+    cfg: PipelineConfig,
+    driver: Driver | None = None,
+    on_event: Optional[EventCallback] = None,
+) -> Dict[str, Any]:
+    return asyncio.run(build_knowledge_graph_async(cfg, driver=driver, on_event=on_event))

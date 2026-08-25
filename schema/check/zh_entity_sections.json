@@ -1,0 +1,209 @@
+{
+  "mp_Attribution": {
+    "Definition": "`mp_Attribution` 记录谁对另一 Representation 负责、断言、创建或策展；它本身不是个人或组织实体。",
+    "Extract when": "仅当文本在归因或论证链中明确指认可归责来源，或该 Attribution 将作为 SupportGraph 的 `prov_hadMember` 成员时创建。",
+    "Do not extract when": "不要为模糊主体（如“研究者认为”）创建，也不要仅凭文档元数据推断作者身份。",
+    "WHU_HASORIGINALTEXT": "必须是逐字归因片段（例如“According to NOM-Lab…”）。",
+    "Relations": "可 `mp_supports` 被限定的 Representation；可为 SupportGraph 成员。",
+    "Example": "“According to the NOM-Lab at Southwest University, …” → Attribution[NOM-Lab]。"
+  },
+  "mp_References": {
+    "Definition": "`mp_References` 是文本中明确引用的书目或外部来源记录（作者–年份、编号引用、DOI、URL）。",
+    "Extract when": "当可识别的引用来源参与引用结构或 SupportGraph 时，为每个来源创建一个 Reference。",
+    "Do not extract when": "不要为无具体来源的“以往研究”创建；不要将多篇文献合并为一个 Reference。",
+    "WHU_HASORIGINALTEXT": "必须是文本中的逐字引用字符串。",
+    "Relations": "Reference → `cito_isCitedBy` 引用它的 Representation；仅当作为证据支撑时才 `mp_supports`。",
+    "Example": "“Biochar reduces Hg bioavailability (Smith et al., 2020).” → Reference[Smith et al., 2020]。"
+  },
+  "whu_Computational_Experiment": {
+    "Tier": "中层（Plan）。在中层抽取阶段建立，并先定义 WHU_HASORIGINALTEXT 范围，再进行基层扩展。",
+    "Definition": "`whu_Computational_Experiment` 是用于组织统计、计算、建模或数据变换程序的中层计划性分析模块，以 Plan 而非单一原子步骤建模。",
+    "WHU_HASORIGINALTEXT scope": "描述该计算分析单元的最小连续片段（如统计检验、建模流程、模拟）。",
+    "Establishment gate": "仅当同一抽取上下文中识别出**至少一个**可归因的计算类 `whu_ResearchStep` 且含明确操作（performed PCA、conducted regression、ran ANOVA）时创建。**禁止创建孤立 Experiment。** 不得臆造 Step。",
+    "If no Step": "不要创建 Computational_Experiment。",
+    "Expected low-level children": "计算 ResearchStep；Method/Software 经 declaredUsed；DataSet 经 declaredInput/Output——均仅来自该 Experiment 的 original_text。",
+    "Relations": "ResearchSteps → `p_plan_isStepOfPlan`；可选 `whu_hasGoal`；中层邻接用 `whu_fellow`。",
+    "Example": "“PCA and Kruskal–Wallis tests were conducted in R 4.2.2.” → Computational_Experiment 及对应计算 ResearchStep(s)。"
+  },
+  "envo_EnvironmentMaterial": {
+    "Tier": "基层（基础型）。在从父级 SpecimenCollection、SpecimenPreprocessing 或 BioChemical_Experiment 的 WHU_HASORIGINALTEXT 进行基层扩展时抽取。",
+    "Definition": "`envo_EnvironmentMaterial` 是与 ENVO 对齐的**物质相或环境基质类型**（土壤、沉积物、孔隙水、空气、颗粒物）。它是**物质类别**，不是单个采集样本，不是生物体，也不是命名地点。",
+    "Extract when": "当文本以物质类型语义命名基质/介质本身时创建（如 surface soil、river water、overlying water）。",
+    "Do not extract when": "- “soil samples / soil specimens / water sample” → `whu_Specimen`\n- “rice plants / fish / bacteria” → `obi_organism`\n- 命名字段、池塘、站点或地点 → `whu_EnvironmentFeature`\n- 干燥、筛分、消解等加工后的样品产物 → `whu_ProcessedSpecimen`",
+    "Naming": "WHU_HASNAME 必须使用文本中的逐字物质短语。不得附加原文未出现的 sample、specimen 或 site 等词。",
+    "Relations": "`whu_EnvironmentFeature -> bfo_has_part -> envo_EnvironmentMaterial`；Specimen 可 `prov_wasDerivedFrom` EnvironmentMaterial；EnvironmentMaterial 可 `bfo_has_part` ChemicalEntity。",
+    "Example": "“Surface soil was collected from the paddy field.” → EnvironmentMaterial[surface soil]；仅当田地作为地点被命名时才建 EnvironmentFeature[paddy field]。"
+  },
+  "whu_Reagent": {
+    "Definition": "`whu_Reagent` 是在已记录研究步骤中明确使用的化学或生物试剂、标准品、溶液、参考物质、缓冲液或其他消耗品。",
+    "Extract when": "当段落命名试剂或给出浓度、等级、供应商、配方等识别信息时创建 Reagent。",
+    "Relations": "从使用的 `whu_ResearchStep` 经 `whu_declaredUsed` 链接。",
+    "Example": "“Samples were digested with 65% suprapure HNO3.” → Reagent[65% suprapure HNO3]。"
+  },
+  "iao_ScalarMeasurementDatum": {
+    "Definition": "`iao_ScalarMeasurementDatum` 是由单一数值及其计量单位表示的标量测量数据项，视为 `iao_DataItem` 的子类型。",
+    "Extract when": "当段落报告具体标量值（如“28.4 ng/g”），可选带明确比较符时使用。若记录为分类、复合或无法归约为“单值+单位”，则用 `iao_DataItem`。",
+    "Relations": "经 `iao_is_about` 链接被测/被分析的 `whu_TargetVariable`；DataSet 经 `dcterms_hasPart` 包含 DataItem 级记录。",
+    "Example": "“Mean THg concentration was 28.4 ng/g.” → ScalarMeasurementDatum[value=28.4, unit=ng/g] is_about TargetVariable[THg concentration]。"
+  },
+  "whu_Software": {
+    "Definition": "`whu_Software` 表示在计算研究步骤中明确使用的命名软件、软件包、计算环境或分析应用。",
+    "Extract when": "当软件名称明确时创建 Software；仅在原文陈述时捕获厂商/品牌与版本。",
+    "Relations": "从使用的 `whu_ResearchStep` 经 `whu_declaredUsed` 链接。",
+    "Example": "“Statistical analyses were performed in R version 4.2.2.” → Software[R]，version=4.2.2。"
+  },
+  "whu_TargetVariable": {
+    "Tier": "基层（基础型）。仅从父级中层 original_text 中的 Goal、DataSet 或测量语境抽取。",
+    "Definition": "`whu_TargetVariable` 是被测量、分析、比较或预测的**可测量量或变量**；必须对应文本中明确的测量量表达。",
+    "Extract when": "文本含完整测量量短语（THg concentration、MeHg content、methylation rate），或变量名在同一片段内与报告单位明确关联。",
+    "Do not extract when": "- 仅出现化学符号或物质名（Sb、mercury）→ 仅 ChemicalEntity\n- concentration/content/level/rate 需凭领域知识推断 → **不要抽取**\n- Goal 仅命名动作而无测量短语 → 不要创建 TargetVariable 或 hasTarget 链接",
+    "Lexical rule": "WHU_HASNAME 必须是 WHU_HASORIGINALTEXT 的逐字子串，或原文中连续出现的测量名词短语。绝不可插入原文未出现的维度词。",
+    "Relations": "仅当测量短语出现在 Goal original_text 中时，Goal → `whu_hasTarget` → TargetVariable；当二者均有文本支撑时，TargetVariable → `iao_is_about` → ChemicalEntity。",
+    "Example": "“Hg concentration in rice grain was quantified.” → TargetVariable[Hg concentration] is_about ChemicalEntity[Hg]。“Sb was analyzed.” → 仅 ChemicalEntity[Sb]；无 TargetVariable。"
+  },
+  "whu_SpecimenCollection": {
+    "Definition": "`whu_SpecimenCollection` 是由一个或多个采集类 `whu_ResearchStep` 组成的中层采样 Plan，表示从环境或生物来源获取物理样本。",
+    "Extract when": "当段落描述连贯的采样/采集程序（含地点、深度、时间、设计或采样方法）时创建一个。",
+    "Relations": "采集 ResearchStep 经 `p_plan_isStepOfPlan` 归属，并经 `whu_declaredOutput` 产出 `whu_Specimen`；采集 Plan 经 `whu_hasContext` 链接环境语境。在 plan 级快捷视图中，已抽取 Specimen 可经 `p_plan_isOutputVarOf` 回连采集 Plan。",
+    "Example": "“Topsoil (0–20 cm) was collected from paddy fields using a stainless-steel auger.” → SpecimenCollection；SpecimenCollection hasContext EnvironmentFeature[paddy field]；ResearchStep[collection] declaredOutput Specimen[topsoil]。"
+  },
+  "mp_Claim": {
+    "Definition": "`mp_Claim` 是论证中的核心科学断言，作为焦点命题；比 `mp_Statement` 更中心。",
+    "Extract when": "当段落呈现主要结论、假设或解释，且在同一轮抽取中将（或已经）作为 `whu_SupportGraph` 的**焦点**命题组织时创建 Claim。",
+    "Do not extract when": "普通观察或中间命题、非论证图焦点时使用 `mp_Statement`。",
+    "Relations": "可接收 mp_supports/mp_challenges；创建 SupportGraph 时必须为 prov_hadMember。",
+    "Example": "“Modified biochar significantly reduced MeHg production in paddy soil.” → SupportGraph 中的焦点 Claim。"
+  },
+  "whu_Goal": {
+    "Tier": "中层附属（依赖 Experiment）。绝不可作为孤立节点抽取。",
+    "Definition": "`whu_Goal` 是 BioChemical 或 Computational Experiment 中明确陈述的科学目标。",
+    "Establishment gate": "仅当 (1) 同一抽取轮次创建了 `whu_BioChemical_Experiment` 或 `whu_Computational_Experiment`，且 (2) 文本含明确目标语言（to quantify、to assess、to compare、to determine、to predict、aimed to、in order to）时创建。Goal **必须**由该 Experiment 经 `whu_hasGoal` 链接。",
+    "Do not extract when": "- 同一轮次无父 Experiment\n- 仅陈述背景动机或意义\n- 目标靠推断而非语言显式表达",
+    "WHU_HASORIGINALTEXT": "目标从句本身。仅当目标从句含逐字测量量短语时才建 TargetVariable 子节点。",
+    "Relations": "Experiment → `whu_hasGoal` → Goal；仅当 Goal 片段有词面支撑时，Goal → `whu_hasTarget` → TargetVariable。",
+    "Example": "“To quantify Hg concentration in rice grain.” → Goal 链接 BioChemical_Experiment；仅当目标从句出现 “Hg concentration” 时才 hasTarget。"
+  },
+  "mp_Statement": {
+    "Definition": "`mp_Statement` 是具有可评估内容的完整命题（观察、事实、解释、中间结论）。Claim 是特化的焦点 Statement。",
+    "Extract when": "当段落表达完整命题，可支持或挑战 Claim，但**不是** SupportGraph 的焦点 Claim 时创建。",
+    "Do not extract when": "不要为片段、标题或非命题性短语创建。",
+    "Relations": "可作为 SupportGraph 的非焦点 `prov_hadMember`；按 schema 可 mp_supports/mp_challenges Claims。",
+    "Example": "“Cadmium concentrations were higher in roots than in grains.” → 支持焦点 Claim 的 Statement。"
+  },
+  "whu_BioChemical_Experiment": {
+    "Tier": "中层（Plan）。在中层抽取阶段建立，并先定义 WHU_HASORIGINALTEXT 范围，再进行基层扩展。",
+    "Definition": "`whu_BioChemical_Experiment` 是组织一个或多个实验室/生化/分析类 `whu_ResearchStep` 的中层计划性实验模块。",
+    "WHU_HASORIGINALTEXT scope": "描述该实验单元的最小连续片段，含同段中的方法链或分析目的。",
+    "Establishment gate": "仅当同一抽取上下文识别出**至少一个**可归因 `whu_ResearchStep` 且含明确操作（digest、extract、measure、assay、quantify）时创建。**禁止创建孤立 Experiment。** 不得臆造 ResearchStep 以补全 Experiment。",
+    "If no Step": "不要创建 BioChemical_Experiment；视为需复核文本范围的不完整中层抽取。",
+    "Expected low-level children": "ResearchStep(s)；可选 Goal；Method/Device/Reagent 经 declaredUsed；Specimen/ProcessedSpecimen/DataSet 经 declaredInput/Output——均仅来自该 Experiment 的 original_text。",
+    "Low-level expansion": "子步骤与实体必须在该 Experiment 的 WHU_HASORIGINALTEXT 内抽取；不得跨 Chunk。",
+    "Relations": "ResearchSteps → `p_plan_isStepOfPlan` → Experiment；可选 `whu_hasGoal`；`whu_fellow` 仅用于中层邻接。",
+    "Example": "“THg and MeHg were quantified by CVAFS after acid digestion.” → 同一轮次含消解与测量 ResearchStep 的 BioChemical_Experiment。"
+  },
+  "whu_Device": {
+    "Definition": "`whu_Device` 是在 ResearchStep 中明确使用的科学仪器、测量设备、处理装置或实验室工具。",
+    "Extract when": "当命名具体仪器/工具时创建 Device；仅在原文明确陈述时捕获品牌/制造商、型号、序列号。",
+    "Relations": "从使用的 `whu_ResearchStep` 经 `whu_declaredUsed` 链接。",
+    "Example": "“Samples were analyzed using an Agilent 7700 ICP-MS.” → Device[Agilent 7700 ICP-MS]。"
+  },
+  "whu_EnvironmentFeature": {
+    "Tier": "基层（基础型）。在中→低抽取中，从父级 `whu_SpecimenCollection` 或野外 `whu_ResearchStep` 的 WHU_HASORIGINALTEXT 抽取。",
+    "Definition": "`whu_EnvironmentFeature` 是具名、可定位的环境地点或地理–生态单元（田地、湿地、河段、采样站、实验站点）。表示**在何处**发生或采样，而非**采集了什么**。",
+    "Extract when": "当文本命名站点/地点/位置，并将其作为采样、生物体位置或已记录野外 ResearchStep 的环境背景时创建一个。坐标可在原文明确时作为属性捕获。",
+    "Do not extract when": "- 短语指**已采集的单个样本** → 用 `whu_Specimen` 或 `whu_ProcessedSpecimen`\n- 短语命名**环境基质/物质**而无独立地名（soil、water、sediment）→ 用 `envo_EnvironmentMaterial`\n- 短语指**生物体** → 用 `obi_organism`\n- 文本仅说采集了材料（如“soil was collected”）而无 distinct 地名 → 用 Specimen + EnvironmentMaterial，**不要**建 EnvironmentFeature，除非另有明确站点名（如“from the SWU paddy field”）",
+    "Decision test": "该短语能否替换 X 于“at/from the [X]”且 X 仍为地点？若不能，则不要用 EnvironmentFeature。",
+    "Relations": "EnvironmentFeature → `bfo_has_part` → EnvironmentMaterial 表示站点级物质相包含，而非采样溯源。SpecimenCollection → `whu_hasContext` → EnvironmentFeature；organism/ResearchStep 可 → `prov_atLocation` → EnvironmentFeature。仅当站点本身被陈述为溯源来源且无更具体的物质/生物来源支撑时，Specimen 可 `prov_wasDerivedFrom` EnvironmentFeature。",
+    "Example": "“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” → EnvironmentFeature[SWU paddy field]；Specimen[topsoil] wasDerivedFrom EnvironmentMaterial[surface soil] 或 EnvironmentFeature，依文本支撑。"
+  },
+  "mp_Method": {
+    "Definition": "`mp_Method` 是作为信息内容而非物理设备表示的命名或可描述科学方法、协议、分析技术、统计程序或标准。",
+    "Extract when": "为 ICP-MS 分析、EPA 3052 消解协议、PCA、回归或命名标准/程序等方法创建 Method。",
+    "Distinguish from": "物理仪器用 `whu_Device`；软件实现用 `whu_Software`。",
+    "Relations": "从使用的 ResearchStep 经 `whu_declaredUsed` 链接。Method 可与 DataSet 在 `whu_ScienceEvidence` 中经 `prov_hadMember` 聚合。",
+    "Example": "“Digestion followed EPA 3052.” → Method[EPA 3052]。"
+  },
+  "whu_SpecimenPreprocessing": {
+    "Definition": "`whu_SpecimenPreprocessing` 是由一个或多个预处理类 ResearchStep 组成的中层制备 Plan，将原始 `whu_Specimen` 转化为 `whu_ProcessedSpecimen`。",
+    "Extract when": "为干燥、研磨、筛分、过滤、保存、消解、提取等连贯制备程序（下游分析前）创建一个。",
+    "Relations": "ResearchStep 经 `p_plan_isStepOfPlan` 归属；对 raw Specimen 用 `whu_declaredInput`，对 ProcessedSpecimen 用 `whu_declaredOutput`。`whu_fellow(X,Y)` 表示当预处理 X 在采集 Y 之后时，上游 SpecimenCollection 为 Y。",
+    "Example": "“Soils were air-dried, ground, and passed through a 2-mm sieve.” → 含对应 ResearchStep(s) 的 SpecimenPreprocessing。"
+  },
+  "whu_ProcessedSpecimen": {
+    "Tier": "基层（基础型）。从 `whu_SpecimenPreprocessing` 或 `whu_BioChemical_Experiment` 的 WHU_HASORIGINALTEXT 抽取。",
+    "Definition": "`whu_ProcessedSpecimen` 是**经已记录预处理步骤后的具体样本**（干燥土壤、筛分粉末、酸消解液、提取液、滤液、均质组织等）。",
+    "Extract when": "当文本在同一父级 original_text 中命名由明确加工操作产生的制备样品产物时创建。",
+    "Do not extract when": "- 仅命名通用基质类型而无加工证据 → EnvironmentMaterial 或 Specimen\n- 仅命名站点或生物体 → EnvironmentFeature 或 organism\n- 同一抽取上下文无 ResearchStep(SpecimenProcessing) 或 wasDerivedFrom Specimen 证据 → 基层扩展中不要创建 ProcessedSpecimen",
+    "Structural note": "应由 SpecimenProcessing ResearchStep 的 `whu_declaredOutput` 或 `prov_wasDerivedFrom` Specimen 支撑。不得臆造 ProcessedSpecimen 以补全预处理链。",
+    "Relations": "ProcessedSpecimen → `prov_wasDerivedFrom` → Specimen；经 declaredInput/declaredOutput 链接 ResearchStep；可 `p_plan_isOutputVarOf` SpecimenPreprocessing 且 `p_plan_isInputVarOf` BioChemical_Experiment。",
+    "Example": "“Dried and sieved soil powder was used for Hg determination.” → ProcessedSpecimen[dried and sieved soil powder]。"
+  },
+  "whu_DataSet": {
+    "Definition": "`whu_DataSet` 是在一个或多个 ResearchStep 中生成或使用的科学数据集合。在 BAE 中同时承载数据集语义与证据/论证角色。",
+    "Extract when": "当段落明确报告连贯数据产物（表格、图、测量集、谱图集、建模结果集、分析输出等）时创建 DataSet。",
+    "Relations": "ResearchStep → `whu_declaredInput`/`whu_declaredOutput` → DataSet。在 plan 级快捷视图中，当文本直接呈现实验级输出时，DataSet 可 `p_plan_isOutputVarOf` Computational_Experiment。DataSet → `dcterms_hasPart` → DataItem。\n\n`iao_is_about` 可在两个互补层级使用：\n- DataSet → Reagent / Specimen / ProcessedSpecimen，当数据集涉及这些研究资源；\n- DataSet → TargetVariable，当数据集涉及被测/被分析目标变量。\nDataItem/ScalarMeasurementDatum 也可在更细粒度 `iao_is_about` TargetVariable。\n\nScienceEvidence → `prov_hadMember` → DataSet。仅当文本明确建立该论证关系时，DataSet 才可直链 `mp_supports`/`mp_challenges` Claim 或 Statement。",
+    "Example": "“Figure 4 reports MeHg concentrations in rice tissues after biochar treatment.” → DataSet[Figure 4 MeHg concentrations]；当链接有文本支撑时可 about 相关 Specimen 与 TargetVariable。"
+  },
+  "whu_Specimen": {
+    "Tier": "基层（基础型）。主要从 `whu_SpecimenCollection` 的 WHU_HASORIGINALTEXT 在基层扩展时抽取。",
+    "Definition": "`whu_Specimen` 是采集获得的**具体物理样本**——可计数的个体研究对象（soil samples、rice grain、fish tissue、water sample），进入制备或分析流程。",
+    "Extract when": "文本使用 sample/specimen/tissue/grain 等采集对象语言，或明确描述被采集/取样的材料时创建。",
+    "Do not extract when": "- 仅命名地点/站点 → EnvironmentFeature\n- 仅基质类型而无个体样本语义 → EnvironmentMaterial\n- 材料明确为加工后（dried、sieved、digest、extract）→ ProcessedSpecimen",
+    "Provenance": "Specimen 可 `prov_wasDerivedFrom` 最具体且有支撑的来源：organism > EnvironmentMaterial > EnvironmentFeature。勿因 Specimen 链接某节点而将该来源节点改标为 Specimen。",
+    "Naming": "使用逐字采集对象短语（如“soil samples”）。勿扩写为原文未出现的站点或物质类名。",
+    "Relations": "ResearchStep 经 `whu_declaredOutput`（采集）与 `whu_declaredInput`（预处理/分析）连接。Specimen 可 `p_plan_isOutputVarOf` SpecimenCollection 且 `p_plan_isInputVarOf` SpecimenPreprocessing。",
+    "Example": "“Soil samples were collected from the paddy field.” → Specimen[soil samples]；仅当站点明确时 wasDerivedFrom EnvironmentFeature[paddy field]。"
+  },
+  "whu_ScienceEvidence": {
+    "Tier": "中层论证复合体。需要共现的论证结构。",
+    "Definition": "`whu_ScienceEvidence` 在明确论证角色中将可识别数据/结果与方法/分析基础绑定。",
+    "Establishment gate": "仅当同一论证 original_text 中**全部**满足时创建：\n1. 可识别 DataSet 或结果引用\n2. 可识别 Method 或分析基础\n3. 明确论证连接词（support、demonstrate、indicate、contradict、challenge 等）\n4. 同一轮次共创建 `whu_SupportGraph`，且 ScienceEvidence 经 `prov_hadMember` 和/或 `mp_supports`/`mp_challenges` 链接",
+    "Do not extract when": "- 仅报告数据而无论证角色 → 仅 DataSet\n- 无法共创建焦点 Claim 与 SupportGraph\n- Method 与 DataSet 仅共现而无论证语言",
+    "No orphan rule": "不要先建 ScienceEvidence 后补 SupportGraph。不要臆造成员以补全证据。",
+    "WHU_HASORIGINALTEXT": "包含证据内容与论证连接词的最小连续片段。",
+    "Example": "“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar hypothesis.” → 含焦点 Claim 的 SupportGraph 中的 ScienceEvidence。"
+  },
+  "whu_ResearchStep": {
+    "Tier": "相对父 Plan/Experiment 为基层。仅从父级中层 WHU_HASORIGINALTEXT 抽取。",
+    "Definition": "`whu_ResearchStep` 是研究工作流中建模为 `p-plan:Step` 的原子记录操作。",
+    "Structural dependency": "每个 ResearchStep **必须**经 `p_plan_isStepOfPlan` 链接到恰好一个中层 Plan（SpecimenCollection、SpecimenPreprocessing、BioChemical_Experiment 或 Computational_Experiment）。**禁止孤立 ResearchStep。**",
+    "Extract when": "父级 original_text 含单一动词驱动操作（collected、dried、digested、measured、analyzed、performed PCA）时抽取。",
+    "Do not extract when": "- 仅出现实验模块标题或方法名而无操作从句 → 不要创建 Step 或父 Experiment\n- 操作无法在同一抽取轮次分配到父 Plan",
+    "Relations": "declaredUsed/declaredInput/declaredOutput；`p_plan_isPrecededBy`；步骤站点明确时用 `prov_atLocation`。",
+    "Example": "“After sieving, soil was digested with HNO3 and Hg was measured by CVAFS.” → 同一父 Experiment original_text 内的多个 ResearchStep。"
+  },
+  "obi_organism": {
+    "Tier": "基层（基础型）。仅当父级中层 WHU_HASORIGINALTEXT 含明确生物指称时抽取。",
+    "Definition": "`obi_organism` 是明确提及的活的生物个体、物种或群体（植物、动物、微生物）。表示**活体来源**，而非其采集组织、分泌物或环境基质。",
+    "Extract when": "当分类单元、物种、 cultivar 或生物群作为活体实体被命名时创建（rice plants、common carp、E. coli）。",
+    "Do not extract when": "- grain、root tissue、fish muscle、leaf sample → `whu_Specimen`（Specimen 可 `prov_wasDerivedFrom` organism）\n- soil、sediment、water → `envo_EnvironmentMaterial`\n- field、wetland、pond → `whu_EnvironmentFeature`",
+    "Low-level rule": "当父级中层 original_text 无生物指称时，不要从化学分析语境推断 organism。",
+    "Relations": "Specimen → `prov_wasDerivedFrom` → organism；organism → `prov_atLocation` → EnvironmentFeature；成分存在明确时 organism → `bfo_has_part` → ChemicalEntity。",
+    "Example": "“Rice plants grown in the paddy field were sampled for grain.” → organism[rice plants]；Specimen[grain] wasDerivedFrom organism。"
+  },
+  "whu_ChemicalEntity": {
+    "Tier": "基层（基础型）。仅从父级中层 WHU_HASORIGINALTEXT 抽取；勿用外部化学知识。",
+    "Definition": "`whu_ChemicalEntity` 是文本中**按名出现**的化学元素、离子、化合物或可识别物质（Hg、MeHg、Sb、Cd²⁺）。它是**物质实体**，不是测量量。",
+    "Extract when": "当文本以物质语义命名化学符号、分子式或化合物时创建。",
+    "Do not extract when": "- 短语含测量维度词（concentration、content、level、rate、flux、amount）→ 仅当完整测量短语逐字出现时才用 `whu_TargetVariable`；否则省略 TargetVariable\n- 仅出现带单位的测量值而无可分物质名 → 经 ScalarMeasurementDatum/DataItem 处理，不要单独 ChemicalEntity",
+    "Bare symbol rule": "若文本仅含 “Sb”“Hg” 等符号而无测量维度词，创建 **ChemicalEntity[Sb]** 且**不要**创建 TargetVariable。",
+    "Relations": "Specimen、organism、EnvironmentMaterial 可 `bfo_has_part` ChemicalEntity；仅当二者均有独立文本支撑时，TargetVariable → `iao_is_about` → ChemicalEntity。",
+    "Example": "“Total mercury and methylmercury were measured.” → ChemicalEntity[mercury]、ChemicalEntity[methylmercury]；仅当文本出现 “concentration/content” 等时才建 TargetVariable。"
+  },
+  "whu_SupportGraph": {
+    "Tier": "中层论证容器。",
+    "Definition": "`whu_SupportGraph` 是围绕一个焦点 `mp_Claim` 组织的论证聚合体。",
+    "Establishment gate": "仅当同时满足时创建：\n1. 同一抽取轮次识别出焦点 `mp_Claim`，且\n2. 存在至少一个额外论证成员候选（Statement、ScienceEvidence、Reference、Attribution）",
+    "Mandatory members": "SupportGraph → `prov_hadMember` → Claim（必需）。若创建 ScienceEvidence，SupportGraph 必须 `prov_hadMember` ScienceEvidence。",
+    "Do not extract when": "- 仅有孤立 Claim 而无支持/挑战材料\n- 仅有 DataSet/结果而无焦点 Claim",
+    "WHU_HASORIGINALTEXT": "覆盖焦点 Claim 及其直接论证邻居的单段连续片段。",
+    "Relations": "prov_hadMember 链接 Claim/Statement/Attribution/Reference/ScienceEvidence；极性经 mp_supports/mp_challenges，而非仅凭成员关系。",
+    "Example": "关于 biochar 降低 MeHg 的 Claim，含 supporting ScienceEvidence 与 cited References，共处于一个 SupportGraph。"
+  },
+  "iao_DataItem": {
+    "Definition": "`iao_DataItem` 是 DataSet 内可单独报告的信息内容项，含分类记录、计数、浓度、统计摘要或其他数据记录。更具体的单值+单位情形用 `iao_ScalarMeasurementDatum`。",
+    "Extract when": "当存在 distinct 可报告记录，但不宜或不能表示为单一标量测量数据项时创建 DataItem。",
+    "Relations": "DataSet → `dcterms_hasPart` → DataItem；DataItem 可 → `iao_is_about` → TargetVariable。",
+    "Example": "“Soil pH was classified as acidic, neutral, or alkaline across sites.” → DataItem[pH classification]。"
+  }
+}

@@ -19,7 +19,7 @@ llm:
   deepseek_model: deepseek-chat
 
 stages:
-  dc_metadata: false
+  dc_metadata: true
   clear_neo4j: true
   build_kg: true
   subgraph_annotate: true

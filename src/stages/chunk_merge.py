@@ -1,7 +1,7 @@
 """Chunk dedup within same filename (from 1_2_0_2 module5)."""
 from __future__ import annotations
 
-chunk去重（可独立运行）
+# chunk去重（可独立运行）
 # -*- coding: utf-8 -*-
 import hashlib
 from typing import Dict, List, Optional, Any

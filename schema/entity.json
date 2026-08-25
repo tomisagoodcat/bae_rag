@@ -2,65 +2,65 @@
   "entities": [
     {
       "label": "mp_Attribution",
-      "description": "### Definition\n`mp_Attribution` is the technical schema label used for an MP Attribution: a provenance/qualifier Representation that records who is responsible for, asserted, created, curated, or otherwise accounts for another Representation. The Attribution is not itself the responsible person or organization.\n\n### Extract when\nCreate an Attribution only when the text explicitly identifies an accountable person, author group, institution, laboratory, project, or authority in relation to a Claim, Statement, DataSet, Method, or Reference.\n\n### Do not extract when\nDo not create an Attribution for vague agency such as “researchers believe” or “it is known” when no accountable source is identifiable. Do not infer authorship from document metadata unless the extraction passage explicitly supports that attribution.\n\n### Relations\nIn this schema, an Attribution may `mp_supports` the Representation whose provenance/responsibility it qualifies, reflecting the Micropublication minimal-support interpretation of attribution.\n\n### Example\n“According to the NOM-Lab at Southwest University, DOM fluorescence was measured using EEM spectroscopy.” -> Attribution[NOM-Lab], supporting the relevant Method/DataSet/Statement representation.",
+      "description": "### Definition\n`mp_Attribution` records who is responsible for, asserted, created, or curated another Representation. It is not the person or organization itself.\n\n### Extract when\nCreate only when the text explicitly identifies an accountable source in an attribution or argumentation chain, or when that Attribution will be a `prov_hadMember` of a SupportGraph.\n\n### Do not extract when\nDo not create for vague agency (“researchers believe”) or inferred authorship from document metadata alone.\n\n### WHU_HASORIGINALTEXT\nMust be the verbatim attribution fragment (e.g. “According to NOM-Lab…”).\n\n### Relations\nMay mp_supports the qualified Representation; may be SupportGraph member.\n\n### Example\n“According to the NOM-Lab at Southwest University, …” -> Attribution[NOM-Lab].",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
     {
       "label": "mp_References",
-      "description": "### Definition\n`mp_References` is the Neo4j-compatible technical label used in this schema for the canonical Micropublication class `mp:Reference`. A Reference represents an explicitly cited external bibliographic source, dataset citation, DOI, URL, or other identifiable source record.\n\n### Extract when\nCreate one Reference per explicitly identifiable cited source, including author–year citations, numbered citations, DOI/URL references, or a bibliographic entry linked to the current passage.\n\n### Do not extract when\nDo not create a Reference for vague phrases such as “previous studies” unless an identifiable source is provided. Do not merge multiple cited works into one Reference node.\n\n### Relations\nUse `cito_isCitedBy` from the Reference to the Representation that cites it. Use `mp_supports` to a Claim or Statement only when the cited source is explicitly invoked as backing for that proposition; a neutral citation alone does not imply support.\n\n### Example\n“Biochar can reduce Hg bioavailability (Smith et al., 2020).” -> Reference[Smith et al., 2020]; Reference `cito_isCitedBy` Statement/Claim; add `mp_supports` only if the text uses the source as evidential backing.",
+      "description": "### Definition\n`mp_References` is an explicitly cited bibliographic or external source record (author–year, numbered citation, DOI, URL).\n\n### Extract when\nCreate one identifiable Reference per cited source when it participates in citation or SupportGraph structure.\n\n### Do not extract when\nDo not create for “previous studies” without an identifiable source. Do not merge multiple works into one Reference.\n\n### WHU_HASORIGINALTEXT\nMust be the verbatim citation string from the text.\n\n### Relations\nReference -> `cito_isCitedBy` citing Representation; mp_supports only when used as evidential backing.\n\n### Example\n“Biochar reduces Hg bioavailability (Smith et al., 2020).” -> Reference[Smith et al., 2020].",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
     {
       "label": "whu_Computational_Experiment",
-      "description": "### Definition\nA `whu_Computational_Experiment` is a mid-level planned analytical module for statistical, computational, modeling, or transformation procedures applied primarily to data. It is represented as a Plan/organized semantic unit, not as a single atomic step.\n\n### Extract when\nCreate one when the passage describes a coherent computational analysis such as regression, PCA, ANOVA, machine learning, simulation, or statistical modeling that contains one or more `whu_ResearchStep` instances.\n\n### Relations\nResearchStep instances belong to it via `p_plan_isStepOfPlan`, use Method/Software via `whu_declaredUsed`, and consume/produce DataSet entities via `whu_declaredInput`/`whu_declaredOutput`. `whu_fellow(X,Y)` means Y is the immediate upstream predecessor/provider of X.\n\n### Example\n“PCA and Kruskal–Wallis tests were conducted in R 4.2.2.” -> Computational_Experiment with Computational ResearchStep(s), declaredUsed Software[R 4.2.2].",
+      "description": "### Tier\nMid-level (Plan). Establish at mid-level extraction with a defined WHU_HASORIGINALTEXT scope before low-level expansion.\n\n### Definition\nA `whu_Computational_Experiment` is a mid-level planned analytical module for statistical, computational, modeling, or data-transformation procedures, organized as a Plan rather than a single atomic step.\n\n### WHU_HASORIGINALTEXT scope\nThe smallest contiguous span describing the computational analysis unit (e.g. statistical tests, modeling procedure, simulation).\n\n### Establishment gate\nCreate **only when** the same extraction context identifies **at least one** attributable Computational `whu_ResearchStep` with explicit operations (performed PCA, conducted regression, ran ANOVA). **Do not create an orphan Experiment.** Do not hallucinate Steps.\n\n### If no Step\nDo not create Computational_Experiment.\n\n### Expected low-level children\nComputational ResearchStep(s); Method/Software via declaredUsed; DataSet via declaredInput/Output—from this Experiment's original_text only.\n\n### Relations\nResearchSteps -> `p_plan_isStepOfPlan`; optional `whu_hasGoal`; `whu_fellow` for mid-level adjacency.\n\n### Example\n“PCA and Kruskal–Wallis tests were conducted in R 4.2.2.” -> Computational_Experiment with Computational ResearchStep(s).",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
         }
       ]
     },
     {
       "label": "envo_EnvironmentMaterial",
-      "description": "### Definition\n`envo_EnvironmentMaterial` is the Neo4j schema label used here for an ENVO-aligned environmental material: a material matrix or medium such as soil, sediment, water, air, or particulate matter.\n\n### Extract when\nCreate an EnvironmentMaterial when the text explicitly names the environmental substance or matrix from which specimens are collected or with which they interact.\n\n### Distinguish from\nDo not use this class for a bounded site or environmental setting; use `whu_EnvironmentFeature`. Do not use it for the collected sample itself; use `whu_Specimen`.\n\n### Relations\n`whu_EnvironmentFeature -> bfo_has_part -> envo_EnvironmentMaterial`; a Specimen may `prov_wasDerivedFrom` the material; the material may `bfo_has_part` a `whu_ChemicalEntity`.\n\n### Example\n“Surface soil was collected from the paddy field.” -> EnvironmentFeature[paddy field] has_part EnvironmentMaterial[surface soil].",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent SpecimenCollection, SpecimenPreprocessing, or BioChemical_Experiment during low-level expansion.\n\n### Definition\n`envo_EnvironmentMaterial` is an ENVO-aligned **material phase or environmental matrix type** present in the environment (soil, sediment, pore water, air, particulate matter). It is a **category of substance**, not an individual collected sample, not a living organism, and not a named site.\n\n### Extract when\nCreate when the text names the matrix/medium itself with substance-type semantics (surface soil, river water, overlying water).\n\n### Do not extract when\n- “soil samples / soil specimens / water sample” → `whu_Specimen`\n- “rice plants / fish / bacteria” → `obi_organism`\n- a named field, pond, station, or site → `whu_EnvironmentFeature`\n- dried, sieved, digested, or otherwise processed sample products → `whu_ProcessedSpecimen`\n\n### Naming\nWHU_HASNAME must use the verbatim material phrase from the text. Do not append sample, specimen, or site words not present.\n\n### Relations\n`whu_EnvironmentFeature -> bfo_has_part -> envo_EnvironmentMaterial`; Specimen may `prov_wasDerivedFrom` EnvironmentMaterial; EnvironmentMaterial may `bfo_has_part` ChemicalEntity.\n\n### Example\n“Surface soil was collected from the paddy field.” -> EnvironmentMaterial[surface soil]; EnvironmentFeature[paddy field] only if the field is named as a place.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
         }
       ]
     },
@@ -71,12 +71,12 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
@@ -102,12 +102,12 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
@@ -128,28 +128,28 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
     {
       "label": "whu_TargetVariable",
-      "description": "### Definition\nA `whu_TargetVariable` is the specific measurable, analyzable, or predictable quantity toward which a research Goal is directed, such as Hg concentration, MeHg content, methylation rate, or a model response variable.\n\n### Extract when\nCreate a TargetVariable when the passage names a quantity or variable being measured, analyzed, compared, or predicted. Keep it distinct from the underlying substance itself.\n\n### Relations\n`whu_Goal -> whu_hasTarget -> whu_TargetVariable`; `whu_TargetVariable -> iao_is_about -> whu_ChemicalEntity`; DataSet/DataItem/ScalarMeasurementDatum may `iao_is_about` the TargetVariable at the granularity supported by the text.\n\n### Example\n“Hg concentration in rice grain was quantified.” -> TargetVariable[Hg concentration] is_about ChemicalEntity[Hg].",
+      "description": "### Tier\nLow-level (foundational). Extract only from parent mid-level original_text in Goal, DataSet, or measurement contexts.\n\n### Definition\nA `whu_TargetVariable` is a **measurable quantity or variable** being measured, analyzed, compared, or predicted. It must correspond to an explicit measurement-quantity expression in the text.\n\n### Extract when\nThe text contains a complete measurement-quantity phrase (THg concentration, MeHg content, methylation rate) or a variable name explicitly tied to a reported unit in the same span.\n\n### Do not extract when\n- only a chemical symbol or substance name appears (Sb, mercury) → ChemicalEntity only\n- concentration/content/level/rate must be inferred from domain knowledge → **do not extract**\n- a Goal names an action without a measurement phrase → do not create TargetVariable or hasTarget link\n\n### Lexical rule\nWHU_HASNAME must be a verbatim substring of WHU_HASORIGINALTEXT or a contiguous measurement noun phrase present in the source. Never insert dimension words not in the text.\n\n### Relations\nGoal -> `whu_hasTarget` -> TargetVariable only when the measurement phrase is in the Goal original_text; TargetVariable -> `iao_is_about` -> ChemicalEntity when both are text-supported.\n\n### Example\n“Hg concentration in rice grain was quantified.” -> TargetVariable[Hg concentration] is_about ChemicalEntity[Hg]. “Sb was analyzed.” -> ChemicalEntity[Sb] only; no TargetVariable.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name grounded only in the source text. The name must appear verbatim in WHU_HASORIGINALTEXT or as a contiguous measurement-quantity noun phrase in the source. If the text only names a chemical symbol or substance (e.g. “Sb”, “Hg”), do NOT expand it to “Sb concentration”, “Hg content”, or similar—omit TargetVariable instead. No unit inference; no dimension-word insertion. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
         }
       ]
     },
@@ -160,76 +160,76 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
         }
       ]
     },
     {
       "label": "mp_Claim",
-      "description": "### Definition\nAn `mp_Claim` is a principal scientific assertion that functions as a focal proposition in the argumentation structure. It is more central and argumentative than a general `mp_Statement`.\n\n### Extract when\nCreate a Claim when the passage explicitly presents a principal conclusion, hypothesis, interpretation, or scientific assertion that is supported or challenged by evidence or other propositions.\n\n### Do not extract when\nUse `mp_Statement` for ordinary factual observations, contextual assertions, or propositions that are not functioning as a focal argumentative claim.\n\n### Relations\nClaims may receive `mp_supports`/`mp_challenges` from DataSet, Statement, Reference, ScienceEvidence, or other allowed Representations according to the potential schema.\n\n### Example\n“Modified biochar significantly reduced MeHg production in paddy soil.” -> Claim[modified biochar reduces MeHg production].",
+      "description": "### Definition\nAn `mp_Claim` is a principal scientific assertion functioning as the focal proposition in argumentation. It is more central than `mp_Statement`.\n\n### Extract when\nCreate a Claim when the passage presents a principal conclusion, hypothesis, or interpretation that is—or will be within the same pass—organized in a `whu_SupportGraph` as the **focal** proposition.\n\n### Do not extract when\nUse `mp_Statement` for ordinary observations or intermediate propositions that are not the focal claim of an argument graph.\n\n### Relations\nMay receive mp_supports/mp_challenges; must be prov_hadMember of SupportGraph when that graph is created.\n\n### Example\n“Modified biochar significantly reduced MeHg production in paddy soil.” -> focal Claim in a SupportGraph.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
     {
       "label": "whu_Goal",
-      "description": "### Definition\nA `whu_Goal` is an explicitly stated scientific objective of a BioChemical or Computational Experiment.\n\n### Extract when\nCreate a Goal only when an objective is linguistically supported, e.g., “to quantify”, “to assess”, “to compare”, “to determine”, or “to predict”.\n\n### Do not extract when\nDo not convert broad background motivation or an inferred purpose into a Goal.\n\n### Relations\nExperiment -> `whu_hasGoal` -> Goal; Goal -> `whu_hasTarget` -> TargetVariable.\n\n### Example\n“To quantify Hg concentration in rice grain.” -> Goal[quantify Hg concentration in rice grain].",
+      "description": "### Tier\nMid-level adjunct (dependent on Experiment). Never extract as an isolated node.\n\n### Definition\nA `whu_Goal` is an explicitly stated scientific objective of a BioChemical or Computational Experiment.\n\n### Establishment gate\nCreate **only when** (1) a `whu_BioChemical_Experiment` or `whu_Computational_Experiment` is created in the **same extraction pass**, and (2) the text contains explicit objective language (to quantify, to assess, to compare, to determine, to predict, aimed to, in order to). The Goal **must** be linked by `whu_hasGoal` from that Experiment.\n\n### Do not extract when\n- no parent Experiment exists in the same pass\n- only background motivation or significance is stated\n- the objective is inferred rather than linguistically explicit\n\n### WHU_HASORIGINALTEXT\nThe objective clause itself. TargetVariable children only when the objective clause contains a verbatim measurement-quantity phrase.\n\n### Relations\nExperiment -> `whu_hasGoal` -> Goal; Goal -> `whu_hasTarget` -> TargetVariable only with lexical support in the Goal span.\n\n### Example\n“To quantify Hg concentration in rice grain.” -> Goal linked to BioChemical_Experiment; hasTarget only if “Hg concentration” appears in the goal clause.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
         }
       ]
     },
     {
       "label": "mp_Statement",
-      "description": "### Definition\nAn `mp_Statement` is a complete proposition with evaluable semantic content, such as an observation, factual assertion, interpretation, or intermediate conclusion. A Claim is a specialized focal Statement.\n\n### Extract when\nCreate a Statement when the passage expresses a complete proposition that may participate in support/challenge relations but is not best treated as the central Claim.\n\n### Do not extract when\nDo not create a Statement for topic fragments, headings, isolated noun phrases, or vague mentions without propositional content.\n\n### Example\n“Cadmium concentrations were higher in roots than in grains.” -> Statement[cadmium concentrations were higher in roots than grains].",
+      "description": "### Definition\nAn `mp_Statement` is a complete proposition with evaluable content (observation, fact, interpretation, intermediate conclusion). A Claim is a specialized focal Statement.\n\n### Extract when\nCreate when the passage expresses a complete proposition that may support or challenge a Claim but is **not** the focal Claim of a SupportGraph.\n\n### Do not extract when\nDo not create for fragments, headings, or non-propositional phrases.\n\n### Relations\nMay be `prov_hadMember` of SupportGraph as non-focal member; may mp_supports/mp_challenges Claims per schema.\n\n### Example\n“Cadmium concentrations were higher in roots than in grains.” -> Statement supporting a focal Claim.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
     {
       "label": "whu_BioChemical_Experiment",
-      "description": "### Definition\nA `whu_BioChemical_Experiment` is a mid-level planned experimental module in which physical/biological specimens are measured, assayed, chemically treated, or otherwise analyzed to generate scientific data.\n\n### Extract when\nCreate one for a coherent laboratory/biochemical/analytical experimental unit containing one or more `whu_ResearchStep` instances.\n\n### Relations\nResearchSteps belong via `p_plan_isStepOfPlan`; the Experiment may have a `whu_Goal`; its steps use Method/Device/Reagent through `whu_declaredUsed`, consume Specimen/ProcessedSpecimen through `whu_declaredInput`, and generate DataSet/ProcessedSpecimen through `whu_declaredOutput`. `whu_fellow(X,Y)` means Y is the immediate upstream predecessor/provider of X.\n\n### Example\n“THg and MeHg were quantified by CVAFS after acid digestion.” -> BioChemical_Experiment containing digestion/measurement ResearchSteps.",
+      "description": "### Tier\nMid-level (Plan). Establish at mid-level extraction with a defined WHU_HASORIGINALTEXT scope before low-level expansion.\n\n### Definition\nA `whu_BioChemical_Experiment` is a mid-level planned experimental module organizing one or more laboratory/biochemical/analytical `whu_ResearchStep` instances.\n\n### WHU_HASORIGINALTEXT scope\nThe smallest contiguous span describing this experimental unit, including its method chain or analytical purpose in the same passage.\n\n### Establishment gate\nCreate **only when** the same extraction context identifies **at least one** attributable `whu_ResearchStep` with explicit operations (digest, extract, measure, assay, quantify). **Do not create an orphan Experiment.** Do not hallucinate ResearchSteps to complete an Experiment.\n\n### If no Step\nDo not create BioChemical_Experiment; treat as incomplete mid-level extraction requiring text-scope review.\n\n### Expected low-level children\nResearchStep(s); optional Goal; Method/Device/Reagent via declaredUsed; Specimen/ProcessedSpecimen/DataSet via declaredInput/Output—all from this Experiment's original_text only.\n\n### Low-level expansion\nChild steps and entities must be extracted from within this Experiment's WHU_HASORIGINALTEXT; do not span Chunks.\n\n### Relations\nResearchSteps -> `p_plan_isStepOfPlan` -> Experiment; optional `whu_hasGoal`; `whu_fellow` for mid-level adjacency only.\n\n### Example\n“THg and MeHg were quantified by CVAFS after acid digestion.” -> BioChemical_Experiment with digestion and measurement ResearchSteps in the same pass.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
         }
       ]
     },
@@ -255,18 +255,18 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
     {
       "label": "whu_EnvironmentFeature",
-      "description": "### Definition\nA `whu_EnvironmentFeature` is a bounded, locatable environmental setting or site described in the paper, such as a specific paddy field, wetland, river reach, sampling station, or experimental field. It is aligned conceptually with ENVO environmental feature and is distinct from the material present at the site.\n\n### Extract when\nCreate one when the passage identifies a concrete environmental setting/site that frames sampling, organism location, or a recorded field ResearchStep. Coordinates may be captured as properties when explicit.\n\n### Relations\nEnvironmentFeature -> `bfo_has_part` -> EnvironmentMaterial; SpecimenCollection -> `whu_hasContext` -> EnvironmentFeature; organism/ResearchStep may -> `prov_atLocation` -> EnvironmentFeature. A Specimen may also `prov_wasDerivedFrom` an EnvironmentFeature when the passage identifies the site/environmental feature itself as the provenance source and does not support a more specific material or organism source.\n\n### Example\n“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” -> EnvironmentFeature[SWU paddy field].",
+      "description": "### Tier\nLow-level (foundational). In Mid→Low extraction, extract from the WHU_HASORIGINALTEXT of a parent `whu_SpecimenCollection` or field `whu_ResearchStep`.\n\n### Definition\nA `whu_EnvironmentFeature` is a named, locatable environmental place or geographic-ecological unit (field, wetland, river reach, sampling station, experimental site). It denotes **WHERE** something occurs or is sampled, not **WHAT** was collected.\n\n### Extract when\nCreate one when the text names a site/place/location and uses it as the environmental setting for sampling, organism location, or a recorded field ResearchStep. Coordinates may be captured as properties when explicit.\n\n### Do not extract when\n- The phrase refers to a **collected individual sample** → use `whu_Specimen` or `whu_ProcessedSpecimen`.\n- The phrase names an **environmental matrix/substance** without an independent place name (soil, water, sediment) → use `envo_EnvironmentMaterial`.\n- The phrase refers to a **living organism** → use `obi_organism`.\n- The text only says material was collected (e.g. “soil was collected”) without a distinct place name → use Specimen + EnvironmentMaterial, **not** EnvironmentFeature, unless a separate site name is explicit (e.g. “from the SWU paddy field”).\n\n### Decision test\nCan the phrase replace X in “at/from the [X]” where X remains a place? If not, do not use EnvironmentFeature.\n\n### Relations\nEnvironmentFeature -> `bfo_has_part` -> EnvironmentMaterial expresses site-level containment of a material phase, not sampling provenance. SpecimenCollection -> `whu_hasContext` -> EnvironmentFeature; organism/ResearchStep may -> `prov_atLocation` -> EnvironmentFeature. A Specimen may `prov_wasDerivedFrom` EnvironmentFeature only when the site itself is stated as the provenance source and no more specific material or organism source is supported.\n\n### Example\n“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” -> EnvironmentFeature[SWU paddy field]; Specimen[topsoil] wasDerivedFrom EnvironmentMaterial[surface soil] or EnvironmentFeature as text supports.",
       "properties": [
         {
           "name": "gn_population",
@@ -291,12 +291,12 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
         }
       ]
     },
@@ -307,12 +307,12 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
@@ -323,28 +323,28 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
         }
       ]
     },
     {
       "label": "whu_ProcessedSpecimen",
-      "description": "### Definition\nA `whu_ProcessedSpecimen` is a physical specimen after preprocessing and before or during downstream experimental analysis.\n\n### Extract when\nCreate one when the text explicitly identifies a materially transformed/prepared sample such as dried soil, sieved powder, digest, extract, filtrate, or homogenized tissue.\n\n### Relations\nProcessedSpecimen -> `prov_wasDerivedFrom` -> Specimen. It is linked to ResearchSteps through `whu_declaredOutput` (produced by preprocessing) and `whu_declaredInput` (consumed by downstream analysis). At the plan-level shortcut view, ProcessedSpecimen may `p_plan_isOutputVarOf` SpecimenPreprocessing and `p_plan_isInputVarOf` BioChemical_Experiment.\n\n### Example\n“Dried and sieved soil powder was used for Hg determination.” -> ProcessedSpecimen[dried and sieved soil powder].",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of `whu_SpecimenPreprocessing` or `whu_BioChemical_Experiment`.\n\n### Definition\nA `whu_ProcessedSpecimen` is a **specific sample after a recorded preprocessing step** (dried soil, sieved powder, acid digest, extract, filtrate, homogenized tissue).\n\n### Extract when\nThe text names a prepared sample product resulting from an explicit processing operation in the same parent original_text.\n\n### Do not extract when\n- only a generic matrix type is named without processing evidence → EnvironmentMaterial or Specimen\n- only a site or organism is named → EnvironmentFeature or organism\n- no ResearchStep(SpecimenProcessing) or wasDerivedFrom Specimen evidence exists in the same extraction context → do not create ProcessedSpecimen in low-level expansion\n\n### Structural note\nShould be supported by a SpecimenProcessing ResearchStep `whu_declaredOutput` or `prov_wasDerivedFrom` Specimen. Do not hallucinate ProcessedSpecimen to complete a preprocessing chain.\n\n### Relations\nProcessedSpecimen -> `prov_wasDerivedFrom` -> Specimen; linked via declaredInput/declaredOutput to ResearchSteps; may `p_plan_isOutputVarOf` SpecimenPreprocessing and `p_plan_isInputVarOf` BioChemical_Experiment.\n\n### Example\n“Dried and sieved soil powder was used for Hg determination.” -> ProcessedSpecimen[dried and sieved soil powder].",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
         }
       ]
     },
@@ -355,113 +355,113 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     },
     {
       "label": "whu_Specimen",
-      "description": "### Definition\nA `whu_Specimen` is a physical biological or environmental sample that has been collected for research and may be passed to downstream preparation or experiments.\n\n### Extract when\nCreate a Specimen for an actually collected sample such as rice grain, fish tissue, surface soil sample, or river-water sample.\n\n### Provenance\nA Specimen may `prov_wasDerivedFrom` the source most specifically supported by the passage:\n- `whu_EnvironmentFeature` when the site/environmental feature itself is stated as the source;\n- `envo_EnvironmentMaterial` when the source matrix/substance is explicit;\n- `obi_organism` when a living biological source is explicit.\nDo not invent a more specific source than the text supports.\n\n### Relations\nResearchSteps connect through `whu_declaredOutput` (collection) and `whu_declaredInput` (preprocessing/analysis). At the plan-level shortcut view, Specimen may `p_plan_isOutputVarOf` SpecimenCollection and `p_plan_isInputVarOf` SpecimenPreprocessing. A Specimen may also `bfo_has_part` a ChemicalEntity when physical presence is explicit.\n\n### Example\n“Soil samples were collected from the paddy field.” -> Specimen[soil samples] wasDerivedFrom EnvironmentFeature[paddy field] when no more specific source matrix is stated.",
+      "description": "### Tier\nLow-level (foundational). Primarily extract from the WHU_HASORIGINALTEXT of `whu_SpecimenCollection` during low-level expansion.\n\n### Definition\nA `whu_Specimen` is a **specific physical sample** obtained by collection—an individual countable research object (soil samples, rice grain, fish tissue, water sample) that enters preparation or analysis.\n\n### Extract when\nThe text uses sample/specimen/tissue/grain or similar collected-object language, or explicitly describes material that was collected/taken.\n\n### Do not extract when\n- only a place/site is named → EnvironmentFeature\n- only a matrix type without individual sample semantics → EnvironmentMaterial\n- the material is explicitly post-preprocessing (dried, sieved, digest, extract) → ProcessedSpecimen\n\n### Provenance\nSpecimen may `prov_wasDerivedFrom` the most specific supported source: organism > EnvironmentMaterial > EnvironmentFeature. Do not relabel a source node as Specimen because a Specimen links to it.\n\n### Naming\nUse the verbatim collected-object phrase (e.g. “soil samples”). Do not expand into site or material class names not in the text.\n\n### Relations\nResearchSteps connect via `whu_declaredOutput` (collection) and `whu_declaredInput` (preprocessing/analysis). Specimen may `p_plan_isOutputVarOf` SpecimenCollection and `p_plan_isInputVarOf` SpecimenPreprocessing.\n\n### Example\n“Soil samples were collected from the paddy field.” -> Specimen[soil samples]; wasDerivedFrom EnvironmentFeature[paddy field] when only the site is explicit.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
         }
       ]
     },
     {
       "label": "whu_ScienceEvidence",
-      "description": "### Definition\nA `whu_ScienceEvidence` is a reusable composite evidence unit that binds at least one DataSet with the Method used to produce or analyze it in an explicit argumentative context. It bridges EEM experimental-process representation and MPU argumentation.\n\n### Extract when\nCreate ScienceEvidence only when the passage contains (1) identifiable data/results, (2) the relevant method or analytical basis, and (3) an explicit or unambiguous argumentative role supporting or challenging a Claim/Statement. Raw data alone are a DataSet, not ScienceEvidence.\n\n### Relations\nScienceEvidence -> `prov_hadMember` -> DataSet/Method. It may `mp_supports`/`mp_challenges` an explicit Claim or Statement. In this BAE schema it may also `mp_supports`/`mp_challenges` a SupportGraph to encode the evidence polarity within that graph; membership in the SupportGraph is separately represented by `prov_hadMember`.\n\n### Extraction boundary\n`WHU_HASORIGINALTEXT` should be the smallest contiguous span containing the evidential content and the argumentative connector. Do not infer ScienceEvidence solely from co-occurrence of a Method and DataSet.\n\n### Example\n“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar-remediation hypothesis.” -> ScienceEvidence[CVAFS evidence of reduced grain MeHg].",
+      "description": "### Tier\nMid-level argumentative composite. Requires co-occurring argument structure.\n\n### Definition\nA `whu_ScienceEvidence` binds identifiable data/results with method/analytical basis in an explicit argumentative role.\n\n### Establishment gate\nCreate only when **all** hold in the same argumentative original_text:\n1. identifiable DataSet or results reference\n2. identifiable Method or analytical basis\n3. explicit argumentative connector (support, demonstrate, indicate, contradict, challenge, etc.)\n4. a co-created `whu_SupportGraph` in the same pass, with ScienceEvidence linked via `prov_hadMember` and/or `mp_supports`/`mp_challenges`\n\n### Do not extract when\n- data are reported without argumentative role → DataSet only\n- no focal Claim and no SupportGraph can be co-created\n- Method and DataSet merely co-occur without argumentative language\n\n### No orphan rule\nDo not create ScienceEvidence first and add SupportGraph later. Do not hallucinate members to complete evidence.\n\n### WHU_HASORIGINALTEXT\nSmallest contiguous span containing evidential content **and** the argumentative connector.\n\n### Example\n“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar hypothesis.” -> ScienceEvidence within a SupportGraph containing the focal Claim.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
         }
       ]
     },
     {
       "label": "whu_ResearchStep",
-      "description": "### Definition\nA `whu_ResearchStep` is the unified minimal semantic unit for an atomic research step recorded in the paper. It is modeled as both `p-plan:Step` and an information-content representation of the described step.\n\n### Extract when\nCreate one for an explicit atomic operation belonging to one of four categories: SpecimenCollection, SpecimenProcessing, BioChemical, or Computational.\n\n### Relations\nResearchStep -> `whu_declaredUsed` -> Method/Device/Reagent/Software; -> `whu_declaredInput`/`whu_declaredOutput` -> Specimen/ProcessedSpecimen/DataSet; -> `p_plan_isStepOfPlan` -> the corresponding mid-level Plan/Experiment; -> `p_plan_isPrecededBy` -> its immediate/explicit predecessor; and, when location is explicit, -> `prov_atLocation` -> EnvironmentFeature.\n\nBAE reuses P-PLAN for Plan/Step organization and ordering. Domain-specific input/output links are represented directly by `whu_declaredInput` and `whu_declaredOutput`; P-PLAN `hasInputVar/hasOutputVar` are not used in this extraction schema.\n\n`p_plan_correspondsToStep` is reserved for cases where an external provenance stage provides an explicit executed `prov:Activity`.\n\n### Example\n“After sieving, soil was digested with HNO3 and Hg was measured by CVAFS.” -> separate ResearchSteps for sieving, digestion, and measurement, linked by `p_plan_isPrecededBy`.",
+      "description": "### Tier\nLow-level relative to parent Plan/Experiment. Extract only from the parent mid-level WHU_HASORIGINALTEXT.\n\n### Definition\nA `whu_ResearchStep` is the atomic recorded operation in a research workflow, modeled as `p-plan:Step`.\n\n### Structural dependency\nEvery ResearchStep **must** link via `p_plan_isStepOfPlan` to exactly one mid-level Plan (SpecimenCollection, SpecimenPreprocessing, BioChemical_Experiment, or Computational_Experiment). **Orphan ResearchSteps are forbidden.**\n\n### Extract when\nThe parent original_text contains a single verb-driven operation (collected, dried, digested, measured, analyzed, performed PCA).\n\n### Do not extract when\n- only an experiment module title or method name appears without an operational clause → do not create Step or parent Experiment\n- the operation cannot be assigned to a parent Plan in the same extraction pass\n\n### Relations\ndeclaredUsed/declaredInput/declaredOutput; `p_plan_isPrecededBy`; `prov_atLocation` when site is explicit for the step.\n\n### Example\n“After sieving, soil was digested with HNO3 and Hg was measured by CVAFS.” -> separate ResearchSteps within the same parent Experiment original_text.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
         },
         {
           "name": "WHU_RESEARCHTYPE",
           "type": "STRING",
-          "description": "Assign exactly one controlled value based on the step's semantic role: 'SpecimenCollection', 'SpecimenProcessing', 'BioChemical', or 'Computational'. Choose the value from the described operation, not from section title alone."
+          "description": "Assign exactly one value: 'SpecimenCollection', 'SpecimenProcessing', 'BioChemical', or 'Computational'. Must be consistent with the p_plan_isStepOfPlan target Plan type. Choose from the described operation in the step's original_text, not from section title alone."
         }
       ]
     },
     {
       "label": "obi_organism",
-      "description": "### Definition\n`obi_organism` is the current technical schema label for a living biological source explicitly mentioned in the paper, such as a plant, animal, or microorganism from which a specimen is obtained or whose environmental location is relevant.\n\n### Extract when\nCreate an organism node when a living source is explicitly identified, rather than only a collected tissue/sample or an environmental material.\n\n### Relations\nSpecimen -> `prov_wasDerivedFrom` -> organism; organism -> `prov_atLocation` -> EnvironmentFeature; organism -> `bfo_has_part` -> ChemicalEntity when the text explicitly describes a constituent present in the organism.\n\n### Example\n“Rice plants grown in the paddy field were sampled for grain and root tissue.” -> organism[rice plant]; Specimen[grain/root] wasDerivedFrom organism.",
+      "description": "### Tier\nLow-level (foundational). Extract only when the parent mid-level WHU_HASORIGINALTEXT contains an explicit biological referent.\n\n### Definition\n`obi_organism` is a living biological individual, species, or population explicitly mentioned (plant, animal, microorganism). It denotes the **living source**, not its collected tissues, secretions, or environmental matrix.\n\n### Extract when\nCreate when a taxon, species, cultivar, or biological group is named as a living entity (rice plants, common carp, E. coli).\n\n### Do not extract when\n- grain, root tissue, fish muscle, leaf sample → `whu_Specimen` (Specimen may `prov_wasDerivedFrom` organism)\n- soil, sediment, water → `envo_EnvironmentMaterial`\n- field, wetland, pond → `whu_EnvironmentFeature`\n\n### Low-level rule\nDo not infer an organism from chemical-analysis context when no biological referent appears in the parent mid-level original_text.\n\n### Relations\nSpecimen -> `prov_wasDerivedFrom` -> organism; organism -> `prov_atLocation` -> EnvironmentFeature; organism -> `bfo_has_part` -> ChemicalEntity when constituent presence is explicit.\n\n### Example\n“Rice plants grown in the paddy field were sampled for grain.” -> organism[rice plants]; Specimen[grain] wasDerivedFrom organism.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
         }
       ]
     },
     {
       "label": "whu_ChemicalEntity",
-      "description": "### Definition\nA `whu_ChemicalEntity` is a specific chemical element, compound, ion, or chemically identifiable substance explicitly named in the paper, with normalization to ChEBI where appropriate.\n\n### Extract when\nCreate a ChemicalEntity when the text names the underlying substance itself (e.g., Hg, MeHg, Pb, Cd), not merely a measured variable such as “Hg concentration”.\n\n### Relations\nSpecimen, organism, or EnvironmentMaterial may `bfo_has_part` a ChemicalEntity when the text supports physical presence. TargetVariable -> `iao_is_about` -> ChemicalEntity links a measured/analyzed quantity to its underlying substance.\n\n### Example\n“Total mercury and methylmercury concentrations were measured.” -> ChemicalEntity[Hg], ChemicalEntity[MeHg]; separate TargetVariables represent their concentrations.",
+      "description": "### Tier\nLow-level (foundational). Extract only from the parent mid-level WHU_HASORIGINALTEXT; do not use external chemical knowledge.\n\n### Definition\nA `whu_ChemicalEntity` is a chemical element, ion, compound, or identifiable substance **as named in the text** (Hg, MeHg, Sb, Cd²⁺). It is the **substance entity**, not a measured quantity.\n\n### Extract when\nThe text names a chemical symbol, formula, or compound with substance semantics.\n\n### Do not extract when\n- the phrase includes measurement-dimension words (concentration, content, level, rate, flux, amount) → `whu_TargetVariable` only if the full measurement phrase appears verbatim; otherwise omit TargetVariable\n- only a measured value with unit appears without a separable substance name → handle via ScalarMeasurementDatum/DataItem, not ChemicalEntity alone\n\n### Bare symbol rule\nIf the text contains only “Sb”, “Hg”, or similar symbols without measurement-dimension words, create **ChemicalEntity[Sb]** and **do not** create TargetVariable.\n\n### Relations\nSpecimen, organism, EnvironmentMaterial may `bfo_has_part` ChemicalEntity; TargetVariable -> `iao_is_about` -> ChemicalEntity only when both are independently text-supported.\n\n### Example\n“Total mercury and methylmercury were measured.” -> ChemicalEntity[mercury], ChemicalEntity[methylmercury]; TargetVariable only if “concentration/content” etc. appear in the text.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
         }
       ]
     },
     {
       "label": "whu_SupportGraph",
-      "description": "### Definition\nA `whu_SupportGraph` is a mid-level argumentative aggregate organized around one focal `mp_Claim`. It is modeled as a Representation, information-content entity, and `prov:Collection`.\n\n### Extract/construct when\nCreate one for a focal Claim that has explicit supporting or challenging argumentative material. The SupportGraph organizes the Claim together with relevant Statements, Attributions, References, and ScienceEvidence.\n\n### Relations\nSupportGraph -> `prov_hadMember` -> Claim/Statement/Attribution/Reference/ScienceEvidence. ScienceEvidence may `mp_supports`/`mp_challenges` the SupportGraph to encode its polarity with respect to the graph’s focal Claim. `prov_hadMember` records membership only; it does not itself encode argumentative polarity.\n\n### Example\nA Claim about biochar reducing MeHg may be represented by one SupportGraph containing the Claim, supporting ScienceEvidence, cited References, and explanatory Statements.",
+      "description": "### Tier\nMid-level argumentative container.\n\n### Definition\nA `whu_SupportGraph` is an argumentative aggregate organized around one focal `mp_Claim`.\n\n### Establishment gate\nCreate only when:\n1. a focal `mp_Claim` is identified in the same extraction pass, and\n2. at least one additional argumentative member candidate exists (Statement, ScienceEvidence, Reference, Attribution)\n\n### Mandatory members\nSupportGraph -> `prov_hadMember` -> Claim (required). If ScienceEvidence is created, SupportGraph must `prov_hadMember` ScienceEvidence.\n\n### Do not extract when\n- only an isolated Claim without supporting/challenging material\n- only DataSet/results without a focal Claim\n\n### WHU_HASORIGINALTEXT\nSpan covering the focal Claim and its immediate argumentative neighbors in one contiguous passage.\n\n### Relations\nprov_hadMember to Claim/Statement/Attribution/Reference/ScienceEvidence; polarity via mp_supports/mp_challenges, not via membership alone.\n\n### Example\nClaim about biochar reducing MeHg with supporting ScienceEvidence and cited References in one SupportGraph.",
       "properties": [
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
         }
       ]
     },
@@ -472,12 +472,12 @@
         {
           "name": "WHU_HASNAME",
           "type": "STRING",
-          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
         },
         {
           "name": "WHU_HASORIGINALTEXT",
           "type": "STRING",
-          "description": "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
         }
       ]
     }

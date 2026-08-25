@@ -14,6 +14,17 @@ kg_build_pipeline/
 ├── config.yaml               # 路径、Neo4j、阶段开关、LLM 配置
 ├── run_pipeline.py           # CLI 主入口（推荐）
 ├── run_pipeline.bat          # Windows 双击一键运行
+├── run_ui.bat                # Web UI 启动（浏览器控制台）
+│
+├── ui/                       # FastAPI + Metro 前端
+│   ├── app.py
+│   ├── stage_manifest.json
+│   └── static/
+│       ├── index.html
+│       ├── metro.css
+│       └── app.js
+│
+├── logs/                     # UI 构建日志（build_*.log）
 │
 ├── schema/                   # 本体 Schema（Pipeline 唯一读取源）
 │   ├── entity.json
@@ -111,6 +122,24 @@ python kg_build_pipeline/run_pipeline.py --stage build_kg,subgraph_annotate,chun
 python utilities/validate_schema.py --dir kg_build_pipeline/schema
 ```
 
+### 方式四：Web UI（可视化控制台）
+
+在**仓库根目录**启动 Metro 风格浏览器界面，支持 stage 勾选、实时日志、论文进度、成功/失败弹窗提示，以及本地日志文件：
+
+```text
+# Windows 双击
+kg_build_pipeline/run_ui.bat
+
+# 或命令行
+python -m kg_build_pipeline.ui.app
+```
+
+浏览器访问：**http://127.0.0.1:8765**
+
+- 论文数目：页面加载时显示待抽取数量（受 `build_kg.max_docs` 限制）
+- 构建日志：同时写入 `kg_build_pipeline/logs/build_YYYYMMDD_HHMMSS.log`
+- 依赖：`pip install -r kg_build_pipeline/requirements.txt`（FastAPI + Uvicorn）
+
 ### 方式三：Jupyter Notebook
 
 | Notebook | 用途 |
@@ -186,6 +215,39 @@ print(results.get("summary"))
 | `output/*.json` | 不再作为 Pipeline 默认 Schema 源；已拷贝至 `schema/` |
 
 MetaPath 核心 Cypher **不重复实现**，直接调用仓库内 `utilities/metapath_path_level.py`。
+
+---
+
+## Metapath 故障排查
+
+`metapath` 阶段依赖前置阶段写回的图谱与 pagerank 属性，执行顺序必须为：`build_kg` → `subgraph_annotate` → `chunk_merge` → `pagerank` → `metapath`。
+
+### 仅重跑 metapath
+
+图数据已存在时，无需重跑前面阶段：
+
+```powershell
+python kg_build_pipeline/run_pipeline.py --config kg_build_pipeline/config.yaml --stage metapath
+```
+
+或在 Web UI 中只勾选 **metapath** 后 Build。
+
+### 常见错误
+
+| 现象 | 可能原因 | 处理 |
+|------|----------|------|
+| `F1 预检失败：无任何匹配实例` | `schema/metapath_relations.json` 与当前 KG 标签/关系不一致，或 `build_kg` 未完成 | 检查 build_kg 日志；对照 `entity.json` / `relation.json` |
+| `F1 未创建任何 low MetaPath` | 实体缺少 `__Entity__` 标签，或模板全部无实例 | 确认 neo4j_graphrag 抽取成功；F1 使用 `:__Entity__` 过滤（与 Notebook 验收一致） |
+| `未找到任何 {mpu,eem,ebm}_pagerank` | 未执行 `pagerank` 阶段 | 先跑 `--stage pagerank` 或全链路中包含 pagerank |
+| `link_mid_to_low: F1 未创建任何 low` | F1 产出为 0，误进入 F4 | 先修复 F1；错误信息会明确指向 F1 而非 FROM_CHUNK |
+| `link_mid_to_low: 未创建任何 hasDetailPath`（low>0） | mid 锚点与 low 实体未共享 `FROM_CHUNK` 的 Chunk | 检查实体 `FROM_CHUNK` 溯源；属 F4 层级边策略（Chunk 共现） |
+| F1 单条模板 `缺少 ebm_pagerank` | 跨子图节点（如 EBM 模板中的 Experiment）仅有 `eem_pagerank` | 已用 COALESCE 回退；若仍失败，确认 pagerank 阶段成功 |
+
+### 预期规模（2 篇 forTest 论文，仅供参考）
+
+- low MetaPath：约 800+
+- mid MetaPath：约 100+（Plan + Container）
+- `hasDetailPath` 边：> 0（通常数千条）
 
 ---
 
