@@ -108,11 +108,12 @@
     "Example": "“Samples were analyzed using an Agilent 7700 ICP-MS.” → Device[Agilent 7700 ICP-MS]。"
   },
   "whu_EnvironmentFeature": {
-    "Tier": "基层（基础型）。在中→低抽取中，从父级 `whu_SpecimenCollection` 或野外 `whu_ResearchStep` 的 WHU_HASORIGINALTEXT 抽取。",
+    "Tier": "中层（站点/语境）。在中层抽取中确立，并给出完整 WHU_HASORIGINALTEXT 范围。本身不是 Plan，但在分层抽取与路由中按中层处理；宜与 `whu_SpecimenCollection` 经 `whu_hasContext` 同 pass 共创。",
     "Definition": "`whu_EnvironmentFeature` 是具名、可定位的环境地点或地理–生态单元（田地、湿地、河段、采样站、实验站点）。表示**在何处**发生或采样，而非**采集了什么**。",
     "Extract when": "当文本命名站点/地点/位置，并将其作为采样、生物体位置或已记录野外 ResearchStep 的环境背景时创建一个。坐标可在原文明确时作为属性捕获。",
     "Do not extract when": "- 短语指**已采集的单个样本** → 用 `whu_Specimen` 或 `whu_ProcessedSpecimen`\n- 短语命名**环境基质/物质**而无独立地名（soil、water、sediment）→ 用 `envo_EnvironmentMaterial`\n- 短语指**生物体** → 用 `obi_organism`\n- 文本仅说采集了材料（如“soil was collected”）而无 distinct 地名 → 用 Specimen + EnvironmentMaterial，**不要**建 EnvironmentFeature，除非另有明确站点名（如“from the SWU paddy field”）",
     "Decision test": "该短语能否替换 X 于“at/from the [X]”且 X 仍为地点？若不能，则不要用 EnvironmentFeature。",
+    "Expected low-level children": "本 Feature original_text 内经 `bfo_has_part` 展开 `envo_EnvironmentMaterial`；Step/organism 的 `prov_atLocation` 与 Specimen 的 `prov_wasDerivedFrom` 在 mid2low/low 扩展中挂接。",
     "Relations": "EnvironmentFeature → `bfo_has_part` → EnvironmentMaterial 表示站点级物质相包含，而非采样溯源。SpecimenCollection → `whu_hasContext` → EnvironmentFeature；organism/ResearchStep 可 → `prov_atLocation` → EnvironmentFeature。仅当站点本身被陈述为溯源来源且无更具体的物质/生物来源支撑时，Specimen 可 `prov_wasDerivedFrom` EnvironmentFeature。",
     "Example": "“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” → EnvironmentFeature[SWU paddy field]；Specimen[topsoil] wasDerivedFrom EnvironmentMaterial[surface soil] 或 EnvironmentFeature，依文本支撑。"
   },

@@ -76,7 +76,9 @@ class PipelineConfig:
         return cls(
             schema_dir=resolve_repo_path(paths.get("schema_dir", "kg_build_pipeline/schema")),
             markdown_dir=resolve_repo_path(paths.get("markdown_dir", "data/markdown/forTest")),
-            custom_prompt=resolve_repo_path(paths.get("custom_prompt", "custom_prompt.md")),
+            custom_prompt=resolve_repo_path(
+                paths.get("custom_prompt", "kg_build_pipeline/prompts/custom_prompt.md")
+            ),
             embedding_model=paths.get("embedding_model", "C:/model/bce-embedding-base_v1"),
             neo4j_uri=neo4j.get("uri", "bolt://localhost:7687"),
             neo4j_user=neo4j.get("user", "neo4j"),

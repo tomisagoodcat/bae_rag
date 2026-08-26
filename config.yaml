@@ -4,7 +4,7 @@
 paths:
   schema_dir: kg_build_pipeline/schema
   markdown_dir: data/markdown/forTest
-  custom_prompt: custom_prompt.md
+  custom_prompt: kg_build_pipeline/prompts/custom_prompt.md
   embedding_model: C:/model/bce-embedding-base_v1
 
 neo4j:

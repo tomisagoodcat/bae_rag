@@ -16,6 +16,9 @@ kg_build_pipeline/
 ├── run_pipeline.bat          # Windows 双击一键运行
 ├── run_ui.bat                # Web UI 启动（浏览器控制台）
 │
+├── prompts/
+│   └── custom_prompt.md      # build_kg 单层抽取 Prompt（v5 schema 对齐）
+│
 ├── ui/                       # FastAPI + Metro 前端
 │   ├── app.py
 │   ├── stage_manifest.json
@@ -195,6 +198,7 @@ print(results.get("summary"))
 |--------|--------|------|
 | `paths.schema_dir` | `kg_build_pipeline/schema` | 本体 JSON 目录 |
 | `paths.markdown_dir` | `data/markdown/forTest` | 论文 Markdown 目录 |
+| `paths.custom_prompt` | `kg_build_pipeline/prompts/custom_prompt.md` | build_kg 抽取 Prompt（仓内 v5） |
 | `neo4j.*` | uri / user / password / database | Neo4j 连接 |
 | `stages.*` | 各阶段 true/false | 是否参与 `--all` |
 | `build_kg.max_docs` | `all` 或整数 | 处理文档数量上限 |

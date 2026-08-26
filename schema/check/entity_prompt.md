@@ -1520,11 +1520,11 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 
 **English**
 
-Low-level (foundational). In Mid→Low extraction, extract from the WHU_HASORIGINALTEXT of a parent `whu_SpecimenCollection` or field `whu_ResearchStep`.
+Mid-level (site/context). Establish at mid-level extraction with a defined WHU_HASORIGINALTEXT scope. Not a Plan, but treated as mid for layered extraction and routing. Prefer co-creating with `whu_SpecimenCollection` via `whu_hasContext` in the same mid pass when both appear.
 
 **中文**
 
-基层（基础型）。在中→低抽取中，从父级 `whu_SpecimenCollection` 或野外 `whu_ResearchStep` 的 WHU_HASORIGINALTEXT 抽取。
+中层（站点/语境）。在中层抽取中确立，并给出完整 WHU_HASORIGINALTEXT 范围。本身不是 Plan，但在分层抽取与路由中按中层处理；宜与 `whu_SpecimenCollection` 经 `whu_hasContext` 同 pass 共创。
 
 
 #### Definition / 定义
@@ -1575,6 +1575,17 @@ Can the phrase replace X in “at/from the [X]” where X remains a place? If no
 **中文**
 
 该短语能否替换 X 于“at/from the [X]”且 X 仍为地点？若不能，则不要用 EnvironmentFeature。
+
+
+#### Expected low-level children / 预期基层子件
+
+**English**
+
+`envo_EnvironmentMaterial` via `bfo_has_part` from this Feature's original_text; Step/organism `prov_atLocation` and Specimen `prov_wasDerivedFrom` attach in mid2low/low expansion.
+
+**中文**
+
+本 Feature original_text 内经 `bfo_has_part` 展开 `envo_EnvironmentMaterial`；Step/organism 的 `prov_atLocation` 与 Specimen 的 `prov_wasDerivedFrom` 在 mid2low/low 扩展中挂接。
 
 
 #### Relations / 关系
@@ -1660,11 +1671,11 @@ Return a concise canonical name for this entity, grounded only in the source tex
 
 **English**
 
-Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded.
+Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity.
 
 **中文**
 
-复制支持创建该实体的最小连续原文片段，逐字保留符号、数字与单位；不得改写、概括、规范化或合并非连续片段。基层：片段须落在所属中层实体 WHU_HASORIGINALTEXT 范围内。
+复制支持创建该实体的最小连续原文片段，逐字保留符号、数字与单位；不得改写、概括、规范化或合并非连续片段。中层：片段须覆盖确立该中层实体所需的全部连续证据。
 
 
 ---

@@ -28,7 +28,7 @@
         "Results",
         "Discussion"
       ],
-      "mid"
+      "low"
     ],
     [
       "mp_Attribution",
@@ -38,7 +38,7 @@
         "References",
         "Introduction"
       ],
-      "mid"
+      "low"
     ],
     [
       "mp_Attribution",
@@ -49,7 +49,7 @@
         "Discussion",
         "Introduction"
       ],
-      "mid"
+      "low"
     ],
     [
       "whu_ResearchStep",
@@ -99,7 +99,7 @@
         "Introduction",
         "Experiment"
       ],
-      "mid"
+      "mid2low"
     ],
     [
       "whu_BioChemical_Experiment",
@@ -141,7 +141,7 @@
         "Methods_Materials",
         "Experiment"
       ],
-      "mid"
+      "mid2low"
     ],
     [
       "whu_Computational_Experiment",
@@ -180,7 +180,7 @@
       [
         "All"
       ],
-      "mid2low"
+      "low"
     ],
     [
       "mp_References",
@@ -189,7 +189,7 @@
       [
         "All"
       ],
-      "mid2low"
+      "low"
     ],
     [
       "mp_References",
@@ -198,7 +198,7 @@
       [
         "All"
       ],
-      "mid"
+      "low"
     ],
     [
       "mp_References",
@@ -207,7 +207,7 @@
       [
         "All"
       ],
-      "mid"
+      "low"
     ],
     [
       "whu_Goal",
@@ -217,7 +217,7 @@
         "Methods_Materials",
         "Experiment"
       ],
-      "mid2low"
+      "low"
     ],
     [
       "whu_ProcessedSpecimen",
@@ -245,7 +245,7 @@
         "Results",
         "Discussion"
       ],
-      "mid2low"
+      "low"
     ],
     [
       "whu_DataSet",
@@ -255,7 +255,7 @@
         "Results",
         "Discussion"
       ],
-      "mid2low"
+      "low"
     ],
     [
       "whu_DataSet",
@@ -265,7 +265,7 @@
         "Results",
         "Discussion"
       ],
-      "mid2low"
+      "low"
     ],
     [
       "whu_DataSet",
@@ -275,7 +275,7 @@
         "Results",
         "Discussion"
       ],
-      "mid2low"
+      "low"
     ],
     [
       "mp_Statement",
@@ -284,7 +284,7 @@
       [
         "All"
       ],
-      "mid"
+      "low"
     ],
     [
       "mp_Statement",
@@ -293,7 +293,7 @@
       [
         "All"
       ],
-      "mid"
+      "low"
     ],
     [
       "mp_Claim",
@@ -302,7 +302,7 @@
       [
         "All"
       ],
-      "mid"
+      "low"
     ],
     [
       "mp_Claim",
@@ -311,7 +311,7 @@
       [
         "All"
       ],
-      "mid"
+      "low"
     ],
     [
       "whu_ScienceEvidence",
@@ -421,7 +421,7 @@
       [
         "Methods_Materials"
       ],
-      "low"
+      "mid2low"
     ],
     [
       "whu_Specimen",
@@ -469,7 +469,7 @@
       [
         "Methods_Materials"
       ],
-      "low"
+      "mid2low"
     ],
     [
       "whu_Specimen",
@@ -585,7 +585,7 @@
       [
         "Methods_Materials"
       ],
-      "low"
+      "mid2low"
     ],
     [
       "whu_SpecimenCollection",
@@ -594,7 +594,7 @@
       [
         "Methods_Materials"
       ],
-      "mid2low"
+      "mid"
     ],
     [
       "mp_References",
@@ -605,7 +605,7 @@
         "Results",
         "Discussion"
       ],
-      "mid"
+      "low"
     ],
     [
       "mp_References",
@@ -616,7 +616,7 @@
         "Results",
         "Discussion"
       ],
-      "mid"
+      "low"
     ],
     [
       "whu_SupportGraph",
@@ -645,27 +645,7 @@
         "Results",
         "Discussion"
       ],
-      "mid"
-    ],
-    [
-      "whu_ScienceEvidence",
-      "mp_supports",
-      "mp_Statement",
-      [
-        "Results",
-        "Discussion"
-      ],
-      "mid"
-    ],
-    [
-      "whu_ScienceEvidence",
-      "mp_challenges",
-      "mp_Statement",
-      [
-        "Results",
-        "Discussion"
-      ],
-      "mid"
+      "mid2low"
     ],
     [
       "whu_Specimen",
@@ -721,7 +701,7 @@
       [
         "Methods_Materials"
       ],
-      "low"
+      "mid2low"
     ],
     [
       "whu_DataSet",

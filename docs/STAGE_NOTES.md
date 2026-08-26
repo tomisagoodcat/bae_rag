@@ -4,6 +4,7 @@
 
 - Schema-guided extraction: iterates `potential_schema.json` triples.
 - Uses `SimpleKGPipeline` per triple with section filtering via `section_role`.
+- Prompt template: `kg_build_pipeline/prompts/custom_prompt.md` (v5 labels; `{schema}` / `{text}` / `{examples}`). Parent-repo `custom_prompt.md` is legacy only.
 - After semantic split, `table3_section_bae.json` assigns prior `bae_roles` on memory nodes.
 - Post-extract per doc: Chunk backfill (`section_role`, `bae_roles`, `header_path`) then `update_metadata_batch` + `enhance_relations`.
 
