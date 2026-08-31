@@ -1,0 +1,114 @@
+# KG Build Pipeline configuration
+# Secrets: set NEO4J_PASSWORD, DEEPSEEK_API_KEY, QWEN_API_KEY in env or .env
+
+paths:
+  schema_dir: kg_build_pipeline/schema
+  markdown_dir: data/markdown/forTest
+  custom_prompt: kg_build_pipeline/prompts/custom_prompt.md
+  embedding_model: C:/model/bce-embedding-base_v1
+
+neo4j:
+  uri: bolt://localhost:7687
+  user: neo4j
+  password: ${NEO4J_PASSWORD}
+  database: neo4j
+
+llm:
+  deepseek_api_key: ${DEEPSEEK_API_KEY}
+  deepseek_base_url: https://api.deepseek.com/v1
+  deepseek_model: deepseek-chat
+
+reviewer:
+  qwen_api_key: ${QWEN_API_KEY}
+  qwen_base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  qwen_model: qwen-plus
+
+stages:
+  dc_metadata: true
+  clear_neo4j: true
+  build_kg: true
+  mid_quality_gate: true
+  low_expand: false
+  subgraph_annotate: true
+  chunk_merge: true
+  entity_merge: false
+  pagerank: true
+  metapath: true
+
+build_kg:
+  max_docs: all
+  schema_tiers: [mid]
+  perform_entity_resolution: false
+  auto_extract_metadata: false
+  pause_between_schemas: 1.0
+  pause_between_docs: 3.0
+  doc_max_retries: 2
+  chunk_size: 300
+  similarity_threshold: 0.72
+
+mid_quality_gate:
+  max_iterations: 3
+  pass_score: 0.78
+  use_rule_targeted_schemas: true
+  pass_on_hard_zero: false
+  reject_before_reextract: true
+  reject_mode: mark
+  reject_rules: [M13, M06]
+  merge_validator_issues: true
+  merge_rules: [M13, M06, M01, M02, M03, M04, M05, M09]
+  max_reextract_issues_per_iter: 15
+  early_stop_on_unchanged_hard: true
+
+low_extraction:
+  enabled: true
+  require_mid_pass: true
+  # entity_first: Schema Activation → entities → low-low → mid-low
+  # attach_first: legacy incident_two_wave / legacy_closure (rollback)
+  strategy: entity_first
+  routing:
+    mode: incident_two_wave   # used when strategy=attach_first
+    max_children_per_mid: 30
+  entity_first:
+    low_expand_hops: 2
+    max_llm_calls_per_parent: 3
+    max_mid_low_llm_calls: 1
+    mid_low_linker: hybrid   # rule_first then optional LLM
+    allow_entity_backfill: true  # one local entity re-extract if low-low reports missing
+    # Safety fuse against runaway entity writes (not a quality KPI).
+    max_entities_per_parent: 40
+    max_per_label: 0
+  extract:
+    # false for low_pass1/repair (one schema per call); low_ml may still batch.
+    # low_ll uses JSON+Cypher MERGE onto scoped entities (no SimpleKG).
+    batch_schemas_per_call: false
+    verify_edges_after_extract: true
+    pause_between_schema_batches: 0.2
+  abort_on_insufficient_balance: true
+  first_pass:
+    use_parent_original_text: true
+    use_current_chunk: true
+    use_neighbor_chunks: false
+  second_pass:
+    enabled: true
+    neighbor_window: 1
+    targeted_only: true
+  validation:
+    shacl_enabled: true
+    max_repair_rounds: 2
+  cross_parent_linking:
+    enabled: true
+
+metapath:
+  skip_f2_without_qwen: true
+  embedding_model: C:/model/bce-embedding-base_v1
+  # lenient: allow orphan mid / empty hasDetailPath (warn); still fail illegal edges.
+  # strict: notebook-equivalent hard fail on any orphan mid or zero detail links.
+  acceptance:
+    mode: lenient
+    allow_orphan_mid: true
+    allow_empty_has_detail_path: true
+    max_orphan_mid_ratio: 1.0
+
+entity_merge:
+  exact_match_property: WHU_HASNAME
+  wcc_attribution_master: true

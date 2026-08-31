@@ -1,0 +1,84 @@
+<prompt>
+  <SpecimenProcessingActivity name="whu:SpecimenProcessingActivity">
+    <Define>
+      <Description>
+        A Specimen Processing Activity is the minimal semantic unit of post-collection handling,
+        representing concrete operations applied to collected specimens (e.g., drying, grinding,
+        sieving, dehusking, filtering, preservation, homogenization) prior to laboratory analysis.
+      </Description>
+      <It>
+        <Declares>whu:Method (processing technique)</Declares>
+
+        <Uses>prov:used → whu:Specimen; whu:Device (e.g., oven, sieve, mill, filter); whu:Reagent (e.g., preservative acid)</Uses>
+        <Generates>prov:generated → whu:ProcessedSpecimen (one or more)</Generates>
+        <PartOf>whu:SpecimenPreprocessing →whu:hasActivity → whu:SpecimenProcessingActivity(e.g., whu:SpecimenProcessing)</PartOf>
+        <Provenance>
+          whu:SpecimenCollectionActivity←prov:wasInformedBy ← whu:SpecimenCollectionActivity (upstream);
+          whu:Specimen_Collection_Activity←prov:wasInformedBy ← whu:SpecimenCollectionActivity (upstream);
+          whu:SpecimenCollectionActivitymay←prov:wasInformedBy ← whu:BioChemicalActivityStep (downstream)
+        </Provenance>
+        <Alignment>skos:closeMatch → OBI:material_processing</Alignment>
+      </It>
+    </Define>
+
+    <Context>
+      <Trigger>Extract when the text describes explicit post-collection handling of specimens.</Trigger>
+      <TypicalActions>
+        <Action>Air-drying / oven-drying, grinding, sieving, homogenization</Action>
+        <Action>Dehusking / milling of plant grains</Action>
+        <Action>Filtration (e.g., 0.45 μm) and chemical preservation (e.g., HNO3 acidification)</Action>
+        <Action>Storage conditions (e.g., cooled, frozen, dark)</Action>
+      </TypicalActions>
+      <Requirements>
+        <Requirement>Atomic: capture the smallest processing operation (not the whole lab workflow)</Requirement>
+        <Requirement>Traceable: record atLocation, used (specimen/device/reagent), generated (processed specimen)</Requirement>
+        <Requirement>Linked: connect with prov:wasInformedBy to prior collection; optionally to downstream biochemical step</Requirement>
+      </Requirements>
+    </Context>
+
+    <Notes>
+      <Diff>Differs from whu:SpecimenCollectionActivity (sampling action before processing)</Diff>
+      <Diff>Differs from whu:BioChemicalActivityStep (analytical/measurement procedures)</Diff>
+      <Relations>
+        prov:used → whu:Specimen | whu:Device | whu:Reagent
+        ; prov:atLocation → whu:EnvironmentFeature
+        ; prov:generated → whu:ProcessedSpecimen
+        ; prov:wasInformedBy → whu:SpecimenCollectionActivity
+        ; optional link to → whu:BioChemicalActivityStep
+      </Relations>
+    </Notes>
+
+    <Examples>
+      <!-- Example patterns reflect common phrasing in environmental science papers -->
+      <Example id="1">
+        <Text>Soil samples were air-dried at room temperature, ground, and passed through a 2 mm nylon sieve.</Text>
+        <Annotation>
+          <prov_wasInformedBy>SpecimenCollectionActivity(soil sampling at field site)</prov_wasInformedBy>
+          <prov_atLocation>EnvironmentFeature(laboratory)</prov_atLocation>
+          <prov_used>Specimen(raw soil); Device(sieve, grinder)</prov_used>
+          <prov_generated>ProcessedSpecimen(sieved soil &lt;2 mm)</prov_generated>
+        </Annotation>
+      </Example>
+
+      <Example id="2">
+        <Text>Rice grains were oven-dried at 60 °C, dehulled, and milled into flour prior to analysis.</Text>
+        <Annotation>
+          <prov_wasInformedBy>SpecimenCollectionActivity(rice grain harvest)</prov_wasInformedBy>
+          <prov_atLocation>EnvironmentFeature(sample preparation room)</prov_atLocation>
+          <prov_used>Specimen(rice grains); Device(oven, dehusker, mill)</prov_used>
+          <prov_generated>ProcessedSpecimen(rice flour)</prov_generated>
+        </Annotation>
+      </Example>
+
+      <Example id="3">
+        <Text>Surface water was filtered through 0.45 μm membranes and acidified to pH &lt; 2 with HNO3 for preservation.</Text>
+        <Annotation>
+          <prov_wasInformedBy>SpecimenCollectionActivity(surface water sampling at Site A)</prov_wasInformedBy>
+          <prov_atLocation>EnvironmentFeature(laboratory)</prov_atLocation>
+          <prov_used>Specimen(surface water); Device(0.45 μm filter); Reagent(nitric acid)</prov_used>
+          <prov_generated>ProcessedSpecimen(preserved filtrate)</prov_generated>
+        </Annotation>
+      </Example>
+    </Examples>
+  </SpecimenProcessingActivity>
+</prompt>

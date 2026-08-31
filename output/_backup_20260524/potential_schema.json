@@ -1,0 +1,105 @@
+{
+  "potential_schema": [
+    ["mp_Attribution","mp_supports","whu_DataSet",["Results","Discussion"]],
+    ["mp_Attribution","mp_supports","whu_Method",["Methods_Materials","Discussion"]],
+    ["mp_Attribution","mp_supports","mp_Claim",["Results","Discussion"]],
+    ["mp_Attribution","mp_supports","mp_References",["References","Introduction"]],
+    ["mp_Attribution","mp_supports","mp_Statement",["Results","Discussion","Introduction"]],
+
+
+    
+    ["whu_SpecimenCollection","whu_fellow","whu_EnvironmentFeature",["Methods_Materials"]],
+    ["whu_SpecimenCollection","whu_hasActivity","whu_Specimen_Collection_Activity",["Methods_Materials"]],
+
+    ["whu_Specimen_Collection_Activity","whu_declareUsed","whu_Method",["Methods_Materials"]],
+    ["whu_Specimen_Collection_Activity","prov_atLocation","whu_EnvironmentFeature",["Methods_Materials"]],
+    ["whu_Specimen_Collection_Activity","prov_generated","whu_Specimen",["Methods_Materials"]],
+    ["whu_Specimen_Collection_Activity","prov_used","whu_Device",["Methods_Materials"]],
+    ["whu_Specimen_Collection_Activity","prov_used","envo_Material",["Methods_Materials"]],
+    ["whu_Specimen_Collection_Activity","prov_wasInformedBy","whu_Specimen_Collection_Activity",["Methods_Materials"]],
+
+    ["whu_SpecimenPreprocessing","p_plan_hasInputVar","whu_Specimen",["Methods_Materials"]],
+    ["whu_SpecimenPreprocessing","whu_fellow","whu_SpecimenCollection",["Methods_Materials"]],
+    ["whu_SpecimenPreprocessing","whu_hasActivity","whu_Specimen_Processing_Activity",["Methods_Materials"]],
+
+    ["whu_Specimen_Processing_Activity","whu_declareUsed","whu_Method",["Methods_Materials"]],
+    ["whu_Specimen_Processing_Activity","prov_atLocation","whu_EnvironmentFeature",["Methods_Materials"]],
+    ["whu_Specimen_Processing_Activity","prov_generated","whu_Specimen",["Methods_Materials"]],
+    ["whu_Specimen_Processing_Activity","prov_used","whu_Device",["Methods_Materials"]],
+    ["whu_Specimen_Processing_Activity","prov_used","envo_Material",["Methods_Materials"]],
+    ["whu_Specimen_Processing_Activity","prov_wasInformedBy","whu_Specimen_Processing_Activity",["Methods_Materials"]],
+    ["whu_Specimen_Processing_Activity","prov_wasInformedBy","whu_Specimen_Collection_Activity",["Methods_Materials"]],
+
+    ["whu_Bio_chemical_Experiment","whu_hasActivity","whu_BioChemicalActivityStep",["Methods_Materials","Experiment"]],
+    ["whu_Bio_chemical_Experiment","whu_hasGoal","whu_Goal",["Abstract","Introduction","Experiment"]],
+    ["whu_Bio_chemical_Experiment","whu_fellow","whu_SpecimenPreprocessing",["Methods_Materials","Experiment"]],
+
+    ["whu_BioChemicalActivityStep","prov_used","whu_ProcessedSpecimen",["Methods_Materials","Experiment"]],
+    ["whu_BioChemicalActivityStep","prov_used","whu_Reagent",["Methods_Materials","Experiment"]],
+    ["whu_BioChemicalActivityStep","prov_wasInformedBy","whu_BioChemicalActivityStep",["Methods_Materials","Experiment"]],
+    ["whu_BioChemicalActivityStep","prov_wasInformedBy","whu_Specimen_Processing_Activity",["Methods_Materials","Experiment"]],
+    ["whu_BioChemicalActivityStep","whu_declareUsed","whu_Method",["Methods_Materials","Experiment"]],
+    
+    ["whu_BioChemicalActivityStep","prov_generated","whu_DataSet",["Methods_Materials","Results","Experiment"]],
+    ["whu_BioChemicalActivityStep","prov_generated","whu_ProcessedSpecimen",["Methods_Materials","Experiment"]],
+    ["whu_BioChemicalActivityStep","prov_used","whu_Device",["Methods_Materials","Experiment"]],
+
+
+    ["whu_Computational_Experiment","whu_hasActivity","whu_ComputationalActivityStep",["Methods_Materials","Experiment"]],
+    ["whu_Computational_Experiment","whu_hasGoal","whu_Goal",["Abstract","Introduction","Methods_Materials","Experiment"]],
+    ["whu_Computational_Experiment","whu_fellow","whu_Bio_chemical_Experiment",["Methods_Materials","Experiment"]],
+    ["whu_Computational_Experiment","prov_used","whu_Software",["Methods_Materials","Experiment"]],
+
+    ["whu_ComputationalActivityStep","whu_declareUsed","whu_Method",["Methods_Materials","Experiment"]],
+ 
+    ["whu_ComputationalActivityStep","prov_generated","whu_DataSet",["Methods_Materials","Results","Experiment"]],
+    ["whu_ComputationalActivityStep","prov_used","whu_DataSet",["Methods_Materials","Experiment"]],
+    ["whu_ComputationalActivityStep","prov_used","whu_Device",["Methods_Materials","Experiment"]],
+    ["whu_ComputationalActivityStep","prov_used","whu_Software",["Methods_Materials","Experiment"]],
+    ["whu_ComputationalActivityStep","prov_wasInformedBy","whu_BioChemicalActivityStep",["Methods_Materials","Experiment"]],
+    ["whu_ComputationalActivityStep","prov_wasInformedBy","whu_ComputationalActivityStep",["Methods_Materials","Experiment"]],
+
+    ["mp_References","cito_isCitedBy","whu_DataSet",["All"]],
+    ["mp_References","cito_isCitedBy","whu_Method",["All"]],
+    ["mp_References","cito_isCitedBy","mp_Claim",["All"]],
+    ["mp_References","cito_isCitedBy","mp_Statement",["All"]],
+
+
+    ["whu_Goal","whu_target","whu_Target_analyte",["Methods_Materials","Experiment"]],
+
+    ["whu_Specimen","p_plan_isInputVarOf","whu_SpecimenPreprocessing",["Methods_Materials"]],
+    ["whu_Specimen","p_plan_isOutputVarOf","whu_SpecimenCollection",["Methods_Materials"]],
+    ["whu_Specimen","prov_wasDerivedFrom","whu_EnvironmentFeature",["Methods_Materials"]],
+
+    ["whu_ProcessedSpecimen","p_plan_isInputVarOf","whu_Bio_chemical_Experiment",["Methods_Materials","Experiment"]],
+    ["whu_ProcessedSpecimen","p_plan_isOutputVarOf","whu_SpecimenPreprocessing",["Methods_Materials"]],
+    ["whu_ProcessedSpecimen","prov_wasDerivedFrom","whu_Specimen",["Methods_Materials"]],
+
+    ["whu_DataSet","dcterms_hasPart","whu_ScalarMeasurementDatum",["All"]],
+    ["whu_DataSet","mp_challenges","mp_Claim",["Results","Discussion"]],
+    ["whu_DataSet","mp_supports","mp_Claim",["Results","Discussion"]],
+    ["whu_DataSet","mp_challenges","mp_Statement",["Results","Discussion"]],
+    ["whu_DataSet","mp_supports","mp_Statement",["Results","Discussion"]],
+    ["whu_DataSet","p_plan_isOutputVarOf","whu_Computational_Experiment",["Methods_Materials","Experiment"]],
+
+
+    ["whu_DataSet","iao_is_about","whu_Reagent",["Methods_Materials","Experiment"]],
+    ["whu_DataSet","iao_is_about","whu_Specimen",["Methods_Materials"]],
+    ["whu_DataSet","iao_is_about","whu_ProcessedSpecimen",["Methods_Materials"]],
+    ["whu_Method","mp_supports","whu_DataSet",["All"]],
+    ["mp_Statement","mp_supports","mp_Claim",["All"]],
+     ["mp_Statement","mp_challenges","mp_Claim",["All"]],
+   ["mp_Claim","mp_supports","mp_Claim",["All"]],
+     ["mp_Claim","mp_challenges","mp_Claim",["All"]],
+ ["whu_ScienceEvidence", "whu_hasPart",   "whu_DataSet",         ["All"]],
+  ["whu_ScienceEvidence", "whu_hasPart",   "whu_Method",          ["All"]],
+  ["whu_SupportGraph",    "whu_hasPart",   "mp_Statement",        ["All"]],
+  ["whu_SupportGraph",    "whu_hasPart",   "mp_Attribution",      ["All"]],
+  ["whu_SupportGraph",    "whu_hasPart",   "mp_References",       ["All"]],
+  ["whu_SupportGraph",    "whu_hasPart",   "whu_ScienceEvidence", ["All"]],
+  ["whu_ScienceEvidence", "mp_supports",   "whu_SupportGraph",        ["All"]],
+    ["whu_ScienceEvidence", "mp_challenges",   "whu_SupportGraph",        ["All"]],
+   ["whu_SupportGraph", "mp_challenges",   "mp_Claim",        ["All"]],
+   ["whu_SupportGraph", "mp_supports",   "mp_Claim",        ["All"]]
+  ]
+}

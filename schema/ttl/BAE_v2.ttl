@@ -1,0 +1,697 @@
+@prefix bfo: <http://purl.obolibrary.org/obo/BFO_> .
+@prefix chebi: <http://purl.obolibrary.org/obo/CHEBI_> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix envo: <http://purl.obolibrary.org/obo/ENVO_> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix iao: <http://purl.obolibrary.org/obo/IAO_> .
+@prefix mp: <http://purl.org/mp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix p-plan: <http://purl.org/net/p-plan#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ro: <http://purl.obolibrary.org/obo/RO_> .
+@prefix schema: <https://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix stato: <http://purl.obolibrary.org/obo/STATO_> .
+@prefix whu: <http://example.org/whu#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Ontology: BAE v2 (Background–Activity–Evidence)
+# Aligned with paper §3: layered EBM / EEM / MPU architecture
+# Fixes vs BAE.ttl: ResearchStep, ScienceEvidence, SupportGraph,
+# correct EBM order, isStepOfPlan, declaredUsed, hasContext, etc.
+#################################################################
+
+<http://example.org/whu/BAE_v2> a owl:Ontology ;
+    rdfs:label "BAE Ontology v2"@en ;
+    rdfs:comment "Background–Activity–Evidence ontology for natural-science paper KG extraction and GraphRAG."@en ;
+    owl:versionInfo "2.0" .
+
+#################################################################
+# Annotation properties
+#################################################################
+
+whu:prompt a owl:AnnotationProperty ;
+    rdfs:label "extraction prompt"@en ;
+    rdfs:comment "LLM extraction guidance for KG-mappable classes and properties."@en .
+
+skos:closeMatch a owl:AnnotationProperty .
+skos:exactMatch a owl:AnnotationProperty .
+
+#################################################################
+# Object / datatype properties
+#################################################################
+
+### Paper-declared resource use (Table 2 MPU metapath)
+whu:declaredUsed a owl:ObjectProperty ;
+    rdfs:subPropertyOf prov:used ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range owl:Thing ;
+    rdfs:label "declared used"@en ;
+    rdfs:comment "Links a ResearchStep to Method, Device, Reagent or Software declared in the paper text."@en ;
+    whu:prompt """Define: A research step declares use of a Method, Device, Reagent or Software.
+Context: Extract only when text says following/according to/using [resource].
+Subject: ResearchStep; Object: Method|Device|Reagent|Software.
+Examples: \"Digestion followed EPA 3052\" → declaredUsed(step, Method:EPA3052)."""@en .
+
+### Environmental context of specimen collection (Table 2 EBM)
+whu:hasContext a owl:ObjectProperty ;
+    rdfs:domain whu:SpecimenCollection ;
+    rdfs:range whu:EnvironmentFeature ;
+    rdfs:label "has context"@en ;
+    rdfs:comment "Links a specimen-collection plan to one or more environment features."@en ;
+    whu:prompt """Define: SpecimenCollection has environmental/geographic context.
+Subject: SpecimenCollection; Object: EnvironmentFeature.
+Examples: \"Samples collected from paddy soils in Nanjing\" → hasContext(collection, EnvironmentFeature:paddy soil Nanjing)."""@en .
+
+whu:hasGoal a owl:ObjectProperty ;
+    rdfs:domain whu:BioChemicalExperiment , whu:ComputationalExperiment ;
+    rdfs:range whu:Goal ;
+    rdfs:label "has goal"@en ;
+    whu:prompt """Define: An experiment has an explicit scientific Goal.
+Look for \"to quantify/assess/compare/evaluate …\".
+Examples: \"to compare metal levels across regions\" → hasGoal(experiment, goal)."""@en .
+
+whu:hasTarget a owl:ObjectProperty ;
+    rdfs:domain whu:Goal ;
+    rdfs:range whu:TargetObject ;
+    rdfs:label "has target"@en ;
+    whu:prompt """Define: A Goal targets a TargetObject (analyte or variable).
+Examples: \"quantify Hg in rice\" → hasTarget(goal, TargetAnalyte:Hg)."""@en .
+
+whu:hasExecutionEnvironment a owl:ObjectProperty ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range whu:ExecutionEnvironment ;
+    rdfs:label "has execution environment"@en ;
+    whu:prompt """Define: Links a ResearchStep to controlled conditions (temperature, humidity, duration).
+Examples: \"digestion at 180 °C for 30 min\" → hasExecutionEnvironment(step, env)."""@en .
+
+whu:hasTemperature a owl:ObjectProperty ;
+    rdfs:domain whu:ExecutionEnvironment ;
+    rdfs:range qudt:QuantityValue ;
+    rdfs:label "has temperature"@en .
+
+whu:hasHumidity a owl:ObjectProperty ;
+    rdfs:domain whu:ExecutionEnvironment ;
+    rdfs:range qudt:QuantityValue ;
+    rdfs:label "has humidity"@en .
+
+whu:hasDuration a owl:ObjectProperty ;
+    rdfs:domain whu:ExecutionEnvironment ;
+    rdfs:range qudt:QuantityValue ;
+    rdfs:label "has duration"@en .
+
+### P-Plan core relations (paper §3.3.2 / Table 2)
+p-plan:isStepOfPlan a owl:ObjectProperty ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range p-plan:Plan ;
+    rdfs:label "is step of plan"@en ;
+    rdfs:comment "ResearchStep belongs to a mid-level plan (Collection, Preprocessing, Experiment)."@en ;
+    whu:prompt """Define: ResearchStep belongs to a Plan.
+Connect step → SpecimenCollection | SpecimenPreprocessing | BioChemicalExperiment | ComputationalExperiment.
+Examples: \"instrument run\" → isStepOfPlan(runStep, BioChemicalExperiment)."""@en .
+
+p-plan:hasInputVar a owl:ObjectProperty ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range owl:Thing ;
+    rdfs:label "has input variable"@en ;
+    whu:prompt """Define: ResearchStep consumes Specimen, ProcessedSpecimen or DataSet as typed input.
+Examples: \"ICP-MS used digested solutions\" → hasInputVar(step, ProcessedSpecimen)."""@en .
+
+p-plan:hasOutputVar a owl:ObjectProperty ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range owl:Thing ;
+    rdfs:label "has output variable"@en ;
+    whu:prompt """Define: ResearchStep produces Specimen, ProcessedSpecimen or DataSet as typed output.
+Examples: \"ICP-MS generated concentration data\" → hasOutputVar(step, DataSet)."""@en .
+
+p-plan:isPrecededBy a owl:ObjectProperty ;
+    rdfs:domain p-plan:Plan , whu:ResearchStep ;
+    rdfs:range p-plan:Plan , whu:ResearchStep ;
+    rdfs:label "is preceded by"@en ;
+    whu:prompt """Define: Logical order between plans or steps (\"after\", \"then\", \"subsequently\").
+EBM order: SpecimenCollection precedes SpecimenPreprocessing; Preprocessing precedes BioChemicalExperiment.
+Examples: \"After preprocessing, ICP-MS was conducted\" → isPrecededBy(BioChemicalExperiment, SpecimenPreprocessing)."""@en .
+
+p-plan:correspondsToStep a owl:ObjectProperty ;
+    rdfs:domain prov:Activity ;
+    rdfs:range whu:ResearchStep ;
+    rdfs:label "corresponds to step"@en ;
+    rdfs:comment "Optional link from executed prov:Activity to paper-recorded ResearchStep."@en .
+
+### PROV / DCT / IAO / MP reused properties (local domain/range for extraction)
+prov:wasDerivedFrom a owl:ObjectProperty ;
+    rdfs:domain whu:Specimen , whu:ProcessedSpecimen ;
+    rdfs:range whu:EnvironmentFeature , whu:Specimen ;
+    whu:prompt """Define: Specimen derived from EnvironmentFeature; ProcessedSpecimen derived from Specimen.
+Examples: \"Rice grains collected from paddy soil\" → wasDerivedFrom(Specimen, EnvironmentFeature)."""@en .
+
+prov:hadMember a owl:ObjectProperty ;
+    rdfs:domain prov:Collection ;
+    rdfs:range owl:Thing ;
+    rdfs:label "had member"@en ;
+    whu:prompt """Define: Collection membership.
+ScienceEvidence hadMember DataSet|Method; SupportGraph hadMember Statement.
+Examples: ScienceEvidence aggregates Method EPA3052 and DataSet Table2."""@en .
+
+dct:hasPart a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range whu:DataItem ;
+    rdfs:label "has part"@en ;
+    whu:prompt """Define: DataSet contains DataItem / ScalarMeasurementDatum.
+Examples: \"Dataset S1 includes Cd concentration measurements\" → hasPart(DataSet, ScalarMeasurementDatum)."""@en .
+
+iao:is_about a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet , whu:ScalarMeasurementDatum ;
+    rdfs:range whu:TargetObject , whu:Specimen , whu:ProcessedSpecimen ;
+    whu:prompt """Define: Dataset or measurement is about a TargetObject or specimen.
+Examples: \"Hg = 12 mg/kg in rice grains\" → is_about(ScalarMeasurementDatum, TargetAnalyte:Hg)."""@en .
+
+mp:supports a owl:ObjectProperty ;
+    rdfs:domain mp:Representation , whu:ScienceEvidence , whu:DataSet , mp:Method ;
+    rdfs:range mp:Claim , mp:Statement , whu:SupportGraph ;
+    rdfs:label "supports"@en ;
+    whu:prompt """Define: Evidence/data/method supports a Statement or Claim (or SupportGraph).
+Examples: \"Results support that MeHg decreased\" → supports(ScienceEvidence, Claim)."""@en .
+
+mp:challenges a owl:ObjectProperty ;
+    rdfs:domain mp:Representation , whu:ScienceEvidence , whu:DataSet ;
+    rdfs:range mp:Claim , mp:Statement , whu:SupportGraph ;
+    rdfs:label "challenges"@en ;
+    whu:prompt """Define: Evidence/data challenges a Statement or Claim.
+Examples: \"Findings contradict the prior claim\" → challenges(ScienceEvidence, Claim)."""@en .
+
+mp:statement a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:domain mp:Representation ;
+    rdfs:range xsd:string ;
+    rdfs:label "statement text"@en ;
+    whu:prompt "Store the original text span from which the entity was extracted."@en .
+
+iao:hasMeasurementValue a owl:DatatypeProperty ;
+    rdfs:domain whu:ScalarMeasurementDatum ;
+    rdfs:range xsd:float .
+
+iao:hasMeasurementUnit a owl:DatatypeProperty ;
+    rdfs:domain whu:ScalarMeasurementDatum ;
+    rdfs:range xsd:string .
+
+whu:hasComparator a owl:DatatypeProperty ;
+    rdfs:domain whu:ScalarMeasurementDatum ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Optional comparator: <, >, <=, >=, between."@en .
+
+#################################################################
+# External / reused classes (minimal local stubs for self-contained TBox)
+# Do NOT redeclare concrete OBO individuals as local classes.
+#################################################################
+
+# IAO anchors use canonical OBO IRIs (prefix iao: expands with IAO_)
+iao:0000030 a owl:Class ;
+    rdfs:label "information content entity"@en .
+
+iao:0000100 a owl:Class ;
+    rdfs:label "data set"@en ;
+    rdfs:subClassOf iao:0000030 .
+
+iao:0000027 a owl:Class ;
+    rdfs:label "data item"@en ;
+    rdfs:subClassOf iao:0000030 .
+
+p-plan:Plan a owl:Class ;
+    rdfs:label "Plan"@en .
+
+p-plan:Step a owl:Class ;
+    rdfs:label "Step"@en ;
+    rdfs:subClassOf p-plan:Plan .
+
+prov:Entity a owl:Class ;
+    rdfs:label "PROV Entity"@en .
+
+prov:Activity a owl:Class ;
+    rdfs:label "PROV Activity"@en .
+
+prov:Collection a owl:Class ;
+    rdfs:label "PROV Collection"@en ;
+    rdfs:subClassOf prov:Entity .
+
+qudt:QuantityValue a owl:Class ;
+    rdfs:label "Quantity Value"@en .
+
+mp:Representation a owl:Class ;
+    rdfs:label "Representation"@en ;
+    rdfs:subClassOf iao:0000030 .
+
+mp:Sentence a owl:Class ;
+    rdfs:label "Sentence"@en ;
+    rdfs:subClassOf mp:Representation .
+
+#################################################################
+# Base layer: Argumentative elements (§3.3.1) — KG-mappable
+#################################################################
+
+mp:Claim a owl:Class ;
+    rdfs:label "Claim"@en ;
+    rdfs:subClassOf mp:Statement , iao:0000030 ;
+    rdfs:comment "A scientific assertion argued by the publication; terminal node of the argumentation chain."@en ;
+    whu:prompt """### Define
+A scientific assertion (interpretive conclusion) argued in the paper.
+### Context
+Extract when text states main findings / conclusions that are supported or challenged by data/methods.
+### Examples
+\"mercury levels exceed safety thresholds\"; \"no significant contamination detected\".
+### Links
+Claim ← supports/challenges — ScienceEvidence | SupportGraph(Statement)."""@en .
+
+mp:Statement a owl:Class ;
+    rdfs:label "Statement"@en ;
+    rdfs:subClassOf mp:Sentence , iao:0000030 ;
+    rdfs:comment "A proposition that can support or challenge a Claim."@en ;
+    whu:prompt """### Define
+A scientific proposition or factual assertion (not necessarily the terminal Claim).
+### Context
+Extract complete propositions in Results/Discussion that mediate between evidence and Claim.
+### Examples
+\"MeHg in grains decreased under biochar treatment\".
+### Links
+Statement ∈ SupportGraph; Statement ← supports — ScienceEvidence."""@en .
+
+mp:Data a owl:Class ;
+    rdfs:label "Data"@en ;
+    rdfs:subClassOf mp:Representation , iao:0000030 ;
+    rdfs:comment "Argumentative data representation in the Micropublication sense."@en ;
+    whu:prompt """### Define
+Argumentative data element that can support or challenge Statement/Claim.
+Prefer creating whu:DataSet for structured scientific datasets; use mp:Data only when a more specific subclass does not apply."""@en .
+
+mp:Method a owl:Class ;
+    rdfs:label "Method"@en ;
+    rdfs:subClassOf mp:Representation , iao:0000030 ;
+    rdfs:comment "Static protocol or standard defining experimental procedure."@en ;
+    whu:prompt """### Define
+A named method, protocol or standard referenced in experiments.
+### Context
+Extract explicit method names/standards (EPA 3052, ICP-MS protocol, statistical test names).
+### Examples
+\"following EPA Method 3052\"; \"analyzed by ICP-MS\".
+### Links
+ResearchStep -declaredUsed→ Method; Method ∈ ScienceEvidence via prov:hadMember."""@en .
+
+#################################################################
+# Base layer: ResearchStep (§3.3.2) — KG-mappable
+#################################################################
+
+whu:ResearchStep a owl:Class ;
+    rdfs:label "Research Step"@en ;
+    rdfs:subClassOf p-plan:Step , iao:0000030 , mp:Representation ;
+    rdfs:comment "Paper-recorded static research step (not executed prov:Activity). Belongs to a mid-level Plan via isStepOfPlan; uses typed IO via hasInputVar/hasOutputVar."@en ;
+    whu:prompt """### Define
+A paper-recorded research step (sampling, preprocessing, instrument run, statistical analysis), modeled as p-plan:Step.
+### Context
+Create one node per concrete procedural step. Link:
+- isStepOfPlan → Collection|Preprocessing|BioChemicalExperiment|ComputationalExperiment
+- hasInputVar / hasOutputVar → Specimen|ProcessedSpecimen|DataSet
+- declaredUsed → Method|Device|Reagent|Software
+### Examples
+\"acid digestion\"; \"ICP-MS measurement\"; \"ANOVA of concentration data\".
+### Do not
+Do not create separate BioChemicalActivityStep / ComputationalActivityStep classes; use ResearchStep for all."""@en .
+
+#################################################################
+# Cross-layer shared participants (§3.3.3) — KG-mappable
+#################################################################
+
+whu:EnvironmentFeature a owl:Class ;
+    rdfs:label "Environment Feature"@en ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:comment "Operational environment/geography node. Multiple features may realize conceptual EnvironmentContext."@en ;
+    whu:prompt """### Define
+Physical, ecological or geographic context: soil, water, site, region, climate condition.
+### Context
+Extract named locations, environmental media, site types. Align to ENVO/GeoNames when possible (skos:closeMatch).
+Optional: geo:lat, geo:long, geo:alt, gn:parentFeature.
+### Examples
+\"paddy soil in Nanjing\"; \"river delta\"; \"urban air\".
+### Links
+SpecimenCollection -hasContext→ EnvironmentFeature; Specimen -wasDerivedFrom→ EnvironmentFeature."""@en .
+
+whu:Specimen a owl:Class ;
+    rdfs:label "Specimen"@en ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:comment "Collected biological or environmental specimen (physical carrier)."@en ;
+    whu:prompt """### Define
+Physical sample collected from an environment before or without full preprocessing.
+### Context
+Must be traceable to EnvironmentFeature; typically output of SpecimenCollection ResearchStep.
+### Examples
+\"rice grains\"; \"fish tissue\"; \"soil cores\"; \"river water samples\".
+### Links
+ResearchStep(Collection) -hasOutputVar→ Specimen;
+ResearchStep(Preprocessing) -hasInputVar→ Specimen;
+Specimen -wasDerivedFrom→ EnvironmentFeature."""@en .
+
+whu:ProcessedSpecimen a owl:Class ;
+    rdfs:label "Processed Specimen"@en ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:comment "Specimen after preprocessing; input to BioChemicalExperiment. Material IO, not argumentative evidence."@en ;
+    whu:prompt """### Define
+Material resulting from specimen preprocessing (digestion, filtration, homogenization).
+### Context
+Output of Preprocessing steps; input to biochemical experimental steps.
+### Examples
+\"digested solution\"; \"filtered porewater\"; \"homogenized powder\".
+### Links
+ResearchStep(Preprocessing) -hasOutputVar→ ProcessedSpecimen;
+ResearchStep(Bio) -hasInputVar→ ProcessedSpecimen;
+ProcessedSpecimen -wasDerivedFrom→ Specimen."""@en .
+
+whu:Device a owl:Class ;
+    rdfs:label "Device"@en ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:comment "Scientific instrument used in research steps."@en ;
+    whu:prompt """### Define
+Analytical or experimental instrument (model, manufacturer if present).
+### Examples
+\"ICP-MS Agilent 7700\"; \"TOC analyzer\".
+### Links
+ResearchStep -declaredUsed→ Device."""@en .
+
+whu:Reagent a owl:Class ;
+    rdfs:label "Reagent"@en ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:comment "Chemical or biological reagent used in sample treatment or analysis."@en ;
+    whu:prompt """### Define
+Reagent including concentration/unit/role when stated.
+### Examples
+\"HNO3\"; \"HgCl2 solution (~5 μg/g)\".
+### Links
+ResearchStep -declaredUsed→ Reagent."""@en .
+
+whu:Software a owl:Class ;
+    rdfs:label "Software"@en ;
+    rdfs:subClassOf iao:0000030 , prov:Entity ;
+    rdfs:comment "Analytical or computational software."@en ;
+    whu:prompt """### Define
+Software tools for analysis or simulation (name + version if present).
+### Examples
+\"SPSS 26\"; \"R 4.2\"; \"MATLAB\".
+### Links
+ResearchStep -declaredUsed→ Software (typically ComputationalExperiment steps)."""@en .
+
+#################################################################
+# Mid-level EBM (§3.4.1)
+# EnvironmentContext: conceptual only (NOT KG-materialized)
+#################################################################
+
+whu:EnvironmentContext a owl:Class ;
+    rdfs:label "Environment Context"@en ;
+    rdfs:subClassOf mp:Representation , iao:0000030 ;
+    rdfs:comment "Conceptual mid-level EBM module. NOT materialized in the operational KG; use EnvironmentFeature nodes instead."@en .
+    # no whu:prompt — not extracted as a KG node
+
+whu:SpecimenCollection a owl:Class ;
+    rdfs:label "Specimen Collection"@en ;
+    rdfs:subClassOf p-plan:Plan , mp:Representation , iao:0000030 ;
+    rdfs:comment "Plan governing specimen collection from environment. EBM: EnvironmentFeature → Specimen."@en ;
+    whu:prompt """### Define
+A sampling/collection plan that produces Specimen from environmental context.
+### Context
+Extract when text describes field sampling, sample acquisition, collection sites/dates.
+### Links
+SpecimenCollection -hasContext→ EnvironmentFeature;
+ResearchStep -isStepOfPlan→ SpecimenCollection;
+ResearchStep -hasOutputVar→ Specimen.
+### Order
+SpecimenCollection precedes SpecimenPreprocessing (p-plan:isPrecededBy)."""@en .
+
+whu:SpecimenPreprocessing a owl:Class ;
+    rdfs:label "Specimen Preprocessing"@en ;
+    rdfs:subClassOf p-plan:Plan , mp:Representation , iao:0000030 ;
+    rdfs:comment "Plan for intermediate handling of specimens before analysis. EBM: Specimen → ProcessedSpecimen."@en ;
+    whu:prompt """### Define
+Preprocessing plan: storage, transport, digestion, filtration, homogenization before analysis.
+### Context
+Extract cooling/freezing/filtering/digestion preparation procedures.
+### Links
+isPrecededBy SpecimenCollection;
+ResearchStep -isStepOfPlan→ SpecimenPreprocessing;
+hasInputVar Specimen; hasOutputVar ProcessedSpecimen.
+### Order
+Preceded by SpecimenCollection; precedes BioChemicalExperiment."""@en .
+
+# EBM plan order axioms (paper formula)
+whu:SpecimenPreprocessing rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty p-plan:isPrecededBy ;
+    owl:someValuesFrom whu:SpecimenCollection
+] .
+
+#################################################################
+# Mid-level EEM (§3.4.2) — KG-mappable
+#################################################################
+
+whu:BioChemicalExperiment a owl:Class ;
+    rdfs:label "Bio-Chemical Experiment"@en ;
+    rdfs:subClassOf p-plan:Plan , mp:Representation , iao:0000030 ;
+    rdfs:comment "Experiment that processes specimens to generate measurement data."@en ;
+    whu:prompt """### Define
+Biochemical/chemical experimental plan: treated specimens → measurement DataSet.
+### Context
+Assays, digestion–instrument runs, wet-lab analyses. Has Goal targeting TargetAnalyte.
+### Links
+isPrecededBy SpecimenPreprocessing (typical);
+ResearchStep -isStepOfPlan→ BioChemicalExperiment;
+hasInputVar ProcessedSpecimen; hasOutputVar DataSet;
+hasGoal → Goal.
+### Examples
+\"Hg determination by ICP-MS\"; \"MeHg extraction and analysis\"."""@en .
+
+whu:ComputationalExperiment a owl:Class ;
+    rdfs:label "Computational Experiment"@en ;
+    rdfs:subClassOf p-plan:Plan , mp:Representation , iao:0000030 ;
+    rdfs:comment "Statistical modeling or computational analysis over DataSet."@en ;
+    whu:prompt """### Define
+Computational/statistical experiment: DataSet_raw → DataSet_final.
+### Context
+Risk assessment, ANOVA, regression, modeling. Has Goal targeting TargetVariable.
+### Links
+Often isPrecededBy BioChemicalExperiment;
+ResearchStep -isStepOfPlan→ ComputationalExperiment;
+hasInputVar/hasOutputVar DataSet; declaredUsed Software|Method.
+### Examples
+\"health risk assessment\"; \"ANOVA of concentration across treatments\"."""@en .
+
+# Typical EEM chain (optional, not mandatory for all papers)
+whu:BioChemicalExperiment rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty p-plan:isPrecededBy ;
+    owl:someValuesFrom whu:SpecimenPreprocessing
+] .
+
+whu:ComputationalExperiment rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty p-plan:isPrecededBy ;
+    owl:someValuesFrom whu:BioChemicalExperiment
+] .
+
+whu:Goal a owl:Class ;
+    rdfs:label "Goal"@en ;
+    rdfs:subClassOf prov:Entity , iao:0000030 ;
+    rdfs:comment "Formalized research objective of an experiment."@en ;
+    whu:prompt """### Define
+Explicit experimental objective (question/aim).
+### Examples
+\"evaluate cadmium levels in rice\"; \"test soil arsenic concentration\".
+### Links
+Experiment -hasGoal→ Goal; Goal -hasTarget→ TargetObject."""@en .
+
+whu:TargetObject a owl:Class ;
+    rdfs:label "Target Object"@en ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:comment "Entity under investigation. Distinct from Specimen (physical carrier)."@en ;
+    whu:prompt """### Define
+Core entity the experiment intends to investigate (pollutant, compound, estimated variable).
+Prefer subclasses TargetAnalyte (bio) or TargetVariable (computational).
+### Examples
+\"mercury\"; \"Hg content\"; \"cadmium\".
+### Note
+Specimen = rice grains (carrier); TargetObject = Hg in rice (investigated entity)."""@en .
+
+whu:TargetAnalyte a owl:Class ;
+    rdfs:label "Target Analyte"@en ;
+    rdfs:subClassOf whu:TargetObject ;
+    rdfs:comment "Chemical analyte for biochemical experiments; align to ChEBI via skos:closeMatch."@en ;
+    whu:prompt """### Define
+Chemical analyte measured in BioChemicalExperiment (align ChEBI when possible).
+### Examples
+\"Hg\"; \"MeHg\"; \"Cd\"; \"Pb\".
+### Links
+Goal -hasTarget→ TargetAnalyte; ScalarMeasurementDatum -iao:is_about→ TargetAnalyte."""@en .
+
+whu:TargetVariable a owl:Class ;
+    rdfs:label "Target Variable"@en ;
+    rdfs:subClassOf whu:TargetObject ;
+    rdfs:comment "Estimated/modeled variable for ComputationalExperiment; align IAO/STATO."@en ;
+    whu:prompt """### Define
+Statistical or modeled variable estimated in ComputationalExperiment.
+### Examples
+\"Hg content\"; \"hazard quotient\"; \"bioaccumulation factor\".
+### Links
+Goal -hasTarget→ TargetVariable; DataSet/ScalarMeasurementDatum -iao:is_about→ TargetVariable."""@en .
+
+whu:ExecutionEnvironment a owl:Class ;
+    rdfs:label "Execution Environment"@en ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:comment "Experimental conditions: temperature, humidity, duration."@en ;
+    whu:prompt """### Define
+Controlled experimental conditions with numeric values/units.
+### Examples
+\"180 °C for 30 min\"; \"incubated at 25 °C\".
+### Links
+ResearchStep -hasExecutionEnvironment→ ExecutionEnvironment."""@en .
+
+#################################################################
+# Mid-level MPU (§3.4.3) — KG-mappable
+#################################################################
+
+whu:ScienceEvidence a owl:Class ;
+    rdfs:label "Science Evidence"@en ;
+    rdfs:subClassOf mp:Representation , iao:0000030 , prov:Collection ;
+    rdfs:comment "Composite evidence unit aggregating DataSet and Method; supports/challenges Statement or Claim."@en ;
+    whu:prompt """### Define
+Identifiable composite evidence unit whose members include DataSet and Method.
+### Context
+Create when data+method jointly support or challenge a Statement/Claim. Same DataSet/Method may join multiple ScienceEvidence.
+### Links
+ScienceEvidence -prov:hadMember→ DataSet;
+ScienceEvidence -prov:hadMember→ Method;
+ScienceEvidence -mp:supports|mp:challenges→ Statement|Claim|SupportGraph.
+### Trace
+Member DataSet should connect back to ResearchStep via hasOutputVar."""@en .
+
+whu:SupportGraph a owl:Class ;
+    rdfs:label "Support Graph"@en ;
+    rdfs:subClassOf mp:Representation , iao:0000030 , prov:Collection ;
+    rdfs:comment "Argumentation structure targeting a single Claim; members are Statements and their support/challenge relations."@en ;
+    whu:prompt """### Define
+Argument package for one Claim, aggregating Statements that support or challenge it.
+### Context
+One SupportGraph focuses on one Claim; encapsulate multi-statement argumentation.
+### Links
+SupportGraph -prov:hadMember→ Statement;
+SupportGraph -mp:supports|mp:challenges→ Claim;
+ScienceEvidence -mp:supports|mp:challenges→ SupportGraph (or its Statements)."""@en .
+
+# Membership restrictions
+whu:ScienceEvidence rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty prov:hadMember ;
+    owl:someValuesFrom whu:DataSet
+] , [
+    a owl:Restriction ;
+    owl:onProperty prov:hadMember ;
+    owl:someValuesFrom mp:Method
+] .
+
+whu:SupportGraph rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty prov:hadMember ;
+    owl:someValuesFrom mp:Statement
+] , [
+    a owl:Restriction ;
+    owl:onProperty mp:supports ;
+    owl:someValuesFrom mp:Claim
+] .
+
+#################################################################
+# Data granularity (§3.3.1) — KG-mappable
+#################################################################
+
+whu:DataSet a owl:Class ;
+    rdfs:label "DataSet"@en ;
+    rdfs:subClassOf mp:Data , iao:0000100 , dcat:Dataset , prov:Entity ;
+    rdfs:comment "Structured scientific dataset; argumentative mp:Data + structured iao:DataSet."@en ;
+    whu:prompt """### Define
+Structured dataset (table, figure, file, measurement collection) generated or used in research.
+### Context
+Extract when text names datasets/tables/figures/results that support or challenge claims.
+Create ScalarMeasurementDatum for explicit numeric values and link via dct:hasPart.
+### Links
+ResearchStep -hasOutputVar|hasInputVar→ DataSet;
+DataSet -dct:hasPart→ ScalarMeasurementDatum;
+DataSet -iao:is_about→ TargetObject|Specimen;
+DataSet ∈ ScienceEvidence via prov:hadMember;
+DataSet -mp:supports|mp:challenges→ Statement|Claim.
+### Examples
+\"Figure 4: MeHg accumulations…\"; \"Table 2 concentration results\"."""@en .
+
+whu:DataItem a owl:Class ;
+    rdfs:label "Data Item"@en ;
+    rdfs:subClassOf iao:0000027 , prov:Entity ;
+    rdfs:comment "Fine-grained data item within a DataSet."@en ;
+    whu:prompt """### Define
+A constituent data item of a DataSet (row/field/observation). Prefer ScalarMeasurementDatum when numeric.
+### Links
+DataSet -dct:hasPart→ DataItem."""@en .
+
+whu:ScalarMeasurementDatum a owl:Class ;
+    rdfs:label "Scalar Measurement Datum"@en ;
+    rdfs:subClassOf whu:DataItem ;
+    rdfs:comment "Single numeric measurement with optional unit and comparator."@en ;
+    whu:prompt """### Define
+Single numeric value (± unit ± comparator/range) inside a DataSet.
+### Context
+Create only for explicit numbers. Store value (iao:hasMeasurementValue), unit (iao:hasMeasurementUnit), comparator (whu:hasComparator).
+### Examples
+\"Hg = 12 mg/kg\"; \"MeHg < 0.2 ng/g\"; \"12–15 mg/kg\".
+### Links
+DataSet -dct:hasPart→ ScalarMeasurementDatum;
+ScalarMeasurementDatum -iao:is_about→ TargetObject."""@en .
+
+whu:DataSetService a owl:Class ;
+    rdfs:label "Data Service"@en ;
+    rdfs:subClassOf mp:Data , dcat:DataService , prov:Entity ;
+    rdfs:comment "Dynamic service providing datasets via endpoint URL."@en ;
+    whu:prompt """### Define
+External dynamic data service with endpoint URL and served datasets.
+### Examples
+\"data available at https://…\"; repository API endpoints."""@en .
+
+#################################################################
+# Optional figure/table anchors (sparing KG types)
+#################################################################
+
+fabio:Figure a owl:Class ;
+    rdfs:label "Figure"@en ;
+    whu:prompt """Extract named figures that present datasets or evidence (e.g., Figure 4). Link related DataSet when co-referenced."""@en .
+
+fabio:Table a owl:Class ;
+    rdfs:label "Table"@en ;
+    whu:prompt """Extract named tables that present datasets or evidence (e.g., Table 2). Link related DataSet when co-referenced."""@en .
+
+#################################################################
+# Top-level semantic views (NOT instantiable KG nodes)
+# Documented as owl:Class for documentation only; mark with comment.
+#################################################################
+
+whu:EBM a owl:Class ;
+    rdfs:label "Environment & Evidence Background Module"@en ;
+    rdfs:comment "Top-level semantic view grouping EnvironmentContext, SpecimenCollection, SpecimenPreprocessing. NOT instantiable in operational KG."@en .
+    # no whu:prompt
+
+whu:EEM a owl:Class ;
+    rdfs:label "Experiment Evidence Module"@en ;
+    rdfs:comment "Top-level semantic view grouping BioChemicalExperiment and ComputationalExperiment. NOT instantiable in operational KG."@en .
+
+whu:MPU a owl:Class ;
+    rdfs:label "Micropublication Argumentation Unit"@en ;
+    rdfs:comment "Top-level semantic view grouping ScienceEvidence and SupportGraph toward Claim. NOT instantiable in operational KG."@en .
+
+#################################################################
+# End of BAE_v2
+#################################################################

@@ -1,0 +1,107 @@
+def build_metapath_for_relation(
+    driver,
+    subgraph: str,
+    source_label: str,
+    relation_type: str,
+    target_label: str,
+    pagerank_prop: str,
+    id_counter_start: int,
+) -> int:
+    """
+    为一条关系模板构建所有 MetaPath Node 实例。
+    
+    每个 metaPathRelation 关系携带以下属性：
+    - position: 节点在路径中的位置（1 = source, 2 = target）
+    - relationText: 该节点之后连接的 relation 的 WHU_HASORIGINALTEXT
+                    position=1 存 source→target 的 relation 原文
+                    position=2 为最终节点，relationText 为 null
+    
+    返回：实际创建的 MetaPath 数量（用于更新 id_counter）
+    """
+    path_type = f"{source_label}-[{relation_type}]->{target_label}"
+    
+    # 第一步：查询所有匹配实例，同时抓取 relation 的 WHU_HASORIGINALTEXT
+    query_match = f"""
+    MATCH (s:{source_label})-[r:{relation_type}]->(t:{target_label})
+    WITH s, r, t,
+         "[{source_label}: " + COALESCE(s.WHU_HASNAME, "") + "] " +
+         COALESCE(s.WHU_HASORIGINALTEXT, "") +
+         " -[{relation_type}] " + COALESCE(r.WHU_HASORIGINALTEXT, "") +
+         " -> [{target_label}: " + COALESCE(t.WHU_HASNAME, "") + "] " +
+         COALESCE(t.WHU_HASORIGINALTEXT, "")
+         AS metapath_text,
+         CASE
+            WHEN COALESCE(s.{pagerank_prop}, 0.0) > COALESCE(t.{pagerank_prop}, 0.0)
+            THEN COALESCE(s.{pagerank_prop}, 0.0)
+            ELSE COALESCE(t.{pagerank_prop}, 0.0)
+         END AS max_pagerank
+    RETURN elementId(s) AS source_id,
+           elementId(t) AS target_id,
+           metapath_text,
+           max_pagerank,
+           r.WHU_HASORIGINALTEXT AS relation_text
+    """
+    
+    try:
+        with driver.session() as session:
+            results = session.run(query_match).data()
+    except Exception as e:
+        print(f"  ❌ {path_type}: 查询失败 - {str(e)[:100]}")
+        return 0
+    
+    if not results:
+        print(f"  ⚠️  {path_type}: 无匹配实例")
+        return 0
+    
+    # 第二步：逐条创建 MetaPath Node + 两条带 relationText 的 metaPathRelation
+    # - position=1 的 relation 携带 source→target 的 relation_text
+    # - position=2 的 relation 是路径终点，relationText 为 null
+    query_create = """
+    MATCH (s) WHERE elementId(s) = $source_id
+    MATCH (t) WHERE elementId(t) = $target_id
+    CREATE (mp:MetaPath {
+      mp_id:         $mp_id,
+      metaPathText:  $metapath_text,
+      metaPathQuery: null,
+      embedding:     null,
+      maxPageRank:   $max_pagerank,
+      subgraph:      $subgraph,
+      path_type:     $path_type
+    })
+    CREATE (mp)-[:metaPathRelation {position: 1, relationText: $relation_text}]->(s)
+    CREATE (mp)-[:metaPathRelation {position: 2, relationText: null}]->(t)
+    RETURN mp.mp_id AS mp_id
+    """
+    
+    counter = id_counter_start
+    created_count = 0
+    failed_count = 0
+    
+    with driver.session() as session:
+        for row in results:
+            mp_id = f"{subgraph}_{counter:06d}"
+            try:
+                session.run(
+                    query_create,
+                    source_id=row["source_id"],
+                    target_id=row["target_id"],
+                    mp_id=mp_id,
+                    metapath_text=row["metapath_text"],
+                    max_pagerank=row["max_pagerank"],
+                    subgraph=subgraph,
+                    path_type=path_type,
+                    relation_text=row["relation_text"],
+                )
+                counter += 1
+                created_count += 1
+            except Exception as e:
+                print(f"    ❌ 创建失败 {mp_id}: {str(e)[:80]}")
+                failed_count += 1
+    
+    status = "✅" if failed_count == 0 else "⚠️"
+    print(f"  {status} {path_type}: 创建 {created_count} 条"
+          + (f"（失败 {failed_count} 条）" if failed_count else ""))
+    return created_count
+
+
+print("✅ MetaPath 构建函数已定义（含 relationText）")

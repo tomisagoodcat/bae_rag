@@ -1,0 +1,41 @@
+# Secrets
+.env
+.env.*
+!.env.example
+**/credentials*.json
+**/*secret*
+
+# Python / envs
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+pipelineD_env/
+pipelineD_env.broken/
+*.rar
+
+# Notebooks / IDE
+.ipynb_checkpoints/
+.cursor/
+.vscode/
+
+# Logs and local run artifacts
+*.log
+debug-*.log
+debug_kg.txt
+kg_build.log
+kg_build_pipeline/logs/*.log
+kg_build_pipeline/logs/*.jsonl
+!kg_build_pipeline/logs/.gitkeep
+
+# Build / cache outputs (regenerable)
+kg_build_pipeline/output/
+**/neo4j_dump/
+.pytest_cache/
+.mypy_cache/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

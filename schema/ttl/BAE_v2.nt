@@ -1,0 +1,368 @@
+<http://example.org/whu#DataItem> <http://www.w3.org/2000/01/rdf-schema#comment> "Fine-grained data item within a DataSet."@en .
+<http://example.org/whu#ScienceEvidence> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Collection> .
+<http://purl.org/mp#supports> <http://www.w3.org/2000/01/rdf-schema#range> <http://purl.org/mp#Statement> .
+<http://example.org/whu#ScalarMeasurementDatum> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/whu#DataItem> .
+<http://example.org/whu#Goal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#EEM> <http://www.w3.org/2000/01/rdf-schema#label> "Experiment Evidence Module"@en .
+<http://example.org/whu#TargetObject> <http://www.w3.org/2000/01/rdf-schema#label> "Target Object"@en .
+<http://example.org/whu#prompt> <http://www.w3.org/2000/01/rdf-schema#label> "extraction prompt"@en .
+<http://example.org/whu#declaredUsed> <http://www.w3.org/2000/01/rdf-schema#comment> "Links a ResearchStep to Method, Device, Reagent or Software declared in the paper text."@en .
+<http://example.org/whu#TargetAnalyte> <http://www.w3.org/2000/01/rdf-schema#comment> "Chemical analyte for biochemical experiments; align to ChEBI via skos:closeMatch."@en .
+<http://www.w3.org/ns/prov#wasDerivedFrom> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#Specimen> .
+<http://example.org/whu#DataItem> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://example.org/whu#BioChemicalExperiment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:n73f149ee62ab420da56059eeebd4be50b2 .
+<http://purl.org/spar/fabio/Table> <http://www.w3.org/2000/01/rdf-schema#label> "Table"@en .
+<http://www.w3.org/ns/prov#Collection> <http://www.w3.org/2000/01/rdf-schema#label> "PROV Collection"@en .
+<http://example.org/whu#BioChemicalExperiment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://example.org/whu#prompt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+<http://purl.org/mp#Claim> <http://www.w3.org/2000/01/rdf-schema#comment> "A scientific assertion argued by the publication; terminal node of the argumentation chain."@en .
+<http://qudt.org/schema/qudt/QuantityValue> <http://www.w3.org/2000/01/rdf-schema#label> "Quantity Value"@en .
+<http://example.org/whu#EnvironmentContext> <http://www.w3.org/2000/01/rdf-schema#comment> "Conceptual mid-level EBM module. NOT materialized in the operational KG; use EnvironmentFeature nodes instead."@en .
+<http://example.org/whu#DataSet> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_DataSet> .
+<http://example.org/whu#hasTarget> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#TargetObject> .
+<http://purl.org/mp#challenges> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#SupportGraph> .
+<http://example.org/whu#hasTemperature> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ExecutionEnvironment> .
+<http://purl.org/mp#statement> <http://www.w3.org/2000/01/rdf-schema#label> "statement text"@en .
+<http://purl.org/net/p-plan#isPrecededBy> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#ResearchStep> .
+<http://purl.org/mp#challenges> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ScienceEvidence> .
+<http://example.org/whu#hasExecutionEnvironment> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#ExecutionEnvironment> .
+<http://purl.org/mp#Data> <http://www.w3.org/2000/01/rdf-schema#label> "Data"@en .
+<http://example.org/whu#ProcessedSpecimen> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://purl.org/net/p-plan#Plan> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#Goal> <http://www.w3.org/2000/01/rdf-schema#comment> "Formalized research objective of an experiment."@en .
+<http://example.org/whu#BioChemicalExperiment> <http://example.org/whu#prompt> "### Define\nBiochemical/chemical experimental plan: treated specimens → measurement DataSet.\n### Context\nAssays, digestion–instrument runs, wet-lab analyses. Has Goal targeting TargetAnalyte.\n### Links\nisPrecededBy SpecimenPreprocessing (typical);\nResearchStep -isStepOfPlan→ BioChemicalExperiment;\nhasInputVar ProcessedSpecimen; hasOutputVar DataSet;\nhasGoal → Goal.\n### Examples\n\"Hg determination by ICP-MS\"; \"MeHg extraction and analysis\"."@en .
+<http://example.org/whu#TargetVariable> <http://example.org/whu#prompt> "### Define\nStatistical or modeled variable estimated in ComputationalExperiment.\n### Examples\n\"Hg content\"; \"hazard quotient\"; \"bioaccumulation factor\".\n### Links\nGoal -hasTarget→ TargetVariable; DataSet/ScalarMeasurementDatum -iao:is_about→ TargetVariable."@en .
+<http://example.org/whu#Specimen> <http://www.w3.org/2000/01/rdf-schema#label> "Specimen"@en .
+<http://example.org/whu#hasDuration> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ExecutionEnvironment> .
+<http://purl.org/net/p-plan#isStepOfPlan> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ResearchStep> .
+<http://example.org/whu#Specimen> <http://example.org/whu#prompt> "### Define\nPhysical sample collected from an environment before or without full preprocessing.\n### Context\nMust be traceable to EnvironmentFeature; typically output of SpecimenCollection ResearchStep.\n### Examples\n\"rice grains\"; \"fish tissue\"; \"soil cores\"; \"river water samples\".\n### Links\nResearchStep(Collection) -hasOutputVar→ Specimen;\nResearchStep(Preprocessing) -hasInputVar→ Specimen;\nSpecimen -wasDerivedFrom→ EnvironmentFeature."@en .
+<http://example.org/whu#Reagent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://example.org/whu#DataItem> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#hasTarget> <http://www.w3.org/2000/01/rdf-schema#label> "has target"@en .
+<http://example.org/whu#hasDuration> <http://www.w3.org/2000/01/rdf-schema#range> <http://qudt.org/schema/qudt/QuantityValue> .
+<http://purl.obolibrary.org/obo/IAO_InformationContentEntity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#ExecutionEnvironment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#ScienceEvidence> <http://www.w3.org/2000/01/rdf-schema#label> "Science Evidence"@en .
+<http://example.org/whu#Specimen> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://purl.org/net/p-plan#isPrecededBy> <http://www.w3.org/2000/01/rdf-schema#range> <http://purl.org/net/p-plan#Plan> .
+<http://purl.org/mp#supports> <http://example.org/whu#prompt> "Define: Evidence/data/method supports a Statement or Claim (or SupportGraph).\nExamples: \"Results support that MeHg decreased\" → supports(ScienceEvidence, Claim)."@en .
+<http://purl.org/mp#Statement> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://purl.obolibrary.org/obo/IAO_is_about> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#Specimen> .
+<http://www.w3.org/ns/prov#Activity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.obolibrary.org/obo/IAO_hasMeasurementValue> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#float> .
+<http://example.org/whu#DataSetService> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://purl.org/net/p-plan#hasOutputVar> <http://www.w3.org/2000/01/rdf-schema#label> "has output variable"@en .
+_:n73f149ee62ab420da56059eeebd4be50b2 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://example.org/whu#SpecimenPreprocessing> .
+_:n73f149ee62ab420da56059eeebd4be50b3 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://example.org/whu#BioChemicalExperiment> .
+<http://example.org/whu#hasGoal> <http://example.org/whu#prompt> "Define: An experiment has an explicit scientific Goal.\nLook for \"to quantify/assess/compare/evaluate …\".\nExamples: \"to compare metal levels across regions\" → hasGoal(experiment, goal)."@en .
+<http://purl.org/mp#Representation> <http://www.w3.org/2000/01/rdf-schema#label> "Representation"@en .
+<http://purl.org/mp#Data> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://example.org/whu#ScienceEvidence> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:n73f149ee62ab420da56059eeebd4be50b5 .
+<http://example.org/whu#ProcessedSpecimen> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#ResearchStep> <http://www.w3.org/2000/01/rdf-schema#label> "Research Step"@en .
+<http://example.org/whu#declaredUsed> <http://www.w3.org/2000/01/rdf-schema#label> "declared used"@en .
+<http://example.org/whu#ExecutionEnvironment> <http://www.w3.org/2000/01/rdf-schema#label> "Execution Environment"@en .
+<http://example.org/whu#Reagent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+_:n73f149ee62ab420da56059eeebd4be50b6 <http://www.w3.org/2002/07/owl#onProperty> <http://www.w3.org/ns/prov#hadMember> .
+<http://purl.org/mp#Statement> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Sentence> .
+<http://purl.org/net/p-plan#isPrecededBy> <http://www.w3.org/2000/01/rdf-schema#label> "is preceded by"@en .
+<http://purl.obolibrary.org/obo/IAO_DataSet> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.w3.org/2004/02/skos/core#exactMatch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+<http://example.org/whu#declaredUsed> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ResearchStep> .
+<http://purl.org/mp#Data> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#DataSet> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://example.org/whu#TargetVariable> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/whu#TargetObject> .
+<http://www.w3.org/ns/prov#Collection> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.obolibrary.org/obo/IAO_is_about> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#TargetObject> .
+<http://purl.org/net/p-plan#hasInputVar> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2002/07/owl#Thing> .
+<http://purl.org/net/p-plan#hasOutputVar> <http://example.org/whu#prompt> "Define: ResearchStep produces Specimen, ProcessedSpecimen or DataSet as typed output.\nExamples: \"ICP-MS generated concentration data\" → hasOutputVar(step, DataSet)."@en .
+<http://example.org/whu#ComputationalExperiment> <http://www.w3.org/2000/01/rdf-schema#comment> "Statistical modeling or computational analysis over DataSet."@en .
+_:n73f149ee62ab420da56059eeebd4be50b6 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://purl.org/mp#Statement> .
+<http://example.org/whu#hasHumidity> <http://www.w3.org/2000/01/rdf-schema#range> <http://qudt.org/schema/qudt/QuantityValue> .
+<http://example.org/whu#EnvironmentFeature> <http://www.w3.org/2000/01/rdf-schema#comment> "Operational environment/geography node. Multiple features may realize conceptual EnvironmentContext."@en .
+<http://example.org/whu#Reagent> <http://www.w3.org/2000/01/rdf-schema#label> "Reagent"@en .
+<http://purl.obolibrary.org/obo/IAO_is_about> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#DataSet> .
+<http://example.org/whu#SpecimenPreprocessing> <http://www.w3.org/2000/01/rdf-schema#label> "Specimen Preprocessing"@en .
+<http://example.org/whu#ResearchStep> <http://example.org/whu#prompt> "### Define\nA paper-recorded research step (sampling, preprocessing, instrument run, statistical analysis), modeled as p-plan:Step.\n### Context\nCreate one node per concrete procedural step. Link:\n- isStepOfPlan → Collection|Preprocessing|BioChemicalExperiment|ComputationalExperiment\n- hasInputVar / hasOutputVar → Specimen|ProcessedSpecimen|DataSet\n- declaredUsed → Method|Device|Reagent|Software\n### Examples\n\"acid digestion\"; \"ICP-MS measurement\"; \"ANOVA of concentration data\".\n### Do not\nDo not create separate BioChemicalActivityStep / ComputationalActivityStep classes; use ResearchStep for all."@en .
+<http://www.w3.org/ns/prov#hadMember> <http://www.w3.org/2000/01/rdf-schema#label> "had member"@en .
+<http://purl.obolibrary.org/obo/IAO_DataItem> <http://www.w3.org/2000/01/rdf-schema#label> "IAO DataItem"@en .
+<http://example.org/whu#DataSetService> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/dcat#DataService> .
+<http://example.org/whu#MPU> <http://www.w3.org/2000/01/rdf-schema#label> "Micropublication Argumentation Unit"@en .
+<http://example.org/whu#EnvironmentFeature> <http://www.w3.org/2000/01/rdf-schema#label> "Environment Feature"@en .
+<http://example.org/whu#ResearchStep> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#EnvironmentFeature> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://example.org/whu#hasExecutionEnvironment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://purl.org/net/p-plan#Plan> <http://www.w3.org/2000/01/rdf-schema#label> "Plan"@en .
+<http://example.org/whu#hasTarget> <http://example.org/whu#prompt> "Define: A Goal targets a TargetObject (analyte or variable).\nExamples: \"quantify Hg in rice\" → hasTarget(goal, TargetAnalyte:Hg)."@en .
+<http://purl.org/net/p-plan#correspondsToStep> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.w3.org/ns/prov#Activity> .
+_:n73f149ee62ab420da56059eeebd4be50b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://purl.org/dc/terms/hasPart> <http://example.org/whu#prompt> "Define: DataSet contains DataItem / ScalarMeasurementDatum.\nExamples: \"Dataset S1 includes Cd concentration measurements\" → hasPart(DataSet, ScalarMeasurementDatum)."@en .
+<http://www.w3.org/ns/prov#wasDerivedFrom> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#EnvironmentFeature> .
+<http://www.w3.org/ns/prov#wasDerivedFrom> <http://example.org/whu#prompt> "Define: Specimen derived from EnvironmentFeature; ProcessedSpecimen derived from Specimen.\nExamples: \"Rice grains collected from paddy soil\" → wasDerivedFrom(Specimen, EnvironmentFeature)."@en .
+<http://purl.org/mp#Claim> <http://www.w3.org/2000/01/rdf-schema#label> "Claim"@en .
+<http://example.org/whu#Specimen> <http://www.w3.org/2000/01/rdf-schema#comment> "Collected biological or environmental specimen (physical carrier)."@en .
+<http://purl.org/mp#Statement> <http://example.org/whu#prompt> "### Define\nA scientific proposition or factual assertion (not necessarily the terminal Claim).\n### Context\nExtract complete propositions in Results/Discussion that mediate between evidence and Claim.\n### Examples\n\"MeHg in grains decreased under biochar treatment\".\n### Links\nStatement ∈ SupportGraph; Statement ← supports — ScienceEvidence."@en .
+<http://example.org/whu#Software> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://purl.org/net/p-plan#hasInputVar> <http://example.org/whu#prompt> "Define: ResearchStep consumes Specimen, ProcessedSpecimen or DataSet as typed input.\nExamples: \"ICP-MS used digested solutions\" → hasInputVar(step, ProcessedSpecimen)."@en .
+<http://purl.org/mp#Data> <http://example.org/whu#prompt> "### Define\nArgumentative data element that can support or challenge Statement/Claim.\nPrefer creating whu:DataSet for structured scientific datasets; use mp:Data only when a more specific subclass does not apply."@en .
+<http://purl.org/mp#statement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://example.org/whu#hasHumidity> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ExecutionEnvironment> .
+<http://purl.org/mp#Method> <http://example.org/whu#prompt> "### Define\nA named method, protocol or standard referenced in experiments.\n### Context\nExtract explicit method names/standards (EPA 3052, ICP-MS protocol, statistical test names).\n### Examples\n\"following EPA Method 3052\"; \"analyzed by ICP-MS\".\n### Links\nResearchStep -declaredUsed→ Method; Method ∈ ScienceEvidence via prov:hadMember."@en .
+<http://purl.org/net/p-plan#hasInputVar> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#BioChemicalExperiment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/net/p-plan#Plan> .
+_:n73f149ee62ab420da56059eeebd4be50b7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/whu#EnvironmentFeature> <http://example.org/whu#prompt> "### Define\nPhysical, ecological or geographic context: soil, water, site, region, climate condition.\n### Context\nExtract named locations, environmental media, site types. Align to ENVO/GeoNames when possible (skos:closeMatch).\nOptional: geo:lat, geo:long, geo:alt, gn:parentFeature.\n### Examples\n\"paddy soil in Nanjing\"; \"river delta\"; \"urban air\".\n### Links\nSpecimenCollection -hasContext→ EnvironmentFeature; Specimen -wasDerivedFrom→ EnvironmentFeature."@en .
+<http://example.org/whu#ScienceEvidence> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://example.org/whu#MPU> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/net/p-plan#isPrecededBy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#EnvironmentFeature> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#DataSetService> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://qudt.org/schema/qudt/QuantityValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/net/p-plan#hasOutputVar> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2002/07/owl#Thing> .
+<http://purl.obolibrary.org/obo/IAO_is_about> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#ProcessedSpecimen> .
+<http://example.org/whu#SpecimenCollection> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#ComputationalExperiment> <http://www.w3.org/2000/01/rdf-schema#label> "Computational Experiment"@en .
+_:n73f149ee62ab420da56059eeebd4be50b4 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://example.org/whu#DataSet> .
+<http://example.org/whu#hasContext> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#SpecimenCollection> .
+<http://example.org/whu#ComputationalExperiment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:n73f149ee62ab420da56059eeebd4be50b3 .
+<http://example.org/whu#DataSet> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/dcat#Dataset> .
+<http://purl.org/mp#Claim> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Statement> .
+<http://www.w3.org/ns/prov#Collection> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://purl.org/spar/fabio/Figure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#DataSetService> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Data> .
+<http://example.org/whu#prompt> <http://www.w3.org/2000/01/rdf-schema#comment> "LLM extraction guidance for KG-mappable classes and properties."@en .
+<http://example.org/whu#ProcessedSpecimen> <http://www.w3.org/2000/01/rdf-schema#comment> "Specimen after preprocessing; input to BioChemicalExperiment. Material IO, not argumentative evidence."@en .
+<http://example.org/whu#Software> <http://www.w3.org/2000/01/rdf-schema#label> "Software"@en .
+<http://example.org/whu#ScienceEvidence> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#ExecutionEnvironment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://purl.org/mp#challenges> <http://www.w3.org/2000/01/rdf-schema#domain> <http://purl.org/mp#Representation> .
+<http://purl.org/mp#Claim> <http://example.org/whu#prompt> "### Define\nA scientific assertion (interpretive conclusion) argued in the paper.\n### Context\nExtract when text states main findings / conclusions that are supported or challenged by data/methods.\n### Examples\n\"mercury levels exceed safety thresholds\"; \"no significant contamination detected\".\n### Links\nClaim ← supports/challenges — ScienceEvidence | SupportGraph(Statement)."@en .
+<http://example.org/whu#hasContext> <http://www.w3.org/2000/01/rdf-schema#label> "has context"@en .
+<http://purl.org/mp#supports> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#DataItem> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_DataItem> .
+<http://example.org/whu#EBM> <http://www.w3.org/2000/01/rdf-schema#comment> "Top-level semantic view grouping EnvironmentContext, SpecimenCollection, SpecimenPreprocessing. NOT instantiable in operational KG."@en .
+<http://example.org/whu#ExecutionEnvironment> <http://www.w3.org/2000/01/rdf-schema#comment> "Experimental conditions: temperature, humidity, duration."@en .
+<http://www.w3.org/ns/prov#Activity> <http://www.w3.org/2000/01/rdf-schema#label> "PROV Activity"@en .
+<http://purl.org/net/p-plan#correspondsToStep> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#ResearchStep> .
+<http://purl.org/spar/fabio/Table> <http://example.org/whu#prompt> "Extract named tables that present datasets or evidence (e.g., Table 2). Link related DataSet when co-referenced."@en .
+<http://purl.obolibrary.org/obo/IAO_InformationContentEntity> <http://www.w3.org/2000/01/rdf-schema#label> "Information Content Entity"@en .
+<http://purl.org/mp#Method> <http://www.w3.org/2000/01/rdf-schema#comment> "Static protocol or standard defining experimental procedure."@en .
+<http://purl.org/mp#Claim> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#hasHumidity> <http://www.w3.org/2000/01/rdf-schema#label> "has humidity"@en .
+<http://www.w3.org/ns/prov#wasDerivedFrom> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#Specimen> .
+<http://example.org/whu#Device> <http://www.w3.org/2000/01/rdf-schema#label> "Device"@en .
+<http://example.org/whu#BioChemicalExperiment> <http://www.w3.org/2000/01/rdf-schema#label> "Bio-Chemical Experiment"@en .
+<http://example.org/whu#hasTarget> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#ProcessedSpecimen> <http://example.org/whu#prompt> "### Define\nMaterial resulting from specimen preprocessing (digestion, filtration, homogenization).\n### Context\nOutput of Preprocessing steps; input to biochemical experimental steps.\n### Examples\n\"digested solution\"; \"filtered porewater\"; \"homogenized powder\".\n### Links\nResearchStep(Preprocessing) -hasOutputVar→ ProcessedSpecimen;\nResearchStep(Bio) -hasInputVar→ ProcessedSpecimen;\nProcessedSpecimen -wasDerivedFrom→ Specimen."@en .
+<http://example.org/whu#declaredUsed> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2002/07/owl#Thing> .
+<http://example.org/whu#hasContext> <http://www.w3.org/2000/01/rdf-schema#comment> "Links a specimen-collection plan to one or more environment features."@en .
+<http://example.org/whu#Goal> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#DataSet> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Data> .
+<http://purl.org/mp#challenges> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#DataSet> .
+<http://example.org/whu#TargetAnalyte> <http://www.w3.org/2000/01/rdf-schema#label> "Target Analyte"@en .
+<http://example.org/whu#ScienceEvidence> <http://example.org/whu#prompt> "### Define\nIdentifiable composite evidence unit whose members include DataSet and Method.\n### Context\nCreate when data+method jointly support or challenge a Statement/Claim. Same DataSet/Method may join multiple ScienceEvidence.\n### Links\nScienceEvidence -prov:hadMember→ DataSet;\nScienceEvidence -prov:hadMember→ Method;\nScienceEvidence -mp:supports|mp:challenges→ Statement|Claim|SupportGraph.\n### Trace\nMember DataSet should connect back to ResearchStep via hasOutputVar."@en .
+<http://purl.obolibrary.org/obo/IAO_hasMeasurementValue> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ScalarMeasurementDatum> .
+<http://example.org/whu#hasGoal> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#Goal> .
+<http://purl.org/mp#Data> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://purl.org/mp#supports> <http://www.w3.org/2000/01/rdf-schema#label> "supports"@en .
+<http://purl.org/net/p-plan#isPrecededBy> <http://example.org/whu#prompt> "Define: Logical order between plans or steps (\"after\", \"then\", \"subsequently\").\nEBM order: SpecimenCollection precedes SpecimenPreprocessing; Preprocessing precedes BioChemicalExperiment.\nExamples: \"After preprocessing, ICP-MS was conducted\" → isPrecededBy(BioChemicalExperiment, SpecimenPreprocessing)."@en .
+<http://example.org/whu#SupportGraph> <http://www.w3.org/2000/01/rdf-schema#label> "Support Graph"@en .
+_:n73f149ee62ab420da56059eeebd4be50b5 <http://www.w3.org/2002/07/owl#onProperty> <http://www.w3.org/ns/prov#hadMember> .
+<http://example.org/whu#Reagent> <http://www.w3.org/2000/01/rdf-schema#comment> "Chemical or biological reagent used in sample treatment or analysis."@en .
+<http://example.org/whu#TargetVariable> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#EnvironmentContext> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#Device> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#hasComparator> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/whu#SpecimenCollection> <http://www.w3.org/2000/01/rdf-schema#comment> "Plan governing specimen collection from environment. EBM: EnvironmentFeature → Specimen."@en .
+_:n73f149ee62ab420da56059eeebd4be50b4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://purl.obolibrary.org/obo/IAO_hasMeasurementValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/whu#hasGoal> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#BioChemicalExperiment> .
+<http://example.org/whu#hasContext> <http://example.org/whu#prompt> "Define: SpecimenCollection has environmental/geographic context.\nSubject: SpecimenCollection; Object: EnvironmentFeature.\nExamples: \"Samples collected from paddy soils in Nanjing\" → hasContext(collection, EnvironmentFeature:paddy soil Nanjing)."@en .
+<http://www.w3.org/ns/prov#Entity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#hasComparator> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+<http://example.org/whu#TargetObject> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/mp#Data> <http://www.w3.org/2000/01/rdf-schema#comment> "Argumentative data representation in the Micropublication sense."@en .
+<http://purl.org/mp#challenges> <http://www.w3.org/2000/01/rdf-schema#range> <http://purl.org/mp#Claim> .
+<http://purl.obolibrary.org/obo/IAO_DataSet> <http://www.w3.org/2000/01/rdf-schema#label> "IAO DataSet"@en .
+<http://purl.org/spar/fabio/Table> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#SpecimenCollection> <http://example.org/whu#prompt> "### Define\nA sampling/collection plan that produces Specimen from environmental context.\n### Context\nExtract when text describes field sampling, sample acquisition, collection sites/dates.\n### Links\nSpecimenCollection -hasContext→ EnvironmentFeature;\nResearchStep -isStepOfPlan→ SpecimenCollection;\nResearchStep -hasOutputVar→ Specimen.\n### Order\nSpecimenCollection precedes SpecimenPreprocessing (p-plan:isPrecededBy)."@en .
+_:n73f149ee62ab420da56059eeebd4be50b1 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://example.org/whu#SpecimenCollection> .
+<http://purl.org/net/p-plan#isStepOfPlan> <http://www.w3.org/2000/01/rdf-schema#range> <http://purl.org/net/p-plan#Plan> .
+<http://example.org/whu#ComputationalExperiment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.obolibrary.org/obo/IAO_hasMeasurementUnit> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/whu#MPU> <http://www.w3.org/2000/01/rdf-schema#comment> "Top-level semantic view grouping ScienceEvidence and SupportGraph toward Claim. NOT instantiable in operational KG."@en .
+<http://purl.org/net/p-plan#correspondsToStep> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#ComputationalExperiment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/net/p-plan#Plan> .
+<http://purl.org/net/p-plan#Step> <http://www.w3.org/2000/01/rdf-schema#label> "Step"@en .
+<http://www.w3.org/2004/02/skos/core#closeMatch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+<http://purl.org/net/p-plan#hasInputVar> <http://www.w3.org/2000/01/rdf-schema#label> "has input variable"@en .
+<http://purl.org/mp#Method> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://example.org/whu/BAE_v2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+<http://purl.org/mp#Statement> <http://www.w3.org/2000/01/rdf-schema#label> "Statement"@en .
+<http://example.org/whu#ResearchStep> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/net/p-plan#Step> .
+<http://example.org/whu#SpecimenCollection> <http://www.w3.org/2000/01/rdf-schema#label> "Specimen Collection"@en .
+<http://example.org/whu#Goal> <http://example.org/whu#prompt> "### Define\nExplicit experimental objective (question/aim).\n### Examples\n\"evaluate cadmium levels in rice\"; \"test soil arsenic concentration\".\n### Links\nExperiment -hasGoal→ Goal; Goal -hasTarget→ TargetObject."@en .
+<http://purl.org/mp#Claim> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/mp#Method> <http://www.w3.org/2000/01/rdf-schema#label> "Method"@en .
+<http://example.org/whu/BAE_v2> <http://www.w3.org/2000/01/rdf-schema#comment> "Background–Activity–Evidence ontology for natural-science paper KG extraction and GraphRAG."@en .
+_:n73f149ee62ab420da56059eeebd4be50b7 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://purl.org/mp#Claim> .
+<http://example.org/whu#SupportGraph> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:n73f149ee62ab420da56059eeebd4be50b6 .
+<http://example.org/whu#EEM> <http://www.w3.org/2000/01/rdf-schema#comment> "Top-level semantic view grouping BioChemicalExperiment and ComputationalExperiment. NOT instantiable in operational KG."@en .
+<http://purl.org/net/p-plan#isStepOfPlan> <http://www.w3.org/2000/01/rdf-schema#comment> "ResearchStep belongs to a mid-level plan (Collection, Preprocessing, Experiment)."@en .
+<http://example.org/whu#hasTarget> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#Goal> .
+<http://purl.obolibrary.org/obo/IAO_is_about> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://purl.obolibrary.org/obo/IAO_DataItem> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#TargetObject> <http://www.w3.org/2000/01/rdf-schema#comment> "Entity under investigation. Distinct from Specimen (physical carrier)."@en .
+<http://example.org/whu#hasExecutionEnvironment> <http://example.org/whu#prompt> "Define: Links a ResearchStep to controlled conditions (temperature, humidity, duration).\nExamples: \"digestion at 180 °C for 30 min\" → hasExecutionEnvironment(step, env)."@en .
+<http://example.org/whu#Device> <http://www.w3.org/2000/01/rdf-schema#comment> "Scientific instrument used in research steps."@en .
+<http://purl.org/mp#Sentence> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#Goal> <http://www.w3.org/2000/01/rdf-schema#label> "Goal"@en .
+<http://example.org/whu#DataSet> <http://example.org/whu#prompt> "### Define\nStructured dataset (table, figure, file, measurement collection) generated or used in research.\n### Context\nExtract when text names datasets/tables/figures/results that support or challenge claims.\nCreate ScalarMeasurementDatum for explicit numeric values and link via dct:hasPart.\n### Links\nResearchStep -hasOutputVar|hasInputVar→ DataSet;\nDataSet -dct:hasPart→ ScalarMeasurementDatum;\nDataSet -iao:is_about→ TargetObject|Specimen;\nDataSet ∈ ScienceEvidence via prov:hadMember;\nDataSet -mp:supports|mp:challenges→ Statement|Claim.\n### Examples\n\"Figure 4: MeHg accumulations…\"; \"Table 2 concentration results\"."@en .
+<http://purl.org/mp#Method> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#hasDuration> <http://www.w3.org/2000/01/rdf-schema#label> "has duration"@en .
+<http://example.org/whu#SpecimenPreprocessing> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#SpecimenPreprocessing> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/net/p-plan#Plan> .
+<http://example.org/whu#EnvironmentContext> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/net/p-plan#isStepOfPlan> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#SpecimenCollection> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#hasTemperature> <http://www.w3.org/2000/01/rdf-schema#range> <http://qudt.org/schema/qudt/QuantityValue> .
+<http://example.org/whu#TargetAnalyte> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/whu#TargetObject> .
+<http://purl.obolibrary.org/obo/IAO_is_about> <http://example.org/whu#prompt> "Define: Dataset or measurement is about a TargetObject or specimen.\nExamples: \"Hg = 12 mg/kg in rice grains\" → is_about(ScalarMeasurementDatum, TargetAnalyte:Hg)."@en .
+<http://example.org/whu#TargetVariable> <http://www.w3.org/2000/01/rdf-schema#label> "Target Variable"@en .
+<http://example.org/whu#ComputationalExperiment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://example.org/whu#hasHumidity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#SupportGraph> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://purl.org/mp#Representation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#EEM> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/mp#Sentence> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://purl.org/mp#statement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://purl.org/dc/terms/hasPart> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#DataItem> .
+<http://example.org/whu#hasDuration> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://purl.obolibrary.org/obo/IAO_hasMeasurementUnit> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ScalarMeasurementDatum> .
+<http://example.org/whu#SupportGraph> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Collection> .
+<http://example.org/whu/BAE_v2> <http://www.w3.org/2000/01/rdf-schema#label> "BAE Ontology v2"@en .
+<http://example.org/whu#declaredUsed> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.w3.org/ns/prov#Entity> <http://www.w3.org/2000/01/rdf-schema#label> "PROV Entity"@en .
+<http://example.org/whu#DataItem> <http://www.w3.org/2000/01/rdf-schema#label> "Data Item"@en .
+<http://example.org/whu#hasComparator> <http://www.w3.org/2000/01/rdf-schema#comment> "Optional comparator: <, >, <=, >=, between."@en .
+<http://example.org/whu#declaredUsed> <http://example.org/whu#prompt> "Define: A research step declares use of a Method, Device, Reagent or Software.\nContext: Extract only when text says following/according to/using [resource].\nSubject: ResearchStep; Object: Method|Device|Reagent|Software.\nExamples: \"Digestion followed EPA 3052\" → declaredUsed(step, Method:EPA3052)."@en .
+_:n73f149ee62ab420da56059eeebd4be50b3 <http://www.w3.org/2002/07/owl#onProperty> <http://purl.org/net/p-plan#isPrecededBy> .
+<http://example.org/whu#TargetAnalyte> <http://example.org/whu#prompt> "### Define\nChemical analyte measured in BioChemicalExperiment (align ChEBI when possible).\n### Examples\n\"Hg\"; \"MeHg\"; \"Cd\"; \"Pb\".\n### Links\nGoal -hasTarget→ TargetAnalyte; ScalarMeasurementDatum -iao:is_about→ TargetAnalyte."@en .
+_:n73f149ee62ab420da56059eeebd4be50b5 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://purl.org/mp#Method> .
+<http://www.w3.org/ns/prov#hadMember> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2002/07/owl#Thing> .
+<http://example.org/whu#Device> <http://example.org/whu#prompt> "### Define\nAnalytical or experimental instrument (model, manufacturer if present).\n### Examples\n\"ICP-MS Agilent 7700\"; \"TOC analyzer\".\n### Links\nResearchStep -declaredUsed→ Device."@en .
+<http://example.org/whu#SpecimenPreprocessing> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://purl.obolibrary.org/obo/IAO_hasMeasurementUnit> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+<http://example.org/whu#ProcessedSpecimen> <http://www.w3.org/2000/01/rdf-schema#label> "Processed Specimen"@en .
+<http://example.org/whu#hasExecutionEnvironment> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ResearchStep> .
+<http://example.org/whu#SpecimenCollection> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://example.org/whu#ScienceEvidence> <http://www.w3.org/2000/01/rdf-schema#comment> "Composite evidence unit aggregating DataSet and Method; supports/challenges Statement or Claim."@en .
+<http://purl.org/mp#supports> <http://www.w3.org/2000/01/rdf-schema#domain> <http://purl.org/mp#Representation> .
+<http://purl.obolibrary.org/obo/IAO_DataSet> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://purl.org/net/p-plan#hasOutputVar> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#ScienceEvidence> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:n73f149ee62ab420da56059eeebd4be50b4 .
+<http://example.org/whu#hasContext> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://purl.org/dc/terms/hasPart> <http://www.w3.org/2000/01/rdf-schema#label> "has part"@en .
+<http://example.org/whu#Reagent> <http://example.org/whu#prompt> "### Define\nReagent including concentration/unit/role when stated.\n### Examples\n\"HNO3\"; \"HgCl2 solution (~5 μg/g)\".\n### Links\nResearchStep -declaredUsed→ Reagent."@en .
+<http://purl.org/mp#supports> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#SupportGraph> .
+<http://example.org/whu#ScalarMeasurementDatum> <http://example.org/whu#prompt> "### Define\nSingle numeric value (± unit ± comparator/range) inside a DataSet.\n### Context\nCreate only for explicit numbers. Store value (iao:hasMeasurementValue), unit (iao:hasMeasurementUnit), comparator (whu:hasComparator).\n### Examples\n\"Hg = 12 mg/kg\"; \"MeHg < 0.2 ng/g\"; \"12–15 mg/kg\".\n### Links\nDataSet -dct:hasPart→ ScalarMeasurementDatum;\nScalarMeasurementDatum -iao:is_about→ TargetObject."@en .
+<http://purl.org/mp#Statement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#BioChemicalExperiment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#SupportGraph> <http://www.w3.org/2000/01/rdf-schema#comment> "Argumentation structure targeting a single Claim; members are Statements and their support/challenge relations."@en .
+<http://example.org/whu#SpecimenPreprocessing> <http://example.org/whu#prompt> "### Define\nPreprocessing plan: storage, transport, digestion, filtration, homogenization before analysis.\n### Context\nExtract cooling/freezing/filtering/digestion preparation procedures.\n### Links\nisPrecededBy SpecimenCollection;\nResearchStep -isStepOfPlan→ SpecimenPreprocessing;\nhasInputVar Specimen; hasOutputVar ProcessedSpecimen.\n### Order\nPreceded by SpecimenCollection; precedes BioChemicalExperiment."@en .
+<http://purl.org/mp#supports> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#DataSet> .
+<http://purl.org/net/p-plan#hasOutputVar> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ResearchStep> .
+<http://purl.org/mp#challenges> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://purl.org/net/p-plan#Step> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/net/p-plan#Step> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/net/p-plan#Plan> .
+_:n73f149ee62ab420da56059eeebd4be50b6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/whu#BioChemicalExperiment> <http://www.w3.org/2000/01/rdf-schema#comment> "Experiment that processes specimens to generate measurement data."@en .
+<http://example.org/whu#SupportGraph> <http://example.org/whu#prompt> "### Define\nArgument package for one Claim, aggregating Statements that support or challenge it.\n### Context\nOne SupportGraph focuses on one Claim; encapsulate multi-statement argumentation.\n### Links\nSupportGraph -prov:hadMember→ Statement;\nSupportGraph -mp:supports|mp:challenges→ Claim;\nScienceEvidence -mp:supports|mp:challenges→ SupportGraph (or its Statements)."@en .
+<http://purl.org/net/p-plan#correspondsToStep> <http://www.w3.org/2000/01/rdf-schema#label> "corresponds to step"@en .
+<http://purl.org/mp#challenges> <http://www.w3.org/2000/01/rdf-schema#range> <http://purl.org/mp#Statement> .
+<http://purl.org/mp#supports> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ScienceEvidence> .
+<http://purl.org/mp#challenges> <http://www.w3.org/2000/01/rdf-schema#label> "challenges"@en .
+<http://purl.org/mp#supports> <http://www.w3.org/2000/01/rdf-schema#range> <http://purl.org/mp#Claim> .
+_:n73f149ee62ab420da56059eeebd4be50b1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://www.w3.org/ns/prov#hadMember> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.w3.org/ns/prov#Collection> .
+<http://example.org/whu#SupportGraph> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:n73f149ee62ab420da56059eeebd4be50b7 .
+_:n73f149ee62ab420da56059eeebd4be50b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://purl.org/dc/terms/hasPart> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://purl.org/mp#statement> <http://example.org/whu#prompt> "Store the original text span from which the entity was extracted."@en .
+<http://example.org/whu#DataSet> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/mp#statement> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+<http://example.org/whu#EnvironmentContext> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://example.org/whu#TargetObject> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+_:n73f149ee62ab420da56059eeebd4be50b1 <http://www.w3.org/2002/07/owl#onProperty> <http://purl.org/net/p-plan#isPrecededBy> .
+<http://example.org/whu#ComputationalExperiment> <http://example.org/whu#prompt> "### Define\nComputational/statistical experiment: DataSet_raw → DataSet_final.\n### Context\nRisk assessment, ANOVA, regression, modeling. Has Goal targeting TargetVariable.\n### Links\nOften isPrecededBy BioChemicalExperiment;\nResearchStep -isStepOfPlan→ ComputationalExperiment;\nhasInputVar/hasOutputVar DataSet; declaredUsed Software|Method.\n### Examples\n\"health risk assessment\"; \"ANOVA of concentration across treatments\"."@en .
+<http://example.org/whu#Software> <http://example.org/whu#prompt> "### Define\nSoftware tools for analysis or simulation (name + version if present).\n### Examples\n\"SPSS 26\"; \"R 4.2\"; \"MATLAB\".\n### Links\nResearchStep -declaredUsed→ Software (typically ComputationalExperiment steps)."@en .
+<http://purl.org/mp#Statement> <http://www.w3.org/2000/01/rdf-schema#comment> "A proposition that can support or challenge a Claim."@en .
+<http://example.org/whu#hasTemperature> <http://www.w3.org/2000/01/rdf-schema#label> "has temperature"@en .
+<http://purl.obolibrary.org/obo/IAO_is_about> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ScalarMeasurementDatum> .
+_:n73f149ee62ab420da56059eeebd4be50b7 <http://www.w3.org/2002/07/owl#onProperty> <http://purl.org/mp#supports> .
+<http://example.org/whu#SpecimenPreprocessing> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:n73f149ee62ab420da56059eeebd4be50b1 .
+<http://example.org/whu#DataSetService> <http://example.org/whu#prompt> "### Define\nExternal dynamic data service with endpoint URL and served datasets.\n### Examples\n\"data available at https://…\"; repository API endpoints."@en .
+<http://purl.org/mp#Method> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://purl.org/mp#supports> <http://www.w3.org/2000/01/rdf-schema#domain> <http://purl.org/mp#Method> .
+<http://example.org/whu#EBM> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#DataSet> <http://www.w3.org/2000/01/rdf-schema#comment> "Structured scientific dataset; argumentative mp:Data + structured iao:DataSet."@en .
+<http://example.org/whu#Software> <http://www.w3.org/2000/01/rdf-schema#comment> "Analytical or computational software."@en .
+<http://example.org/whu#EnvironmentContext> <http://www.w3.org/2000/01/rdf-schema#label> "Environment Context"@en .
+<http://example.org/whu#BioChemicalExperiment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#Software> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://purl.org/net/p-plan#isPrecededBy> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ResearchStep> .
+<http://example.org/whu#TargetAnalyte> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#ScalarMeasurementDatum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/spar/fabio/Figure> <http://example.org/whu#prompt> "Extract named figures that present datasets or evidence (e.g., Figure 4). Link related DataSet when co-referenced."@en .
+<http://example.org/whu#ScalarMeasurementDatum> <http://www.w3.org/2000/01/rdf-schema#label> "Scalar Measurement Datum"@en .
+<http://example.org/whu#DataSet> <http://www.w3.org/2000/01/rdf-schema#label> "DataSet"@en .
+<http://example.org/whu/BAE_v2> <http://www.w3.org/2002/07/owl#versionInfo> "2.0" .
+<http://example.org/whu#DataSetService> <http://www.w3.org/2000/01/rdf-schema#label> "Data Service"@en .
+<http://example.org/whu#Device> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://purl.org/spar/fabio/Figure> <http://www.w3.org/2000/01/rdf-schema#label> "Figure"@en .
+<http://example.org/whu#EBM> <http://www.w3.org/2000/01/rdf-schema#label> "Environment & Evidence Background Module"@en .
+<http://example.org/whu#hasGoal> <http://www.w3.org/2000/01/rdf-schema#label> "has goal"@en .
+_:n73f149ee62ab420da56059eeebd4be50b4 <http://www.w3.org/2002/07/owl#onProperty> <http://www.w3.org/ns/prov#hadMember> .
+<http://example.org/whu#SupportGraph> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/net/p-plan#isPrecededBy> <http://www.w3.org/2000/01/rdf-schema#domain> <http://purl.org/net/p-plan#Plan> .
+<http://example.org/whu#ExecutionEnvironment> <http://example.org/whu#prompt> "### Define\nControlled experimental conditions with numeric values/units.\n### Examples\n\"180 °C for 30 min\"; \"incubated at 25 °C\".\n### Links\nResearchStep -hasExecutionEnvironment→ ExecutionEnvironment."@en .
+<http://www.w3.org/ns/prov#wasDerivedFrom> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ProcessedSpecimen> .
+<http://www.w3.org/ns/prov#hadMember> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#ResearchStep> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/net/p-plan#isStepOfPlan> <http://www.w3.org/2000/01/rdf-schema#label> "is step of plan"@en .
+<http://example.org/whu#ComputationalExperiment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#SpecimenPreprocessing> <http://www.w3.org/2000/01/rdf-schema#comment> "Plan for intermediate handling of specimens before analysis. EBM: Specimen → ProcessedSpecimen."@en .
+<http://example.org/whu#Software> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/whu#hasComparator> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ScalarMeasurementDatum> .
+<http://purl.org/net/p-plan#isStepOfPlan> <http://example.org/whu#prompt> "Define: ResearchStep belongs to a Plan.\nConnect step → SpecimenCollection | SpecimenPreprocessing | BioChemicalExperiment | ComputationalExperiment.\nExamples: \"instrument run\" → isStepOfPlan(runStep, BioChemicalExperiment)."@en .
+<http://purl.org/mp#challenges> <http://example.org/whu#prompt> "Define: Evidence/data challenges a Statement or Claim.\nExamples: \"Findings contradict the prior claim\" → challenges(ScienceEvidence, Claim)."@en .
+<http://purl.obolibrary.org/obo/IAO_DataItem> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://purl.org/net/p-plan#correspondsToStep> <http://www.w3.org/2000/01/rdf-schema#comment> "Optional link from executed prov:Activity to paper-recorded ResearchStep."@en .
+<http://example.org/whu#DataSetService> <http://www.w3.org/2000/01/rdf-schema#comment> "Dynamic service providing datasets via endpoint URL."@en .
+<http://example.org/whu#TargetVariable> <http://www.w3.org/2000/01/rdf-schema#comment> "Estimated/modeled variable for ComputationalExperiment; align IAO/STATO."@en .
+<http://example.org/whu#hasGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#TargetObject> <http://example.org/whu#prompt> "### Define\nCore entity the experiment intends to investigate (pollutant, compound, estimated variable).\nPrefer subclasses TargetAnalyte (bio) or TargetVariable (computational).\n### Examples\n\"mercury\"; \"Hg content\"; \"cadmium\".\n### Note\nSpecimen = rice grains (carrier); TargetObject = Hg in rice (investigated entity)."@en .
+<http://example.org/whu#SupportGraph> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://example.org/whu#ScalarMeasurementDatum> <http://www.w3.org/2000/01/rdf-schema#comment> "Single numeric measurement with optional unit and comparator."@en .
+_:n73f149ee62ab420da56059eeebd4be50b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/whu#Specimen> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.w3.org/ns/prov#hadMember> <http://example.org/whu#prompt> "Define: Collection membership.\nScienceEvidence hadMember DataSet|Method; SupportGraph hadMember Statement.\nExamples: ScienceEvidence aggregates Method EPA3052 and DataSet Table2."@en .
+<http://www.w3.org/ns/prov#wasDerivedFrom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/whu#SpecimenCollection> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/net/p-plan#Plan> .
+<http://example.org/whu#Goal> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/ns/prov#Entity> .
+<http://example.org/whu#DataItem> <http://example.org/whu#prompt> "### Define\nA constituent data item of a DataSet (row/field/observation). Prefer ScalarMeasurementDatum when numeric.\n### Links\nDataSet -dct:hasPart→ DataItem."@en .
+<http://example.org/whu#ResearchStep> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.org/mp#Representation> .
+<http://example.org/whu#ResearchStep> <http://www.w3.org/2000/01/rdf-schema#comment> "Paper-recorded static research step (not executed prov:Activity). Belongs to a mid-level Plan via isStepOfPlan; uses typed IO via hasInputVar/hasOutputVar."@en .
+<http://example.org/whu#SpecimenPreprocessing> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#hasExecutionEnvironment> <http://www.w3.org/2000/01/rdf-schema#label> "has execution environment"@en .
+<http://example.org/whu#hasTemperature> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+_:n73f149ee62ab420da56059eeebd4be50b2 <http://www.w3.org/2002/07/owl#onProperty> <http://purl.org/net/p-plan#isPrecededBy> .
+<http://example.org/whu#hasGoal> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ComputationalExperiment> .
+<http://purl.org/net/p-plan#hasInputVar> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#ResearchStep> .
+<http://purl.org/dc/terms/hasPart> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/whu#DataSet> .
+<http://purl.org/mp#Sentence> <http://www.w3.org/2000/01/rdf-schema#label> "Sentence"@en .
+<http://purl.org/mp#statement> <http://www.w3.org/2000/01/rdf-schema#domain> <http://purl.org/mp#Representation> .
+<http://example.org/whu#declaredUsed> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf> <http://www.w3.org/ns/prov#used> .
+<http://example.org/whu#ScienceEvidence> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://purl.org/mp#Representation> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://purl.obolibrary.org/obo/IAO_InformationContentEntity> .
+<http://example.org/whu#hasContext> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/whu#EnvironmentFeature> .

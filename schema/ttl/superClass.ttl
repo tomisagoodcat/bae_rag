@@ -1,0 +1,136 @@
+
+#################################################################
+# Class: whu:ActivityStep 在此schema中为避免干扰llm不进行定义，只定义其具体子类
+#################################################################
+whu:ActivityStep a owl:Class ;
+    rdfs:label "Activity Step"@en ;
+    rdfs:comment "A step in an experimental plan that involves a specific activity, such as sample preparation or analysis."@en ;
+    rdfs:comment "实验计划中的一个步骤，涉及特定活动，如样本准备或分析。"@zh ;
+    rdfs:subClassOf 
+        
+        prov:Activity ,
+        [ a owl:Restriction ;
+          owl:onProperty p-plan:has_Plan ;  
+          owl:someValuesFrom p-plan:Plan ;
+          rdfs:comment "This step is part of a plan."@en ;
+          rdfs:comment "该步骤属于实验计划。"@zh ;
+          whu:prompt "Identify the experimental plan that this step is part of."@en
+        ],
+          [ a owl:Restriction ;
+          owl:onProperty p-plan:crrrespondsToStep ;
+          owl:someValuesFrom p-plan:Step ;
+          rdfs:comment "This step corresponds to a design step."@en ;
+          rdfs:comment "该步骤对应于设计步骤。"@zh ;
+          whu:prompt "Identify the design step that this activity step corresponds to."@en
+        ]
+.
+
+
+whu:Experiment a owl:Class ;
+    rdfs:label "Experiment"@en ;
+    rdfs:comment "An experimental process that involves the use of samples or materials to measure properties of the samples or the environment."@en ;
+    rdfs:comment "实验过程，涉及使用样品或材料来测量样品或环境的性质。"@zh ;
+    rdfs:subClassOf mp:Representation ,
+                    p-plan:Plan ,
+                    obi:OBI_0000272 ,
+        [ a owl:Restriction ;
+          owl:onProperty prov:wasAssociatedWith ;
+          owl:someValuesFrom whu:ActivityStep
+        ] ,
+        [ a owl:Restriction ;
+          owl:onProperty ro:has_goal ;
+          owl:someValuesFrom whu:Goal
+        ] .
+
+
+    whu:ActivityStep a owl:Class ;
+    rdfs:label "ActivityStep"@en ;
+    whu:prompt "Extract information about 'ActivityStep' from the scientific text."@en ;
+    rdfs:comment "ActivityStep is an ontology class placeholder requiring proper definition."@en .
+whu:Data a owl:Class ;
+    rdfs:label "Data"@en ;
+    whu:prompt "Extract information about 'Data' from the scientific text."@en ;
+    rdfs:comment "In the pursuit of knowledge, data (US: /ˈdætə/; UK: /ˈdeɪtə/) are a collection of discrete values that convey information, describing quantity, quality, fact, statistics, other basic units of meaning, or simply sequences of symbols that may be further interpreted. A datum is an individual value in a collection of data. Data are usually organized into structures such as tables that provide additional context and meaning, and which may themselves be used as data in larger structures. Data may be used as variables in a computational process. Data may represent abstract ideas or concrete measurements.Data are commonly used in scientific research, economics, and in virtually every other form of human organizational activity. Examples of data sets include price indices (such as consumer price in"@en .
+
+whu:EnvironmentContext a owl:Class ;
+    rdfs:label "EnvironmentContext"@en ;
+    whu:prompt "Extract information about 'EnvironmentContext' from the scientific text."@en ;
+    rdfs:comment "EnvironmentContext is an ontology class placeholder requiring proper definition."@en .
+
+whu:ScientificEvidenceGraph a owl:Class ;
+    rdfs:label "ScientificEvidenceGraph"@en ;
+    whu:prompt "Extract information about 'ScientificEvidenceGraph' from the scientific text."@en ;
+    rdfs:comment "ScientificEvidenceGraph is an ontology class placeholder requiring proper definition."@en .
+
+whu:TargetObject a owl:Class ;
+    mp:statement xsd:string ;
+    rdfs:label "Target Object"@en ;
+    rdfs:comment "An object of scientific interest or concern."@en ;
+    rdfs:comment "科学研究的目标对象。"@zh ;
+    whu:prompt:"The specific physical, chemical, or biological entities being measured or analyzed. These are typically pollutants, elements, or compounds defined in reference ontologies (e.g., CHEBI). Examples include 'arsenic', 'mercury', 'Pb', 'cadmium', 'heavy metals', 'lead nitrate'. Context: Serve as the semantic anchor of measurement, analysis, or classification within experimental reasoning.";
+    
+    
+        [ a owl:Restriction ;
+          owl:onProperty ro:is_target_of;  # ro:is_target_of
+          owl:someValuesFrom whu:Goal ] ,
+        [ a owl:Restriction ;
+          owl:onProperty iao:is_about;  # iao:is_about (inverse)
+          owl:someValuesFrom whu:Method ] ,
+        [ a owl:Restriction ;
+          owl:onProperty ro:denotes ;  # ro:denotes (inverse)
+          owl:someValuesFrom mp:Data ] .
+mp:Data a owl:Class ;  # 定义 mp:Data 是一个 OWL 类（数据表示的语义类型）
+    rdfs:label "Data"@en ;
+        mp:statement xsd:string ;
+    rdfs:comment "Data is a representation that supports another representation."@en ;
+    rdfs:comment "数据是一种支持另一种表示的表示。"@zh ;
+    whu:prompt "Identify the data of the experiment."@en ;
+
+    # 使用 owl:equivalentClass 语句，定义 mp:Data 与一个交集类完全等价
+    owl:equivalentClass [
+
+        a owl:Class ;  # 匿名类表达式
+
+        # 定义类交集（intersectionOf），即该类中的个体同时满足以下两个条件：
+        owl:intersectionOf (
+
+            mp:Representation  # 条件1：是 mp:Representation 的实例（表示型实体，广义上的语义表述对象）
+
+            [   # 条件2：满足一个存在性限制（existential restriction）
+
+                a owl:Restriction ;               # OWL 限制类定义
+                owl:onProperty mp:dataSupports ; # 限制的属性是 mp:dataSupports，表示数据对某种表示对象的支持关系
+                owl:someValuesFrom mp:Representation  # 至少存在一个支持的对象，其类型为 mp:Representation
+            ]
+        )
+    ] ;
+
+    # 显式指定 mp:Data 是 mp:Representation 的子类（该关系已隐含于等价类定义中，但保留有助于清晰展示层级）
+    rdfs:subClassOf mp:Representation .
+
+
+
+
+ 
+
+
+
+###  http://purl.org/mp/Material
+ 
+
+
+
+###  http://purl.org/mp/Method
+
+mp:Method  a owl:Class ;
+        
+        owl:equivalentClass [ a owl:Class ;
+                              owl:intersectionOf ( mp:Representation
+                                                   [ a owl:Restriction ;
+                                                     owl:onProperty mp:methodSupports ;
+                                                     owl:someValuesFrom mp:Representation
+                                                   ]
+                                                 )
+                            ] ;
+        
+        rdfs:subClassOf mp:Representation .

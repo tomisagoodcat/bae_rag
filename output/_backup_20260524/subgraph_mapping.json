@@ -1,0 +1,82 @@
+{
+    "description": "实体与子图的精确映射关系 - 基于Ontology设计",
+    "version": "1.0",
+    "mappings": {
+      "MPU": [
+        "whu_DataSetMaster",
+        "mp_ClaimMaster",
+        "whu_Goal",
+        "whu_GoalMaster",
+        "whu_MethodMaster",
+        "mp_StatementMaster",
+        "mp_References",
+        "whu_DataSet",
+        "mp_Claim",
+        "mp_Statement",
+        "whu_Method",
+        "mp_Attribution"
+      ],
+      "EBM": [
+        "whu_DataSet",
+        "whu_Specimen_Processing_Activity",
+        "whu_Specimen_Collection_Activity",
+        "whu_ProcessedSpecimen",
+        "whu_ScalarMeasurementDatum",
+        "whu_Device",
+        "whu_Specimen",
+        "whu_EnvironmentFeature",
+        "whu_SpecimenCollection",
+        "whu_Reagent",
+        "whu_Software",
+        "envo_Material",
+        "whu_SpecimenPreprocessingMaster",
+        "whu_Specimen_Processing_ActivityMaster",
+        "whu_Specimen_Collection_ActivityMaster",
+        "whu_DataSetMaster"
+      ],
+      "EEM": [
+        "whu_DataSet",
+        "whu_BioChemicalActivityStep",
+        "whu_Method",
+        "whu_ComputationalActivityStep",
+        "whu_ProcessedSpecimen",
+        "whu_ScalarMeasurementDatum",
+        "whu_Device",
+        "whu_Bio_chemical_Experiment",
+        "whu_Specimen",
+        "whu_Computational_Experiment",
+        "whu_Goal",
+        "whu_Reagent",
+        "whu_Target_analyte",
+        "whu_Software",
+        "envo_Material",
+        "whu_Computational_ExperimentMaster",
+        "whu_GoalMaster",
+        "whu_Bio_chemical_ExperimentMaster",
+        "whu_ComputationalActivityStepMaster",
+        "whu_MethodMaster",
+        "whu_BioChemicalActivityStepMaster",
+        "whu_DataSetMaster",
+        "whu_SupportGraph",
+        "whu_ScienceEvidence"
+      ]
+    },
+    "notes": {
+      "cross_subgraph_entities": [
+        "whu_DataSet",
+        "whu_DataSetMaster",
+        "whu_Method",
+        "whu_MethodMaster",
+        "whu_Goal",
+        "whu_GoalMaster",
+        "whu_ProcessedSpecimen",
+        "whu_ScalarMeasurementDatum",
+        "whu_Device",
+        "whu_Specimen",
+        "whu_Reagent",
+        "whu_Software",
+        "envo_Material"
+      ],
+      "description": "以上实体同时存在于多个子图中，在查询时应考虑跨子图关联"
+    }
+  }

@@ -1,0 +1,40 @@
+{
+  "relations": [
+    {
+      "label": "COME_FROM",
+      "description": "Specimen origin relationship. Format: SPECIMEN COME_FROM LOCATION or ENVIRONMENT. Example: (rice samples, COME_FROM, Songjiang District). Meaning: Indicates the environmental or geographic origin of a SPECIMEN. Usually derived from sample collection metadata or field descriptions. Essential for provenance tracking."
+    },
+    {
+      "label": "IS_ABOUT",
+      "description": "Subject-object relationship for METHOD, DATA, or EXPERIMENT describing their analytical focus. Format: [METHOD / DATA / EXPERIMENT] IS_ABOUT TARGETOBJECT. Example: (ICP-MS analysis, IS_ABOUT, mercury). Meaning: Describes what the method is measuring, what the data quantifies, or what the experiment investigates. Typically used to bind analytic processes to their focal chemical or compound."
+    },
+    {
+      "label": "SUPPORT",
+      "description": "Evidence relationship between a METHOD or DATA and a CLAIM. Format: [METHOD / DATA] SUPPORT CLAIM. Example: (measurement data, SUPPORT, mercury exceeds safe limits). Meaning: Establishes the epistemic grounding of a CLAIM in empirical DATA or procedural METHOD. Used to construct argumentation chains in micropublishing and scientific discourse models."
+    },
+    {
+      "label": "HAS_GOAL",
+      "description": "Experiment-objective relationship. Format: EXPERIMENT HAS_GOAL GOAL. Example: (arsenic field study, HAS_GOAL, detect arsenic in soil). Meaning: Links a research experiment to its scientific intention. Usually derived from introduction sections or experimental design descriptions."
+    },
+    {
+      "label": "HAS_OBJECT",
+      "description": "Goal-target relationship. Format: GOAL HAS_OBJECT TARGETOBJECT. Example: (assess cadmium levels, HAS_OBJECT, cadmium). Meaning: Specifies what a research goal is intended to measure, monitor, or analyze. Anchors the goal in specific chemical/biological substances."
+    },
+    {
+      "label": "HAS_PART",
+      "description": "Composition relationship between DATA and DATA_ITEM. Format: DATA HAS_PART DATA_ITEM. Example: (mercury analysis results, HAS_PART, 0.034 mg/kg). Meaning: Indicates that a DATA collection contains specific DATA_ITEM measurements. Essential for linking aggregate datasets to individual quantitative values with their units."
+    },
+    {
+      "label": "HAS_VALUE",
+      "description": "Measurement-value relationship. Format: DATA HAS_VALUE float. Example: (mercury_level, HAS_VALUE, 0.034). Meaning: Assigns a numeric (float) value to DATA. Units (e.g., mg/kg) may be part of the value or inferred from context. Critical for quantitative claim grounding."
+    },
+    {
+      "label": "WAS_GENERATED_BY",
+      "description": "Provenance relationship between DATA and the METHOD that produced it. Format: DATA WAS_GENERATED_BY METHOD. Example: (arsenic_concentration, WAS_GENERATED_BY, atomic absorption). Meaning: Links measurement outcomes to the procedure or instrumentation used. Enables tracing reproducibility paths and protocol-to-result linkage."
+    },
+    {
+      "label": "MENTIONS",
+      "description": "Annotation or context-mention relationship. Format: CLAIM MENTIONS SPECIMEN / ENVIRONMENT. Example: (pollution conclusion, MENTIONS, farmland). Meaning: Used when a claim references a specimen or location without formal dependency (not SUPPORT). Adds contextual richness to assertions."
+    }
+  ]
+}

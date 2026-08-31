@@ -1,0 +1,538 @@
+@prefix mp: <http://purl.org/mp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix whu: <http://example.org/whu#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix cito: <http://purl.org/spar/cito/> .
+@base <http://www.w3.org/2002/07/owl#> .
+
+ 
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+cito:isCitedBy rdf:type owl:ObjectProperty ;
+ 
+    rdfs:label "is cited by"@en ;
+    
+    rdfs:comment "Indicates that the subject micropublication cites the object micropublication."@en ;
+      whu:prompt "".
+
+
+###  http://example.org/whu#hasElement
+whu:hasElement rdf:type owl:ObjectProperty ;
+               rdfs:domain mp:Micropublication ;
+               rdfs:range [ rdf:type owl:Class ;
+                            owl:unionOf ( whu:DataSet
+                                          whu:Method
+                                          mp:Attribution
+                                          mp:Claim
+                                          mp:References
+                                          mp:Statement
+                                        )
+                          ] ;
+               whu:prompt """### Define
+
+`whu:hasElement` connects a **Micropublication (`mp:Micropublication`)** to its **constituent elements**, such as `mp:Claim`, `mp:Statement`, `whu:DataSet`, `whu:Method`, `mp:Reference`, or `mp:Attribution`.
+
+* It represents a **containment / composition relation**: the Micropublication is the **argumentation container**, and its elements are explicitly included within it.
+* This property does **not** indicate argumentative roles (support/challenge); it only records **membership** of elements inside the MPU.
+
+---
+
+### Purpose
+
+* **Structural linkage**: Ensure each MPU is connected to its **core elements**.
+* **Argumentation integrity**: Guarantee that all Claims, Statements, Data, Methods, References, and Attributions are correctly grouped under the MPU.
+* **Graph completeness**: Provide a clear container structure for downstream reasoning and visualization.
+
+---
+
+### Context
+
+Use this property **only when the text explicitly indicates that an element belongs to a Micropublication**.
+
+* Trigger when authors describe that a Claim, Statement, Dataset, Method, Reference, or Attribution is **part of / included in** a Micropublication.
+* Do **not** infer this relation from simple co-mention (e.g., if Claim and Data appear in the same sentence without an explicit MPU container, skip).
+* Prioritize explicit expressions such as *“Micropublication X contains Claim Y”*, *“MPU includes Dataset Z”*, etc.
+
+---
+
+### Notes
+
+* This property is **structural**, not argumentative. Use `mp:support` / `mp:challenge` for evidential relations.
+* Every `mp:Micropublication` must have **at least one `mp:Claim` or `mp:Statement`** as its nucleus.
+* Additional elements (Data, Method, Attribution, Reference) may be linked when explicitly mentioned.
+
+---
+
+### Use semantic links
+
+* `mp:Micropublication` → `whu:hasElement` → `mp:Claim`
+* `mp:Micropublication` → `whu:hasElement` → `mp:Statement`
+* `mp:Micropublication` → `whu:hasElement` → `whu:DataSet`
+* `mp:Micropublication` → `whu:hasElement` → `whu:Method`
+* `mp:Micropublication` → `whu:hasElement` → `mp:Reference`
+* `mp:Micropublication` → `whu:hasElement` → `mp:Attribution`
+
+---
+
+### Examples
+
+*   **Micropublication 1 (Biochar altered DOM and enhanced microbial activity) `whu:hasElement` mp:Claim**:
+    *   **mp:Claim**: \"Biochar addition **significantly altered porewater dissolved organic matter (DOM) characteristics** and **enhanced microbial activity** in paddy soils.\"
+
+*   **Micropublication 1 (Biochar altered DOM and enhanced microbial activity) `whu:hasElement` whu:Data**:
+    *   **whu:Data**: \"Measurements of DOM properties in porewater (DOC, SUVA$_{254}$, S$_{R}$, a$_{355}$, HIX, BIX).\"
+
+*   **Micropublication 1 (Biochar altered DOM and enhanced microbial activity) `whu:hasElement` whu:Method**:
+    *   **whu:Method**: \"Porewater collected via Rhizon sampler. DOC measured with TOC analyzer. Optical analyses (fluorescence, UV-Vis) performed with Aqualog® spectrometer. Spectral parameters calculated using established methods.\""""@en ;
+               rdfs:comment "Composition relation linking a Micropublication to its constituent elements such as Claims, Statements, DataSets, Methods, References, or Attributions."@en ,
+                            "组成关系，将 Micropublication 与其构成要素（如主张、陈述、数据集、方法、引用或归因）连接起来。"@zh ;
+               rdfs:label "has element"@en .
+
+
+###  http://purl.org/mp#argues
+mp:argues rdf:type owl:ObjectProperty ;
+          rdfs:domain mp:Micropublication ;
+          rdfs:range mp:Claim ;
+          whu:prompt """### Define
+
+`mp:argues` links a **Micropublication (`mp:Micropublication`)** to the **central Claim (`mp:Claim`)** that it advances.
+
+* It expresses the **primary argumentative direction**: every Micropublication is constructed to argue exactly **one central Claim**.
+* This relation is **obligatory** for a valid MPU: without it, the MPU lacks an argumentative nucleus.
+
+---
+
+### Purpose
+
+* **Argumentative anchoring**: Ensure each MPU is tied to a **core Claim**.
+* **Graph integrity**: Distinguish the **central Claim** from supporting Statements or Data.
+* **Reasoning clarity**: Provide a direct link for downstream reasoning engines and reproducibility tracking.
+
+---
+
+### Context
+
+Use this property **only when the text explicitly states that a Micropublication (or evidence package) makes or advances a Claim**.
+
+* Trigger when the MPU is described as *asserting*, *putting forward*, *arguing*, or *centering on* a Claim.
+* Do **not** infer this relation from co-mention or indirect implication (e.g., a Claim and MPU appearing together without clear argumentative connection).
+* Each MPU should have **exactly one `mp:argues` Claim**.
+
+---
+
+### Notes
+
+* `mp:argues` is distinct from `mp:supports` / `mp:challenges`, which connect **evidence** (Data, Method, Reference) to Claims or Statements.
+* Supporting `mp:Statement` nodes may be present inside the MPU, but the **nucleus Claim** must always be identified via `mp:argues`.
+* A Micropublication can include multiple elements, but only **one Claim** is its argumentative target.
+
+---
+
+### Use semantic links
+
+* `(mp:Micropublication)` → `mp:argues` → `(mp:Claim)`
+
+---
+
+### Examples
+ 
+*   **Micropublication 1: Biochar altered DOM and enhanced microbial activity `mp:argues` its central Claim:**
+    *   This relation signifies that the micropublication, titled \"Biochar altered DOM and enhanced microbial activity,\" is built to advance the central claim that **biochar addition significantly altered porewater dissolved organic matter (DOM) characteristics and enhanced microbial activity in paddy soils**.
+
+*   **Micropublication 2: Modified biochar decreased MeHg production in soils `mp:argues` its central Claim:**
+    *   This relation indicates that the micropublication, titled \"Modified biochar decreased MeHg production in soils,\" puts forth the central claim that **only modified biochar effectively decreased methylmercury (MeHg) production in paddy soils, while original biochar had no significant effect on soil MeHg**."""@en ;
+          rdfs:comment "Relates a Micropublication to the central Claim it advances."@en ,
+                       "连接 Micropublication 与其所主张的核心 Claim。"@zh ;
+          rdfs:label "argues"@en .
+
+
+###  http://purl.org/mp#challenges
+mp:challenges rdf:type owl:ObjectProperty ;
+              rdfs:domain mp:Representation ;
+              rdfs:range mp:Representation ;
+              whu:prompt """### Define
+
+`mp:challenges` connects a **challenging Representation** (e.g., `whu:DataSet`, `whu:Method`, `mp:Statement`) to another **Representation** (`mp:Claim` / `mp:Statement`) that it **contradicts, refutes, or undermines**.
+
+* This relation encodes **conflicting evidence** or **argumentative opposition** within a micropublication graph.
+* It complements `mp:supports`, ensuring both **positive** and **negative** evidence relations are captured.
+
+---
+
+### Purpose
+
+* **Conflict modeling**: Capture when evidence or statements directly oppose a Claim/Statement.
+* **Argument balance**: Represent not only supportive but also contradictory findings in the scientific discourse.
+* **Reproducibility tracking**: Allow reasoning engines to highlight **where claims are disputed** across datasets, methods, or statements.
+
+---
+
+### Context
+
+Use this property **only when the text explicitly signals contradiction, refutation, or challenge**.
+
+Trigger words/phrases include: *challenge*, *contradict*, *refute*, *does not support*, *inconsistent with*, *fails to confirm*.
+
+Do **not** trigger for:
+
+* Mere co-mention without explicit opposition.
+* Neutral comparisons (e.g., “Dataset A differs from Dataset B” without evaluative contradiction).
+* General background text.
+
+---
+
+### Notes
+
+* `mp:challenges` always points from an **evidence/representation** → to a **Claim or Statement**.
+* A single Representation can simultaneously **support one Claim** and **challenge another**, depending on context.
+* Ensure that **support/challenge relations** are not confused:
+
+  * `mp:supports`: strengthens/affirms.
+  * `mp:challenges`: weakens/refutes.
+
+
+---
+
+### Examples
+ 
+
+*   **Challenged Statement:** Biochar and its modified forms are generally **\"a helpful way to alleviate Hg pollution\"** in soil/sediment systems.
+    **Challenging Statement:** **\"Some other studies have reported that the effect of biochar on the remediation of Hg-contaminated soil/sediment is not as good as expected,\"** for example, biochar application **\"increased the MeHg content of soils\"**.
+
+*   **Challenged Statement:** There is a **\"consensus that DOM, in general, can influence Hg bioavailability and methylation potential in two ways\"**.
+    **Challenging Statement:** Despite this, **\"the relationships between Hg and DOM observed in both field investigations and the laboratory have been inconsistent,\"** even regarding the accepted mechanisms.
+
+*   **Challenged Statement:** Previous studies reported that biochar **\"could significantly change the content and properties of soil DOM\"** (e.g., increased or decreased DOC).
+    **Challenging Statement (supported by `whu:Data`):** In this study, **\"the DOC content in the treatment was not significantly different (p > 0.05) from the control,\"** a finding that is **\"different from previous studies\"**."""@en ;
+              rdfs:comment "Generic evidential conflict relation from a challenging Representation to a Representation it contradicts/refutes."@en ,
+                           "从质疑性表示指向其所反驳/矛盾的表示的通用证据冲突关系。"@zh ;
+              rdfs:label "challenges"@en .
+
+
+###  http://purl.org/mp#supports
+mp:supports rdf:type owl:ObjectProperty ;
+            rdfs:domain mp:Representation ;
+            rdfs:range mp:Representation ;
+            whu:prompt """### Define
+
+`mp:supports` links a **supporting Representation** (e.g., `whu:DataSet`, `whu:Method`, `mp:Statement`) to another **Representation** (`mp:Claim` / `mp:Statement`) that it **provides positive evidence for**.
+
+* This property encodes **affirmative argumentative relations**, showing how data, methods, or statements strengthen a scientific assertion.
+* It is the **positive counterpart** of `mp:challenges`.
+
+---
+
+### Purpose
+
+* **Evidence modeling**: Capture explicit positive evidence connections in micropublications.
+* **Argument construction**: Enable structured reasoning chains (e.g., Data → supports → Claim).
+* **Reproducibility assurance**: Show how datasets and methods provide a foundation for claims and statements.
+
+---
+
+### Context
+
+Use this property **only when the text explicitly signals support or evidence provision**.
+
+Trigger words/phrases include: *support*, *provide evidence for*, *validate*, *confirm*, *consistent with*, *corroborate*.
+
+Do **not** trigger for:
+
+* Co-mention without explicit evidence relation.
+* Neutral comparisons (e.g., “Dataset A is compared with Dataset B” without evaluative support).
+* Vague mentions (“studies have shown” without clear link).
+
+---
+
+### Notes
+
+* `mp:supports` always points from an **evidence Representation** → to a **Claim or Statement**.
+* A single Representation can **support one Claim** and **challenge another**, depending on the context.
+* Ensure clear distinction from `mp:challenges`:
+
+  * `mp:supports`: strengthens/affirms.
+  * `mp:challenges`: weakens/refutes.
+ 
+ 
+---
+
+### Examples
+
+*   **Challenged Statement:** The general assertion that \"biochar and its modified forms have been illustrated as a helpful way to alleviate Hg pollution in various soil/sediment systems\".
+    **Challenging Statement:** **\"In contrast, some other studies have reported that the effect of biochar on the remediation of Hg-contaminated soil/sediment is not as good as expected.\"** For example, Shu et al. (2016) reported that biochar application **\"increased the MeHg content of soils\"**.
+
+*   **Challenged Statement:** There is a **\"consensus that DOM, in general, can influence Hg bioavailability and methylation potential in two ways\"**.
+    **Challenging Statement:** **\"However, the relationships between Hg and DOM observed in both field investigations and the laboratory have been inconsistent, even concerning the above mechanisms\"**.
+
+*   **Challenged Statement:** Previous studies reported that biochar **\"could significantly change the content and properties of soil DOM\"** (e.g., biochar-induced elevation or decreased soil DOC concentrations).
+    **Challenging Statement (supported by `whu:DataSet`):** In the present study, **\"the DOC content in the treatment was not significantly different (p > 0.05) from the control,\"** and this **\"finding is different from previous studies\"**."""@en ;
+            rdfs:comment "Generic evidential relation from a supporting Representation (Data/Method/Statement/Attribution/References) to a supported Representation (Claim/Statement)."@en ,
+                         "从支持性表示（数据/方法/陈述/归因/引用）指向被支持表示（主张/陈述）的通用证据关系。"@zh ;
+            rdfs:label "supports"@en .
+
+
+###  http://purl.org/spar/cito/isCitedBy
+<http://purl.org/spar/cito/isCitedBy> rdf:type owl:ObjectProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+ 
+###  http://purl.org/mp#Attribution
+mp:Attribution rdf:type owl:Class ;
+               rdfs:subClassOf mp:Representation ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty mp:supports ;
+                                 owl:someValuesFrom [ rdf:type owl:Class ;
+                                                      owl:unionOf ( whu:DataSet
+                                                                    whu:Method
+                                                                    mp:Claim
+                                                                    mp:References
+                                                                    mp:Statement
+                                                                  )
+                                                    ]
+                               ] ;
+               whu:prompt """### Define
+
+An **Attribution** specifies the **agent(s)** responsible for **creating, asserting, or being accountable**  ( mp:supports/mp:challenges) for a  Representation e.g., `mp:Claim`, `mp:Statement`, `whu:DataSet`,`whu:Method``).
+
+* Typical agents include **persons**, **institutions**, or **projects**.
+* It is modeled as a subclass of  **prov:Agent** for provenance alignment.
+* Attribution provides the **responsibility layer** in the micropublication framework, connecting content with its accountable source.
+
+---
+
+### Purpose
+
+* **Responsibility binding**: Link representations (claims, data, methods) to their authors or accountable parties.
+* **Provenance tracking**: Preserve authorship and source information to ensure accountability and reproducibility.
+* **Agent integration**: Connect with `prov:Agent` instances (e.g., persons, labs, organizations).
+
+---
+
+### Context
+
+Use this class **only when authorship, responsibility, or source agency is explicitly stated**.
+
+* Trigger when a **claim, statement, or dataset** is linked to a **named agent** (person, institution, project, authority).
+* Do **not** trigger for vague or generic phrases (e.g., “scientists believe”, “it is known that”).
+* Avoid inference: extract only when attribution is **explicitly mentioned** in the text.
+
+---
+
+### Notes
+
+* Attribution does **not** indicate whether a claim is true or false; it only records **who is responsible**.
+* Link via:
+
+  * `mp:Attribution` → `mp:suppots/mp:challenges` → `mp:Claim'
+  * `mp:Attribution` → `mp:suppots/mp:challenges` → `mp:Statement`
+  * `mp:Attribution` → `mp:suppots/mp:challenges` → `mp:Reference`
+  * `mp:Attribution` → `mp:suppots/mp:challenges` → `whu:DataSet`
+  * `mp:Attribution` → `mp:suppots/mp:challenges` → `whu:Method`
+---
+
+### Examples
+
+*   **Attribution 1: The Authors of the Study**
+    The **group of individuals** credited with conducting the research and asserting the scientific claims and findings presented in the paper. These authors are: **Siqi Zhang, Mingxing Wang, Jiang Liu, Shanyi Tian, Xueling Yang, Guangquan Xiao, Guomin Xu, Tao Jiang, and Dingyong Wang**. They are collectively accountable for the entire scientific work, including its experimental design, execution, data interpretation, and reported conclusions.
+
+*   **Attribution 2: Environmental Biogeochemistry Laboratory of Natural Organic Matter (NOM-Lab)**
+    This **institution/laboratory** is directly responsible for the execution and accountability of the **Dissolved Organic Matter (DOM) characterization**. Specifically, it conducted measurements of DOM concentration, optical analyses (fluorescence and UV-Vis measurements), and the calculation of various spectral parameters, which are key supporting elements for the study's claims regarding DOM characteristics. The NOM-Lab is located at Southwest University (SWU)."""@en ;
+               rdfs:comment "Attribution records who asserted/created or is accountable for a Representation (e.g., Statement, Claim, Data), linking content to responsible agents."@en ,
+                            "Attribution 记录对某个表示（如陈述、主张或数据）负责的主体（提出者、创建者、责任者），将内容与责任主体关联。"@zh ;
+               rdfs:label "Attribution"@en .
+
+
+###  http://purl.org/mp#Claim
+mp:Claim rdf:type owl:Class ;
+         rdfs:subClassOf mp:Statement ;
+         whu:prompt """Definition: A Claim is the central assertion argued by a Micropublication.
+Context: Extract when the text explicitly advances a principal scientific assertion to be supported or challenged by evidence.
+Examples:
+- Positive: 'We conclude cadmium exceeds the permissible limit.' -> mp:Claim
+- Negative: 'We measured cadmium.' (methodological fact, not a central assertion) -> consider mp:Statement instead."""@en ;
+         rdfs:comment "A Claim is a Statement advanced as the central assertion of a Micropublication and evaluated via linked evidence (Data, Method, etc.)."@en ,
+                      "Claim 是 Micropublication 的核心断言，通过所链接的证据（数据、方法等）加以评估。"@zh ;
+         rdfs:label "Claim"@en .
+
+
+###  http://purl.org/mp#Micropublication
+mp:Micropublication rdf:type owl:Class ;
+                    rdfs:subClassOf mp:Representation ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty whu:hasElement ;
+                                      owl:someValuesFrom [ rdf:type owl:Class ;
+                                                           owl:unionOf ( whu:DataSet
+                                                                         whu:Method
+                                                                         mp:Attribution
+                                                                         mp:Claim
+                                                                         mp:References
+                                                                         mp:Statement
+                                                                       )
+                                                         ]
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty mp:argues ;
+                                      owl:someValuesFrom mp:Claim
+                                    ] ;
+                    whu:prompt """### Define:
+
+A **Micropublication (MPU)** is a **structured evidence graph** that captures a **scientific assertion** (central `mp:Claim` ) together with its **supporting or challenging elements**.
+And  the **Micropublication (MPU)**  `mp:argues` the central `mp:Claim`
+* **Core components**: `mp:Claim` (argumentative nucleus).
+* **Has Support Elements**:  `mp:Statement` ,`whu:DataSet`, `whu:Method`, `mp:Attribution`, `mp:Reference`.
+ 
+
+---
+
+### Purpose:
+
+* **Evidence integration**: Bundle a central claim with its supporting/challenging evidence.
+* **Argumentation tracking**: Ensure each MPU forms a coherent subgraph of Claim–Evidence relations.
+* **Provenance capture**: Attribute responsibility and link references, enabling transparency and reproducibility.
+
+---
+
+### Context
+
+Use this class **only when the text explicitly presents a scientific assertion with its associated evidence**.
+
+* Trigger when a **claim/statement** is paired with **data, method, attribution, or references**.
+* **Do not** trigger if only a claim appears without evidence, or if the text only describes background context.
+* Always link the MPU to its central Claim and connect to supporting elements using evidence relations (`mp:support`, `mp:challenge`).
+
+ 
+---
+
+### Notes
+
+* In a scientific article or lecture, multiple MPUs may appear: some introduced directly by the author, others attributed to external researchers or cited references.  
+* Each MPU must contain **exactly one central `mp:Claim`** as its argumentative nucleus.  
+* Supporting elements (`mp:Statement`, `whu:Data`, `whu:Method`, `mp:Attribution`, `mp:Reference`) are **optional**, but should be linked to the MPU whenever they are **explicitly mentioned** in the text. Avoid inferring elements that are not stated.
+
+#### Relations within a Micropublication
+
+* `whu:Method` → `mp:support` → `whu:DataSet`
+* `whu:DataSet` → (`mp:support` / `mp:challenge`) → `mp:Claim` / `mp:Statement`
+* `mp:Statement` may provide intermediate reasoning linking **DataSet** and **Claim**.
+
+#### Relations between Micropublication
+* `mp:Micropublication` → (`mp:argues`) → `mp:Claim`
+* `mp:Micropublication` → (`whu:hasElement`) → `mp:Claim`
+* `mp:Micropublication` → (`whu:hasElement`) → `whu:Method`
+* `mp:Micropublication` → (`whu:hasElement`) → `mp:Attribution`
+* `mp:Micropublication` → (`whu:hasElement`) → `mp:Reference`
+* `mp:Micropublication` → (`whu:hasElement`) → `whu:DataSet`
+---
+
+### Examples
+
+*   **Micropublication 1: Biochar altered DOM and enhanced microbial activity.**
+    *   **mp:Claim**: Biochar addition **significantly altered porewater dissolved organic matter (DOM) characteristics** and **enhanced microbial activity** in paddy soils.
+    *   **mp:Statement**: DOM in biochar-amended soil showed **increased aromaticity, molecular weight, and chromophoric components** (higher SUVA$_{254}$, a$_{355}$ values; lower S$_{R}$ values). An **increase in humic character** (higher HIX, normalized CDOM, humic-like fluorescence peaks) and **enhanced microbial activity** (higher BIX, DOC-normalized peak M) were observed.
+    *   **whu:DataSet**: Measurements of DOM properties in porewater (DOC, SUVA$_{254}$, S$_{R}$, a$_{355}$, HIX, BIX).
+    *   **whu:Method**: Porewater collected via Rhizon sampler. DOC measured with TOC analyzer. Optical analyses (fluorescence, UV-Vis) performed with Aqualog® spectrometer. Spectral parameters calculated using established methods.
+    *   **mp:Attribution**: Environmental Biogeochemistry Laboratory of Natural Organic Matter (NOM-Lab) at Southwest University (SWU).
+    *   **mp:Reference**: Calculation methods for spectral parameters, and similar observations or biological implications of BIX, are supported by various studies.
+
+*   **Micropublication 2: Modified biochar decreased MeHg production in soils.**
+    *   **mp:Claim**: Only **modified biochar effectively decreased methylmercury (MeHg) production** in paddy soils; original biochar had no significant effect on soil MeHg.
+    *   **mp:Statement**: **MeHg content and MeHg/THg ratios were significantly lower** in soil with modified biochar. MeHg in porewaters was also significantly lower in *both* biochar treatments. The original biochar showed no significant difference from the control in soil THg, MeHg, or MeHg/THg ratio. This effect involves competition between decreasing Hg bioavailability and increasing microbial activity.
+    *   **whu:DataSet**: Measurements of total mercury (THg), MeHg, and MeHg/THg ratios in soil and porewater samples.
+    *   **whu:Method**: THg measured by cold vapor atomic fluorescence spectroscopy (CVAAS). MeHg by ethylated isothermal gas chromatography-cold atomic fluorescence (GC-CVAFC) or distillation-ethylation method. USEPA method 1631 used for porewater THg. Quality control procedures applied.
+    *   **mp:Attribution**: Mercury Biogeochemistry Laboratory (MBL) at SWU.
+    *   **mp:Reference**: Biochar's ability to decrease MeHg production is supported by prior studies. The antagonistic interaction of selenium (in modified biochar) with Hg is also referenced."""@en ;
+                    rdfs:comment "A minimal, self-contained scientific unit encapsulating a central Claim (or Statement) together with supporting elements (Data, Method, Attribution, References), forming an evidence graph to evaluate/reproduce the claim."@en ,
+                                 "一个最小、自包含的科学单元，围绕核心主张（或陈述）组织其支持要素（数据、方法、归因、引用），构成用于评估/复现主张的证据图。"@zh ;
+                    rdfs:label "Micropublication"@en .
+
+
+###  http://purl.org/mp#References
+mp:References rdf:type owl:Class ;
+              rdfs:subClassOf mp:Representation ,
+                               
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty cito:isCitedBy ;
+                                owl:someValuesFrom [ rdf:type owl:Class ;
+                                                     owl:unionOf ( whu:DataSet
+                                                                   whu:Method
+                                                                   mp:Claim
+                                                                   mp:Statement
+                                                                 )
+                                                   ]
+                              ] ;
+              whu:prompt """### Define
+
+A **Reference** (`mp:Reference`) encodes a **bibliographic citation or source link** that is explicitly tied to a `mp:Representation` (e.g., `mp:Claim`, `mp:Statement`, `whu:DataSet`, `whu:Method`).
+
+* References typically follow **standard citation formats** (author–year, numbered references, DOI, or URL).
+* In publications, references usually appear in the **References / Bibliography section**, but may also be cited **inline** (e.g., “Smith 2020”, “\\[15]”, “DOI:10.1234/abcd”).
+* References provide **documented provenance** and contextualize a Representation, but do **not** themselves support or challenge claims.
+
+---
+
+### Purpose
+
+* **Citation anchoring**: Connect scientific statements with their bibliographic sources.
+* **Provenance**: Track external works or datasets that underpin a Representation.
+* **Normalization**: Represent citations in a **standard bibliographic format** (APA, numbered, DOI/URL) for consistency.
+
+---
+
+### Context
+
+Use this class **only when explicit references are present in the text**.
+
+* Trigger when a Representation cites a **work, dataset, or external source** using author–year style (“Smith 2020”), numbered style (\\[12]), or persistent identifiers (DOI, URL).
+* Do **not** trigger for vague mentions without explicit source (e.g., “previous studies have shown”, “it is widely known”).
+* When possible, normalize the extracted reference to a **standard citation string** and link it to the Representation.
+
+---
+
+### Notes
+
+* A `mp:Reference` always points to an **external source**, not to internal narrative.
+* When multiple references occur together (e.g., “Smith 2020; Zhang 2021”), extract each as a **separate `mp:Reference`**.
+* If a DOI/URL is present, include it in the citation entry.
+
+---
+
+### Use semantic links
+
+* `mp:Claim/mp:Statement/whu:DataSet/whu:Method) `→ `cito:cites` → `mp:Reference`"""@en ;
+              rdfs:comment "One or more bibliographic citations or source pointers associated with a Representation, linking to external works for provenance/context/evidence."@en ,
+                           "与某个表示相关联的一条或多条参考/来源指针，链接到外部成果以提供出处、语境或证据支持。"@zh ;
+              rdfs:label "References"@en .
+
+
+###  http://purl.org/mp#Representation
+mp:Representation rdf:type owl:Class .
+
+
+###  http://purl.org/mp#Statement
+mp:Statement rdf:type owl:Class ;
+             rdfs:subClassOf mp:Representation ;
+             whu:prompt """Definition: A Statement is an assertion with a truth value (true/false), typically supported by evidence.
+Context: Extract when the text presents a complete proposition (claim, observation, factual assertion). Model as a subclass of mp:Sentence if available in your schema.
+Examples:
+- Positive: 'Cadmium levels exceeded 0.2 mg/kg.' -> mp:Statement
+- Positive: 'Arsenic contamination is above safety limits.' -> mp:Statement
+- Negative: 'Heavy metals are discussed.' (no evaluable proposition) -> skip."""@en ;
+             rdfs:comment "A Statement is an assertion that can be evaluated as true or false, typically supported by evidence; it represents a complete proposition in scientific discourse."@en ,
+                          "Statement 表示可被判定真假的断言，通常有证据支持，代表科学论述中的完整命题。"@zh ;
+             rdfs:label "Statement"@en .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

@@ -1,0 +1,178 @@
+
+#################################################################
+# Class: whu:EvidenceBackground
+#################################################################
+
+whu:EvidenceBackground a owl:Class ;
+    rdfs:label "Evidence Background"@en ;
+    rdfs:comment "Semantic background module that provides contextual evidence supporting a scientific experiment or claim."@en ;
+    rdfs:comment "提供实验或主张背景信息的语义模块，包括环境、采样、设备等。"@zh ;
+
+    ##################################################
+    ### 包含环境上下文（如地点、气候）
+    ##################################################
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_part ;
+        owl:someValuesFrom whu:EnvironmentFeature;
+        rdfs:comment "Includes environmental context such as location, climate, or surroundings."@en ;
+        rdfs:comment "包含环境背景信息，如地点、气候或自然条件。"@zh ;
+        whu:prompt "Extract environmental context elements involved in the background."@en
+    ] ;
+
+    ##################################################
+    ### 包含样本采集过程
+    ##################################################
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_part ;
+        owl:someValuesFrom whu:SpecimenCollection ;
+        rdfs:comment "Includes the specimen collection process as part of the experimental background."@en ;
+        rdfs:comment "包含样本采集过程，是实验背景的一部分。"@zh ;
+        whu:prompt "Identify and extract the specimen collection process."@en
+    ] ;
+
+    ##################################################
+    ### 包含样本预处理过程
+    ##################################################
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_part ;
+        owl:someValuesFrom whu:SpecimenPreprocessing ;
+        rdfs:comment "Includes specimen preprocessing steps as part of the experimental background."@en ;
+        rdfs:comment "包含样本预处理步骤，是背景过程的一部分。"@zh ;
+        whu:prompt "Extract specimen preprocessing information involved in the background."@en
+    ] ;
+
+    ##################################################
+    ### 背景中参与的设备
+    ##################################################
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_participant ;
+        owl:someValuesFrom whu:Device ;
+        rdfs:comment "Specifies devices involved in the background of the experimental setup."@en ;
+        rdfs:comment "指明实验背景中所使用的设备。"@zh ;
+        whu:prompt "Identify scientific devices used during background setup."@en
+    ] ;
+
+    ##################################################
+    ### 背景中参与的试剂
+    ##################################################
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_participant ;
+        owl:someValuesFrom whu:Reagent ;
+        rdfs:comment "Specifies reagents used during background sample treatment or storage."@en ;
+        rdfs:comment "指明实验背景中所使用的化学或生物试剂。"@zh ;
+        whu:prompt "Extract reagents used in background sampling or storage."@en
+    ] ;
+
+    ##################################################
+    ### 背景中使用的软件
+    ##################################################
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_participant ;
+        owl:someValuesFrom whu:Software ;
+        rdfs:comment "Specifies software involved in background data handling or preparation."@en ;
+        rdfs:comment "指明背景处理中使用的分析或模拟软件。"@zh ;
+        whu:prompt "Extract software tools used in background data preparation or processing."@en
+    ] ;
+
+    ##################################################
+    ### 背景对 Expeirment，ScientificEvidenceGraph的支持
+    ##################################################
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty mp:directlySupports ;
+        owl:someValuesFrom whu:Experiment ;
+        rdfs:comment "Indicates that this background module supports the scientific evidence graph (e.g., experiment, method, data)."@en ;
+        rdfs:comment "表明该背景模块为科学证据图（实验、方法、数据）提供支撑。"@zh ;
+        whu:prompt "Link the background elements that support the scientific evidence graph."@en
+    ] ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty mp:supports ;
+        owl:someValuesFrom whu:ScientificEvidence ;
+        rdfs:comment "Indicates that this background module supports the scientific evidence graph (e.g., experiment, method, data)."@en ;
+        rdfs:comment "表明该背景模块为科学证据图（实验、方法、数据）提供支撑。"@zh ;
+        whu:prompt "Link the background elements that support the scientific evidence graph."@en
+    ] .
+
+
+whu:ScientificEvidence a owl:Class ;
+    rdfs:label "Scientific Evidence"@en ;
+    rdfs:comment "A structured scientific evidence unit composed of experiment, method, activity steps and data, supporting or challenging a claim."@en,
+                 "结构化科学证据单元，由实验、方法、步骤和数据组成，用于支持或挑战一个主张。"@zh ;
+    whu:prompt "Extract structured scientific evidence including experiment, method, steps and data, and identify its relation to a claim."@en ;
+
+    ### 包含实验
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_part ;
+        owl:someValuesFrom whu:Experiment ;
+        rdfs:comment "Includes at least one experiment as the base of the evidence."@en ;
+        whu:prompt "Identify the experiment involved in this scientific evidence."@en
+    ] ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_part ;
+        owl:someValuesFrom whu:bio_chemical_Experiment ;
+        rdfs:comment "Includes at bio_chemical  experiment as the base of the evidence."@en ;
+        whu:prompt "Identify the bio_chemical experiment involved in this scientific evidence."@en
+       
+    ] ;
+
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_part ;
+        owl:someValuesFrom whu:Computational_Experiment;
+        rdfs:comment "Includes at computational  experiment as the base of the evidence."@en ;
+        whu:prompt "Identify the computational experiment involved in this scientific evidence."@en
+       
+    ] ;
+    ### 包含活动步骤
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_participant ;
+        owl:someValuesFrom whu:ActivityStep ;
+        rdfs:comment "Includes specific experimental activity steps."@en ;
+        whu:prompt "Extract the activity steps that make up this scientific evidence."@en
+    ] ;
+
+    ### 包含方法
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_participant ;
+        owl:someValuesFrom whu:Method ;
+        rdfs:comment "Includes methods used in the experiment."@en ;
+        whu:prompt "List the methods applied within the scientific evidence."@en
+    ] ;
+
+    ### 包含数据
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_participant ;
+        owl:someValuesFrom whu:DataSet ;
+        rdfs:comment "Includes the data produced by the experiment."@en ;
+        whu:prompt "Identify the resulting data associated with this scientific evidence."@en
+    ] ;
+
+    ### 支持背景
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty mp:supportedBy ;
+        owl:someValuesFrom whu:EvidenceBackground ;
+        rdfs:comment "Is supported by a defined experimental background context."@en ;
+        whu:prompt "Extract the evidence background that supports this scientific structure."@en
+    ] ;
+
+    ### 支持 或 挑战 claim
+    rdfs:subClassOf [
+        owl:unionOf (
+            [ a owl:Restriction ; owl:onProperty mp:supports ; owl:someValuesFrom mp:Claim ]
+            [ a owl:Restriction ; owl:onProperty mp:challenges ; owl:someValuesFrom mp:Claim ]
+        )
+    ] .      
+#####################################################################

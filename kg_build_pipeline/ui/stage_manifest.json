@@ -1,0 +1,68 @@
+[
+  {
+    "id": "clear_neo4j",
+    "title": "Clear Neo4j Database",
+    "destructive": true,
+    "order": 1,
+    "incompatible_extract_modes": ["expand_mid"],
+    "incompatible_reason": "Extract Low expands existing Validated Mid; clearing Neo4j would remove mid_gate_status=PASS parents."
+  },
+  {
+    "id": "build_kg",
+    "title": "Build Knowledge Graph",
+    "destructive": false,
+    "order": 2,
+    "incompatible_extract_modes": ["expand_mid"],
+    "incompatible_reason": "Extract Low does not re-run mid build_kg; it expands PASS mid parents already in Neo4j."
+  },
+  {
+    "id": "mid_quality_gate",
+    "title": "Mid Quality Gate",
+    "destructive": false,
+    "order": 3,
+    "incompatible_extract_modes": ["low_and_all", "expand_mid"],
+    "incompatible_reason": "Mid Quality Gate applies to mid-tier extraction; Extract Low requires prior PASS status; low_and_all skips mid gate."
+  },
+  {
+    "id": "low_expand",
+    "title": "Low Hierarchical Expand",
+    "destructive": false,
+    "order": 4,
+    "incompatible_extract_modes": ["low_and_all"],
+    "incompatible_reason": "Deprecated Extract Low and All uses section-wide full schema; incompatible with parent-scoped low_expand."
+  },
+  {
+    "id": "subgraph_annotate",
+    "title": "Subgraph Annotation",
+    "destructive": false,
+    "order": 5
+  },
+  {
+    "id": "chunk_merge",
+    "title": "Chunk Merge",
+    "destructive": false,
+    "order": 6
+  },
+  {
+    "id": "entity_merge",
+    "title": "Entity Merge",
+    "destructive": false,
+    "order": 7
+  },
+  {
+    "id": "pagerank",
+    "title": "PageRank Scoring",
+    "destructive": false,
+    "order": 8,
+    "incompatible_extract_modes": ["mid"],
+    "incompatible_reason": "PageRank feeds MetaPath maxPageRank; not used in mid-only extraction."
+  },
+  {
+    "id": "metapath",
+    "title": "MetaPath Enrichment",
+    "destructive": false,
+    "order": 9,
+    "incompatible_extract_modes": ["mid"],
+    "incompatible_reason": "Requires full low-level graph for F1 MetaPath templates."
+  }
+]

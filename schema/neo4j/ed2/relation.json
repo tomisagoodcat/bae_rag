@@ -1,0 +1,108 @@
+{
+  "relations": [
+    {
+      "label": "mp_argues",
+      "description": "Definition: Links a Micropublication to the Claim it advances.\nContext: Extract when the text explicitly states that a Micropublication (or its equivalent evidence package) argues a specific Claim.\nExamples:\n- Positive: 'MPU X argues Claim C1.' -> (mp:Micropublication) -[mp:argues]-> (mp:Claim)\n- Negative: Mentioned together without asserting 'argues' -> skip."
+    },
+    {
+      "label": "mp_hasSupport",
+      "description": "Definition: Links a Micropublication to elements that provide evidential support.\nContext: Extract when the text explicitly ties datasets, methods, statements, attributions, or references to a Micropublication as support.\nExamples:\n- Positive: 'MPU X is supported by Dataset S1 and Method M1.' -> mp:hasSupport triples\n- Negative: Co-occurrence without explicit support -> skip."
+    },
+    {
+      "label": "whu_hasElement",
+      "description": "Definition: Connects a Micropublication to its constituent elements (Claim, Statement, DataSet, Method, References, Attribution).\nContext: Extract when the text explicitly states one element is part of another element.\nExamples:\n- Positive: 'Micropublication P1 hasElement Claim 1.' -> (mp:Micropublication) -[whu:hasElement]-> (mp:Claim)\n- Positive: 'Micropublication P2 hasElement Statement 2.' -> (mp:Micropublication) -[whu:hasElement]-> (mp:Statement)\n- Negative: Co-mention without explicit hasElement -> skip."
+    },
+    {
+      "label": "mp_supports",
+      "description": "Definition: Connects a supporting Representation to another Representation that it provides evidence for.\nContext: Extract when the text states that one element supports or provides evidence for another element.\nExamples:\n- Positive: 'Dataset S1 supports Claim C3.' -> (whu:DataSet) -[mp:supports]-> (mp:Claim)\n- Positive: 'Method M1 supports Statement S2.' -> (whu:Method) -[mp:supports]-> (mp:Statement)\n- Negative: 'Discussed together' without explicit support -> skip."
+    },
+    {
+      "label": "mp_challenges",
+      "description": "Definition: Connects a challenging Representation to another Representation it contradicts/refutes.\nContext: Extract when the text states that one element challenges/contradicts/refutes another.\nExamples:\n- Positive: 'Dataset S1 challenges Claim C3.'\n- Positive: 'Method M1 contradicts Statement S2.'\n- Negative: Co-mention without contradiction -> skip."
+    },
+    {
+      "label": "dcterms_hasPart",
+      "description": "Definition: The 'hasPart' relation connects a DataSet to its constituent DataItems, indicating that these data items are part of the dataset.\nContext: Extract this relation when the text explicitly states that a dataset includes, contains, or is composed of specific data items, measurements, or observations. The subject should be the dataset, and the object should be the contained data item(s).\nExamples:\n- Positive: \"Dataset S1 includes measurements of cadmium concentration.\" -> (whu:DataSet) -[dcterms:hasPart]-> (whu:DataItem)\n- Positive: \"Dataset 2020-ENV contains temperature readings.\" -> (whu:DataSet) -[dcterms:hasPart]-> (whu:DataItem)\n- Negative: \"The study mentions both Dataset S1 and cadmium concentration\" (no explicit inclusion stated) -> skip."
+    },
+    {
+      "label": "prov_wasDerivedFrom",
+      "description": "Definition: Indicates that the specimen is derived from a specific environmental context, which may influence its characteristics.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:ProcessedSpecimen to an object of type whu:EnvironmentFeature. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:ProcessedSpecimen) wasderivedfrom Y (whu:EnvironmentFeature).\" -> (whu:ProcessedSpecimen) -[prov:wasDerivedFrom]-> (whu:EnvironmentFeature)\n- Negative: \"X and Y are discussed together\" (no explicit wasDerivedFrom) -> skip."
+    },
+    {
+      "label": "p_plan_isOutputVarOf",
+      "description": "Definition: The processed specimen is the output of a specimen preprocessing step.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:ProcessedSpecimen to an object of type whu:SpecimenCollection. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:ProcessedSpecimen) isoutputvarof Y (whu:SpecimenCollection).\" -> (whu:ProcessedSpecimen) -[p-plan:isOutputVarOf]-> (whu:SpecimenCollection)\n- Negative: \"X and Y are discussed together\" (no explicit isOutputVarOf) -> skip."
+    },
+    {
+      "label": "p_plan_isInputVarOf",
+      "description": "Definition: This specimen is used as an input variable in a specimen preprocessing plan, such as filtering, centrifugation, or staining.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:ProcessedSpecimen to an object of type whu:SpecimenPreprocessing. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:ProcessedSpecimen) isinputvarof Y (whu:SpecimenPreprocessing).\" -> (whu:ProcessedSpecimen) -[p-plan:isInputVarOf]-> (whu:SpecimenPreprocessing)\n- Negative: \"X and Y are discussed together\" (no explicit isInputVarOf) -> skip."
+    },
+    {
+      "label": "iao_is_about",
+      "description": "Definition: the dataSet about speciemen for example how many specimen has been collected.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:ProcessedSpecimen to an object of type whu:DataSet. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:ProcessedSpecimen) //purl.obolibrary.org/obo/iao is about> Y (whu:DataSet).\" -> (whu:ProcessedSpecimen) -[<http://purl.obolibrary.org/obo/IAO_is_about>]-> (whu:DataSet)\n- Negative: \"X and Y are discussed together\" (no explicit //purl.obolibrary.org/obo/IAO_is_about>) -> skip."
+    },
+    {
+      "label": "prov_wasAssociatedWith",
+      "description": "Definition: This experiment consists of biological or chemical steps.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:Computational_Experiment to an object of type whu:BioChemicalActivityStep. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:Computational_Experiment) wasassociatedwith Y (whu:BioChemicalActivityStep).\" -> (whu:Computational_Experiment) -[prov:wasAssociatedWith]-> (whu:BioChemicalActivityStep)\n- Negative: \"X and Y are discussed together\" (no explicit wasAssociatedWith) -> skip."
+    },
+    {
+      "label": "p_plan_isPreceededBy",
+      "description": "Definition: This collection plan follows a specimen preprocessing plan in the experimental sequence.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:SpecimenCollection to an object of type whu:SpecimenPreprocessing. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:SpecimenCollection) ispreceededby Y (whu:SpecimenPreprocessing).\" -> (whu:SpecimenCollection) -[p-plan:isPreceededBy]-> (whu:SpecimenPreprocessing)\n- Negative: \"X and Y are discussed together\" (no explicit isPreceededBy) -> skip."
+    },
+    {
+      "label": "p_plan_hasInputVar",
+      "description": "Definition: Associates a Step with the input Variable(s) it consumes or requires to be executed. Variables may represent material, data, or parameters.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:SpecimenPreprocessing to an object of type whu:Specimen. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:SpecimenPreprocessing) has input variable Y (whu:Specimen).\" -> (whu:SpecimenPreprocessing) -[p-plan:hasInputVar]-> (whu:Specimen)\n- Negative: \"X and Y are discussed together\" (no explicit has input variable) -> skip."
+    },
+    {
+      "label": "ro_has_goal",
+      "description": "Definition: This experiment has a specific scientific goal or objective.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:Bio_chemical_Experiment to an object of type whu:Goal. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:Bio_chemical_Experiment) //purl.obolibrary.org/obo/ro has goal> Y (whu:Goal).\" -> (whu:Bio_chemical_Experiment) -[<http://purl.obolibrary.org/obo/RO_has_goal>]-> (whu:Goal)\n- Negative: \"X and Y are discussed together\" (no explicit //purl.obolibrary.org/obo/RO_has_goal>) -> skip."
+    },
+    {
+      "label": "p_plan_has_Plan",
+      "description": "Definition: This step is part of a biochemical experiment.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:BioChemicalActivityStep to an object of type whu:Bio_chemical_Experiment. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:BioChemicalActivityStep) has plan Y (whu:Bio_chemical_Experiment).\" -> (whu:BioChemicalActivityStep) -[p-plan:has_Plan]-> (whu:Bio_chemical_Experiment)\n- Negative: \"X and Y are discussed together\" (no explicit has_Plan) -> skip."
+    },
+    {
+      "label": "prov_used",
+      "description": "Definition: This step involves a DataSet.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:BioChemicalActivityStep to an object of type whu:DataSet. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:BioChemicalActivityStep) used Y (whu:DataSet).\" -> (whu:BioChemicalActivityStep) -[prov:used]-> (whu:DataSet)\n- Negative: \"X and Y are discussed together\" (no explicit used) -> skip."
+    },
+    {
+      "label": "prov_generated",
+      "description": "Definition: This step produces DataSet.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:BioChemicalActivityStep to an object of type whu:DataSet. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:BioChemicalActivityStep) generated Y (whu:DataSet).\" -> (whu:BioChemicalActivityStep) -[prov:generated]-> (whu:DataSet)\n- Negative: \"X and Y are discussed together\" (no explicit generated) -> skip."
+    },
+    {
+      "label": "whu_declareUsed",
+      "description": "Definition: The method declared to be used by an activity step, pending verification.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:ActivityStep to an object of type whu:Method. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:ActivityStep) declared used Y (whu:Method).\" -> (whu:ActivityStep) -[whu:declareUsed]-> (whu:Method)\n- Negative: \"X and Y are discussed together\" (no explicit declared used) -> skip."
+    },
+    {
+      "label": "prov_wasUsedBy",
+      "description": "Definition: This device is used in one or more experimental steps.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:Device to an object of type whu:ActivityStep. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:Device) wasusedby Y (whu:ActivityStep).\" -> (whu:Device) -[prov:wasUsedBy]-> (whu:ActivityStep)\n- Negative: \"X and Y are discussed together\" (no explicit wasUsedBy) -> skip."
+    },
+    {
+      "label": "ro_has_constituent",
+      "description": "Definition: environmental material constituents (soil, water).\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:EnvironmentFeature to an object of type <http://purl.obolibrary.org/obo/CHEBI_24431>. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:EnvironmentFeature) //purl.obolibrary.org/obo/ro has constituent> Y (<http://purl.obolibrary.org/obo/CHEBI_24431>).\" -> (whu:EnvironmentFeature) -[<http://purl.obolibrary.org/obo/RO_has_constituent>]-> (<http://purl.obolibrary.org/obo/CHEBI_24431>)\n- Negative: \"X and Y are discussed together\" (no explicit //purl.obolibrary.org/obo/RO_has_constituent>) -> skip."
+    },
+    {
+      "label": "ro_has_quality",
+      "description": "Definition: the environmental condition (e.g., tropical, polar).\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:EnvironmentFeature to an object of type <http://purl.obolibrary.org/obo/ENVO_01000254>. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:EnvironmentFeature) //purl.obolibrary.org/obo/ro has quality> Y (<http://purl.obolibrary.org/obo/ENVO_01000254>).\" -> (whu:EnvironmentFeature) -[<http://purl.obolibrary.org/obo/RO_has_quality>]-> (<http://purl.obolibrary.org/obo/ENVO_01000254>)\n- Negative: \"X and Y are discussed together\" (no explicit //purl.obolibrary.org/obo/RO_has_quality>) -> skip."
+    },
+    {
+      "label": "ro_is_target_of",
+      "description": "Definition: //purl.obolibrary.org/obo/RO_is_target_of>: An object property linking whu:Target_analyte to whu:Goal.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:Target_analyte to an object of type whu:Goal. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:Target_analyte) //purl.obolibrary.org/obo/ro is target of> Y (whu:Goal).\" -> (whu:Target_analyte) -[<http://purl.obolibrary.org/obo/RO_is_target_of>]-> (whu:Goal)\n- Negative: \"X and Y are discussed together\" (no explicit //purl.obolibrary.org/obo/RO_is_target_of>) -> skip."
+    },
+    {
+      "label": "p_plan_correspondsToStep",
+      "description": "Definition: This step corresponds to a design step.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:BioChemicalActivityStep to an object of type p-plan:Step. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:BioChemicalActivityStep) correspondstostep Y (p-plan:Step).\" -> (whu:BioChemicalActivityStep) -[p-plan:correspondsToStep]-> (p-plan:Step)\n- Negative: \"X and Y are discussed together\" (no explicit correspondsToStep) -> skip."
+    },
+    {
+      "label": "p_plan_hasOutputVar",
+      "description": "Definition: Associates a Step with the Variable(s) it produces. This supports tracing how outputs are derived from previous inputs across Steps.\nContext: Extract this relation only when the text explicitly states a link from a subject of type p-plan:Step to an object of type p-plan:Variable. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (p-plan:Step) has output variable Y (p-plan:Variable).\" -> (p-plan:Step) -[p-plan:hasOutputVar]-> (p-plan:Variable)\n- Negative: \"X and Y are discussed together\" (no explicit has output variable) -> skip."
+    },
+    {
+      "label": "schema_hasBrand",
+      "description": "Definition: The brand or label under which the device was sold.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:Device to an object of type schema:Brand. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:Device) hasbrand Y (schema:Brand).\" -> (whu:Device) -[schema:hasBrand]-> (schema:Brand)\n- Negative: \"X and Y are discussed together\" (no explicit hasBrand) -> skip."
+    },
+    {
+      "label": "schema_hasManufacturer",
+      "description": "Definition: The organization that manufactured the device.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:Device to an object of type schema:Organization. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:Device) hasmanufacturer Y (schema:Organization).\" -> (whu:Device) -[schema:hasManufacturer]-> (schema:Organization)\n- Negative: \"X and Y are discussed together\" (no explicit hasManufacturer) -> skip."
+    }
+  ]
+}

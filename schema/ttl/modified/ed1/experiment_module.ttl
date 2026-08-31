@@ -1,0 +1,1012 @@
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix mp: <http://purl.org/mp#> .
+@prefix ro: <http://purl.obolibrary.org/obo/RO_> .
+@prefix uo: <http://purl.obolibrary.org/obo/UO_> .
+@prefix bfo: <http://purl.obolibrary.org/obo/BFO_> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix iao: <http://purl.obolibrary.org/obo/IAO_> .
+@prefix obi: <http://purl.obolibrary.org/obo/obi#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix whu: <http://example.org/whu#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix envo: <http://purl.obolibrary.org/obo/ENVO_> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix chebi: <http://purl.obolibrary.org/obo/CHEBI_> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix omath: <http://ontomathpro.org/ontology/> .
+@prefix p-plan: <http://purl.org/net/p-plan#> .
+@prefix schema: <https://schema.org/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ncbitaxon: <http://purl.obolibrary.org/obo/NCBITaxon_> .
+@base <http://www.w3.org/2002/07/owl#> .
+
+[ rdf:type owl:Ontology
+ ] .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://example.org/whu#prompt
+whu:prompt rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://example.org/whu#declareUsed
+whu:declareUsed rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf prov:used ;
+                rdfs:domain whu:ActivityStep ,
+                            whu:BioChemicalActivityStep ,
+                            whu:ComputationalActivityStep ;
+                rdfs:range whu:Method ;
+                whu:prompt """Define: Declares that an ActivityStep follows a specific Method/standard.
+
+Context: Extract only when the text states “following/according to/using [Method/Standard]”. Subject: BioChemicalActivityStep or ComputationalActivityStep; Object: Method.
+
+Examples: “Digestion followed EPA 3052” → declareUsed(step, Method:EPA 3052)."""@en ;
+                rdfs:comment "The method declared to be used by an activity step, pending verification."@en ,
+                             "This step uses a method."@en ,
+                             "活动步骤声明使用的方法（待确认）。"@zh ,
+                             "该步骤使用方法。"@zh ;
+                rdfs:label "declared used"@en .
+
+
+###  http://example.org/whu#hasExecutionEnvironment
+whu:hasExecutionEnvironment rdf:type owl:ObjectProperty ;
+                            rdfs:domain whu:BioChemicalActivityStep ;
+                            rdfs:range whu:ExecutionEnvironment ;
+                            whu:prompt """Define: Links a biochemical step to its execution environment (temperature, humidity, duration).
+
+Context: Use when controlled conditions are reported with numeric values/units.
+
+Examples: “digestion at 180 °C for 30 min” → hasExecutionEnvironment with temperature=180, duration=30 min.""" .
+
+
+###  http://example.org/whu#hasGoal
+whu:hasGoal rdf:type owl:ObjectProperty ;
+            rdfs:domain whu:Bio_chemical_Experiment ,
+                        whu:ComputationalExperiment ;
+            rdfs:range whu:Goal ;
+            whu:prompt """Define: Links an experiment to its explicit scientific objective (Goal).
+
+Context: Look for “to quantify/assess/compare/evaluate …”. Subject: Bio_chemical_Experiment or Computational_Experiment; Object: Goal.
+
+Examples: “to compare metal levels across regions” → hasGoal(experiment, goal). """@en ;
+            rdfs:comment "This experiment has a specific scientific goal or objective."@en ,
+                         "这个实验有具体的目标。"@zh .
+
+
+###  http://purl.obolibrary.org/obo/IAO_is_about
+iao:is_about rdf:type owl:ObjectProperty .
+
+
+###  http://purl.org/net/p-plan#correspondsToStep
+p-plan:correspondsToStep rdf:type owl:ObjectProperty ;
+                         rdfs:domain whu:BioChemicalActivityStep ,
+                                     whu:ComputationalActivityStep ;
+                         rdfs:range p-plan:Step ;
+                         whu:prompt """Define: Maps an executed ActivityStep to a designed p-plan:Step.
+
+Context: Use when the paper enumerates planned steps (Step 1/2/3) and later refers to actual execution.
+
+Examples: “as in Step 2 (acid digestion)” → correspondsToStep(ActivityStep_digestion, Step_2)."""@en ;
+                         rdfs:comment "This step corresponds to a design step."@en ,
+                                      "该步骤对应一个设计步骤。"@zh .
+
+
+###  http://purl.org/net/p-plan#hasInputVar
+p-plan:hasInputVar rdf:type owl:ObjectProperty ;
+                   rdfs:domain whu:SpecimenPreprocessing ,
+                               p-plan:Step ;
+                   rdfs:range whu:Specimen ,
+                              p-plan:Variable ;
+                   whu:prompt """Define: Associates a plan/step with its input variable.
+
+Context: For SpecimenPreprocessing, link the consumed Specimen; for p-plan:Step, link its p-plan:Variable.
+
+Examples: “Preprocessing used homogenized rice grains.” → hasInputVar(Preprocessing, Specimen)"""@en ;
+                   rdfs:comment "just like material_processing, but with a specific focus on specimen preprocessing."@zh ,
+                                "Associates a Step with the input Variable(s) it consumes or requires to be executed. Variables may represent material, data, or parameters." ;
+                   rdfs:label "has input variable" .
+
+
+###  http://purl.org/net/p-plan#isInputVarOf
+p-plan:isInputVarOf rdf:type owl:ObjectProperty ;
+                    rdfs:domain whu:ProcessedSpecimen ,
+                                whu:Specimen ;
+                    rdfs:range whu:Bio_chemical_Experiment ,
+                               whu:SpecimenPreprocessing ;
+                    whu:prompt """Define: A Specimen or ProcessedSpecimen serves as input to a plan.
+
+Context: Use when text says “used for … experiment/preprocessing”.
+
+Examples: “Processed powder was used for ICP‑MS.” → isInputVarOf(ProcessedSpecimen, Bio_chemical_Experiment)."""@en ;
+                    rdfs:comment "This specimen is used as an input variable in a specimen preprocessing plan, such as filtering, centrifugation, or staining."@en ,
+                                 "This specimen is used as input in a biochemical experiment."@en ,
+                                 "该标本作为输入用于生化实验中。"@zh ,
+                                 "该标本是样本预处理计划的输入变量，例如过滤、离心、染色等实验处理流程的输入。"@zh .
+
+
+###  http://purl.org/net/p-plan#isOutputVarOf
+p-plan:isOutputVarOf rdf:type owl:ObjectProperty ;
+                     rdfs:domain whu:ProcessedSpecimen ,
+                                 whu:Specimen ;
+                     rdfs:range whu:SpecimenCollection ,
+                                whu:SpecimenPreprocessing ;
+                     whu:prompt """Define: A Specimen/ProcessedSpecimen is the output of a plan.
+
+Context: For Specimen ← SpecimenCollection; for ProcessedSpecimen ← SpecimenPreprocessing.
+
+Examples: “The digestion produced solutions.” → isOutputVarOf(ProcessedSpecimen, SpecimenPreprocessing)."""@en ;
+                     rdfs:comment "The processed specimen is the output of a specimen preprocessing step."@en ,
+                                  "This specimen is the output variable of a specimen collection plan, indicating its generation through structured sampling."@en ,
+                                  "该标本是样本采集计划的输出变量，表示其通过结构化采样过程产生。"@zh ,
+                                  "该标本是样本预处理流程的输出产物。"@zh .
+
+
+###  http://purl.org/net/p-plan#isPrecededBy
+p-plan:isPrecededBy rdf:type owl:ObjectProperty ;
+                    whu:prompt """Define: Declares an execution order between plans/steps.
+
+Context: Use when the text states sequence terms (“after”, “then”, “subsequently”).
+
+Examples: “After preprocessing, ICP‑MS was conducted.” → isPrecededBy(Bio_chemical_Experiment, SpecimenPreprocessing)."""@en ;
+                    rdfs:comment "This collection plan follows a specimen preprocessing plan in the experimental sequence."@en ,
+                                 "该采集计划在实验顺序中位于预处理计划之后。"@zh .
+
+
+###  http://purl.org/net/p-plan#isStepOfPlan
+p-plan:isStepOfPlan rdf:type owl:ObjectProperty ;
+                    rdfs:domain whu:BioChemicalActivityStep ,
+                                whu:ComputationalActivityStep ;
+                    rdfs:range whu:Bio_chemical_Experiment ;
+                    whu:prompt """Define: States an ActivityStep belongs to an experiment plan.
+
+Context: Connect BioChemicalActivityStep → Bio_chemical_Experiment; ComputationalActivityStep → Computational_Experiment.
+
+Examples: “instrument run” → isStepOfPlan(runStep, Bio_chemical_Experiment)."""@en ;
+                    rdfs:comment "This step is part of a biochemical experiment."@en ,
+                                 "This step is part of a computational experiment."@en ,
+                                 "该步骤属于生物化学实验。"@zh ,
+                                 "该步骤属于计算实验。"@zh .
+
+
+###  http://www.w3.org/ns/prov#generated
+prov:generated rdf:type owl:ObjectProperty ;
+               rdfs:domain whu:BioChemicalActivityStep ,
+                           whu:ComputationalActivityStep ;
+               rdfs:range whu:DataSet ,
+                          whu:ProcessedSpecimen ;
+               whu:prompt """Define: An activity step produced a DataSet or ProcessedSpecimen.
+
+Context: Look for “produced/yielded/generated/obtained/output”.
+
+Examples: “ICP‑MS generated concentration data.” → generated(BioChemicalActivityStep, DataSet)."""@en ;
+               rdfs:comment "This step produces DataSet."@en ,
+                            "This step produces a processed specimen."@en ,
+                            "This step produces data set"@en ,
+                            "该步骤生成处理后的样本。"@zh ,
+                            "该步骤生成数据。"@zh ,
+                            "该步骤生成数据集。"@zh .
+
+
+###  http://www.w3.org/ns/prov#used
+prov:used rdf:type owl:ObjectProperty ;
+          rdfs:domain whu:BioChemicalActivityStep ,
+                      whu:ComputationalActivityStep ;
+          rdfs:range whu:DataSet ,
+                     whu:Device ,
+                     whu:ProcessedSpecimen ,
+                     whu:Reagent ,
+                     whu:Software ;
+          whu:prompt """Define: An activity step used an input entity (DataSet/Device/ProcessedSpecimen/Reagent/Software).
+
+Context: Triggers: “using/with/processed by/analysed in/implemented in”.
+
+Examples: “Data were analysed in R 4.2.2” → used(ComputationalActivityStep, Software:R)."""@en ;
+          rdfs:comment "This step involves a DataSet."@en ,
+                       "This step involves a Software."@en ,
+                       "This step involves a device."@en ,
+                       "This step involves a reagent."@en ,
+                       "This step involves a specimen."@en ,
+                       "该步骤涉及数据集。"@zh ,
+                       "该步骤涉及样本。"@zh ,
+                       "该步骤涉及设备。"@zh ,
+                       "该步骤涉及试剂。"@zh .
+
+
+###  http://www.w3.org/ns/prov#wasAssociatedWith
+prov:wasAssociatedWith rdf:type owl:ObjectProperty ;
+                       rdfs:domain whu:Bio_chemical_Experiment ,
+                                   whu:Computational_Experiment ,
+                                   whu:SpecimenCollection ,
+                                   whu:SpecimenPreprocessing ;
+                       rdfs:range whu:BioChemicalActivityStep ,
+                                  whu:ComputationalActivityStep ;
+                       whu:prompt """Define: A plan/experiment is associated with specific activity steps.
+
+Context: Link SpecimenCollection/Preprocessing to BioChemicalActivityStep; link Computational_Experiment to ComputationalActivityStep.
+
+Examples: “The collection involved grab sampling and composite mixing.” → 两个 BioChemicalActivityStep 与 SpecimenCollection 关联。"""@en ;
+                       rdfs:comment "This experiment consists of biological or chemical steps."@en ,
+                                    "This experiment is composed of computational activity steps."@en ,
+                                    "the activity steps involved in the specimen collection plan."@en ,
+                                    "the activity steps involved in the specimen preprocessing plan."@en ,
+                                    "样本采集计划涉及的活动步骤。"@zh ,
+                                    "样本预处理计划涉及的活动步骤。"@zh ,
+                                    "这个实验由生物或化学步骤组成。"@zh ,
+                                    "这个实验由计算步骤组成。"@zh .
+
+
+###  http://www.w3.org/ns/prov#wasDerivedFrom
+prov:wasDerivedFrom rdf:type owl:ObjectProperty ;
+                    rdfs:domain whu:ProcessedSpecimen ,
+                                whu:Specimen ;
+                    rdfs:range whu:EnvironmentFeature ,
+                               whu:Specimen ;
+                    whu:prompt """Define: A material/result derives from a source entity.
+
+Context: Use for (Specimen → EnvironmentFeature) and (ProcessedSpecimen → Specimen).
+
+Examples: “Processed digests were derived from collected rice grains.” → wasDerivedFrom(ProcessedSpecimen, Specimen)."""@en ;
+                    rdfs:comment "Indicates that the specimen is derived from a specific environmental context, which may influence its characteristics."@en ,
+                                 "The processed specimen is derived from a collected specimen sample."@en ,
+                                 "表示该样本来源于特定的环境上下文，环境因素可能影响其性质。"@zh ,
+                                 "该处理标本来源于采集得到的 specimen 原始样本。"@zh .
+
+
+###  https://schema.org/hasManufacturer
+schema:hasManufacturer rdf:type owl:ObjectProperty ;
+                       rdfs:domain whu:Device ;
+                       rdfs:range schema:Organization ;
+                       whu:prompt """Define: Organization that manufactured the Device.
+
+Context: Use when explicit company/organization is named; if only brand occurs, keep hasBrand and skip manufacturer unless clearly stated.
+
+Examples: “Thermo Fisher Scientific” → hasManufacturer=Thermo Fisher Scientific."""@en ;
+                       rdfs:comment "The organization that manufactured the device."@en ,
+                                    "生产该设备的机构。"@zh .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://example.org/whu#brand
+whu:brand rdf:type owl:DatatypeProperty .
+
+
+###  http://www.geonames.org/ontology#population
+gn:population rdf:type owl:DatatypeProperty .
+
+
+###  http://www.w3.org/2003/01/geo/wgs84_pos#alt
+geo:alt rdf:type owl:DatatypeProperty .
+
+
+###  http://www.w3.org/2003/01/geo/wgs84_pos#lat
+geo:lat rdf:type owl:DatatypeProperty .
+
+
+###  http://www.w3.org/2003/01/geo/wgs84_pos#long
+geo:long rdf:type owl:DatatypeProperty .
+
+
+###  https://schema.org/hasBrand
+schema:hasBrand rdf:type owl:DatatypeProperty .
+
+
+###  https://schema.org/hasModel
+schema:hasModel rdf:type owl:DatatypeProperty .
+
+
+###  https://schema.org/hasSerialNumber
+schema:hasSerialNumber rdf:type owl:DatatypeProperty .
+
+
+###  https://schema.org/softwareVersion
+schema:softwareVersion rdf:type owl:DatatypeProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://example.org/whu#ActivityStep
+whu:ActivityStep rdf:type owl:Class .
+
+
+###  http://example.org/whu#BioChemicalActivityStep
+whu:BioChemicalActivityStep rdf:type owl:Class ;
+                            rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                              owl:onProperty whu:declareUsed ;
+                                              owl:someValuesFrom whu:Method
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty whu:hasExecutionEnvironment ;
+                                              owl:someValuesFrom whu:ExecutionEnvironment
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty p-plan:correspondsToStep ;
+                                              owl:someValuesFrom p-plan:Step
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty p-plan:isPrecededBy ;
+                                              owl:someValuesFrom whu:BioChemicalActivityStep
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty p-plan:isStepOfPlan ;
+                                              owl:someValuesFrom whu:Bio_chemical_Experiment
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty prov:generated ;
+                                              owl:someValuesFrom whu:DataSet
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty prov:generated ;
+                                              owl:someValuesFrom whu:ProcessedSpecimen
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty prov:used ;
+                                              owl:someValuesFrom whu:Device
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty prov:used ;
+                                              owl:someValuesFrom whu:ProcessedSpecimen
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty prov:used ;
+                                              owl:someValuesFrom whu:Reagent
+                                            ] ;
+                            whu:prompt """Define: Atomic biochemical procedure that declares a whu:Method, consumes ProcessedSpecimen/Reagent/Device, and generates ProcessedSpecimen and/or DataSet.
+
+Context: Create per step (e.g., “acid digestion”, “instrument run”). Link p-plan:isStepOfPlan → Bio_chemical_Experiment; prov:used (Device/Reagent/ProcessedSpecimen); prov:generated (DataSet/ProcessedSpecimen); optional p-plan:correspondsToStep; whu:hasExecutionEnvironment.
+
+Examples: “Microwave digestion with HNO₃ (65%) using MARS 6; run ICP‑MS.” → two steps: digestion and measurement."""@en ;
+                            rdfs:comment "A subclass_of ActivityStep involving biochemical procedures that use reagents, devices, specimens and produce data and processed specimens."@en ;
+                            rdfs:label "Biochemical Activity Step"@en .
+
+
+###  http://example.org/whu#Bio_chemical_Experiment
+whu:Bio_chemical_Experiment rdf:type owl:Class ;
+                            rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                              owl:onProperty whu:hasGoal ;
+                                              owl:someValuesFrom whu:Goal
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty p-plan:isPrecededBy ;
+                                              owl:someValuesFrom whu:SpecimenPreprocessing
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty prov:wasAssociatedWith ;
+                                              owl:someValuesFrom whu:BioChemicalActivityStep
+                                            ] ;
+                            whu:prompt """### Define:
+
+A **BioChemicalExperiment** is a structured set of laboratory or field-based procedures applied to physical **specimens** or their **processed derivatives**, using defined **instruments**, **reagents**, and **protocols**. These experiments aim to transform or analyze specimens to produce scientifically valid **data**, which can serve as **evidence in claims** and may also be inputs for downstream computational analysis.
+
+> Typical examples include heavy metal detection in soil using ICP-MS, or pesticide residue analysis via HPLC.
+
+---
+
+### Purpose:
+
+1. **Transformation & Measurement**: Apply specific techniques to extract or quantify chemical/biological targets from specimens (e.g., nutrients, pollutants, biomarkers).  
+2. **Evidence Generation**: Produce raw or processed data as core scientific evidence that can **support or challenge scientific claims**, and may serve as input to computational workflows or comparative analysis.  
+
+---
+
+### Context:
+
+Trigger this class when a procedure is described that:  
+
+- Applies instruments, reagents, or chemical methods to a physical sample.  
+- Explicitly yields **measured data** from physical material.  
+- Is causally or sequentially linked to downstream reasoning steps.  
+
+**Use semantic links**:  
+* `prov:wasAssociatedWith` → `whu:BioChemicalActivityStep`
+* `whu:hasGoal` → experiment’s scientific intent  
+* `p-plan:isPrecededBy` ← `whu:SpecimenPreprocessing`  
+
+---
+
+### Examples:
+
+> **BioChemicalExperiment 1**: *Characterization of Porewater Dissolved Organic Matter (DOM) using UV absorbance and fluorescence spectroscopy, producing fluorescence indices and absorbance spectra.*  
+
+> **BioChemicalExperiment 2**: *Detection of heavy metals in rice grains through ICP-MS following nitric acid digestion, yielding concentration data for Cd, Hg, and Pb in grains.*"""@en ;
+                            rdfs:comment "A bio-chemical experiment is an experiment that involves the use of biological or chemical samples to measure properties of the samples or the environment."@en ;
+                            rdfs:label "Bio-Chemical Experiment"@en .
+
+
+###  http://example.org/whu#ComputationalActivityStep
+whu:ComputationalActivityStep rdf:type owl:Class ;
+                              rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                                owl:onProperty whu:declareUsed ;
+                                                owl:someValuesFrom whu:Method
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty p-plan:correspondsToStep ;
+                                                owl:someValuesFrom p-plan:Step
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty p-plan:isStepOfPlan ;
+                                                owl:someValuesFrom whu:Computational_Experiment
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty prov:generated ;
+                                                owl:someValuesFrom whu:DataSet
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty prov:used ;
+                                                owl:someValuesFrom whu:DataSet
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty prov:used ;
+                                                owl:someValuesFrom whu:Device
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty prov:used ;
+                                                owl:someValuesFrom whu:Software
+                                              ] ;
+                              whu:prompt """Define: Atomic computational operation that declares a whu:Method, uses Software and input DataSet, and generates a new DataSet or result.
+
+Context: Create per transform/test/modeling step. Link p-plan:isStepOfPlan → Computational_Experiment; prov:used (Software, DataSet); prov:generated (DataSet).
+
+Examples: “Log‑transform concentrations; run one‑way ANOVA; compute Pearson r.” → separate ComputationalActivitySteps."""@en ;
+                              rdfs:comment "Experimental steps involving computational data transformations."@en ,
+                                           "涉及计算数据转换的实验步骤。"@zh ;
+                              rdfs:label "Computational Activity Step"@en .
+
+
+###  http://example.org/whu#ComputationalExperiment
+whu:ComputationalExperiment rdf:type owl:Class .
+
+
+###  http://example.org/whu#Computational_Experiment
+whu:Computational_Experiment rdf:type owl:Class ;
+                             rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                               owl:onProperty whu:hasGoal ;
+                                               owl:someValuesFrom whu:Goal
+                                             ] ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty p-plan:isPrecededBy ;
+                                               owl:someValuesFrom whu:BioChemicalActivityStep
+                                             ] ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty prov:used ;
+                                               owl:someValuesFrom whu:Software
+                                             ] ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty prov:wasAssociatedWith ;
+                                               owl:someValuesFrom whu:ComputationalActivityStep
+                                             ] ;
+                             whu:prompt """Define: Data‑only analysis (statistics/modeling/transforms) using software to produce derived datasets or results.
+
+Context: Create when methods like t‑test/ANOVA/PCA/regression/ML are reported. Link prov:wasAssociatedWith → ComputationalActivityStep; prov:used → Software; whu:hasGoal → Goal.
+
+Examples: “We ran PCA in R 4.2.2; t‑tests assessed group differences (p<0.05).” → Computational_Experiment."""@en ;
+                             rdfs:comment "A computational experiment involves the use of software and computational procedures to process or analyze data."@en ,
+                                          "一个计算实验涉及使用软件和计算方法进行数据处理或分析。"@zh ;
+                             rdfs:label "Computational Experiment"@en .
+
+
+###  http://example.org/whu#DataSet
+whu:DataSet rdf:type owl:Class .
+
+
+###  http://example.org/whu#Device
+whu:Device rdf:type owl:Class ;
+           rdfs:subClassOf [ rdf:type owl:Restriction ;
+                             owl:onProperty schema:hasManufacturer ;
+                             owl:someValuesFrom schema:Organization
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty schema:hasBrand ;
+                             owl:someValuesFrom xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty schema:hasModel ;
+                             owl:someValuesFrom xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty schema:hasSerialNumber ;
+                             owl:someValuesFrom xsd:string
+                           ] ;
+           whu:prompt """Define: Scientific instrument used in biochemical steps.
+
+Context: Create Device and fill schema:hasBrand (brand/name), schema:hasModel, schema:hasSerialNumber if stated; connect via prov:used from BioChemicalActivityStep.
+
+Examples: “Agilent 7700 ICP‑MS”, “Thermo Fisher iCAP Q; SN: Q12345”."""@en ;
+           rdfs:comment "Scientific or analytical device used in specimen processing or experiment."@en ,
+                        "用于样本处理或实验的科学仪器。"@zh ;
+           rdfs:label "Device"@en .
+
+
+###  http://example.org/whu#EnvironmentFeature
+whu:EnvironmentFeature rdf:type owl:Class ;
+                       rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                         owl:onProperty gn:population ;
+                                         owl:someValuesFrom xsd:integer
+                                       ] ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty geo:alt ;
+                                         owl:someValuesFrom xsd:float
+                                       ] ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty geo:lat ;
+                                         owl:someValuesFrom xsd:float
+                                       ] ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty geo:long ;
+                                         owl:someValuesFrom xsd:float
+                                       ] ;
+                       whu:prompt """
+    Define: An environmental or geographic context (e.g., soil, river, urban air, farmland, site, province/city) that can carry coordinates and optional demographics.
+
+Context: Create a node of type whu:EnvironmentFeature when the text names a sampling location or environmental setting used to derive specimens or frame experiments. If coordinates appear, map them to geo:lat, geo:long, geo:alt; if population appears, map to gn:population.
+
+Examples:
+
+“Samples were taken from paddy fields in Nanjing (32.1°N, 118.8°E, 20 m).” → EnvironmentFeature with geo:lat=32.1, geo:long=118.8, geo:alt=20.
+
+“Urban air in Shanghai; population 24M.” → EnvironmentFeature with gn:population=24000000.
+    
+    """@en ;
+                       rdfs:comment "A spatial feature representing any real-world location, geographic entity, or phenomenon with associated geometry. In the context of a Neo4j Graph RAG system, this class is designed to model provinces, cities, sites, or other geographic regions as described in environmental research. It is primarily used to associate precise geometry or coordinates (e.g., latitude, longitude, polygons) to enable advanced geospatial queries, environmental analyses, and spatial data visualization. By integrating both environmental semantics from ENVO and geospatial properties from WGS84, this class supports robust spatial reasoning and facilitates cross-disciplinary research.Represents environmental context integrating geographic coordinates, administrative divisions, environmental conditions, and material constituents, including chemical pollutants."@en ,
+                                    "代表环境上下文，集成地理坐标、行政区划、环境状态以及物质组成，包括化学污染物。"@zh ;
+                       rdfs:label "Environment Feature"@en .
+
+
+###  http://example.org/whu#ExecutionEnvironment
+whu:ExecutionEnvironment rdf:type owl:Class .
+
+
+###  http://example.org/whu#Goal
+whu:Goal rdf:type owl:Class ;
+         rdfs:subClassOf prov:Entity ;
+         whu:prompt """Define: Stated scientific objective of an experiment/plan (e.g., “quantify Hg in rice”, “compare urban vs rural PM2.5 metals”).
+
+Context: Create only when explicitly stated; link from experiment via whu:hasGoal.
+
+Examples: “to quantify As, Cd, Pb in white rice” → Goal."""@en ;
+         rdfs:comment "A scientific goal or objective."@en ,
+                      "科学目标或目标。"@zh ;
+         rdfs:label "Goal"@en .
+
+
+###  http://example.org/whu#Method
+whu:Method rdf:type owl:Class ;
+           rdfs:subClassOf prov:Entity ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty mp:supports ;
+                             owl:someValuesFrom mp:DataSet
+                           ] ;
+           whu:prompt """Define: Static protocol or named method/standard that steps can declare as used (e.g., “EPA 6020B”, “AOAC 2015.01”, “ISO 17294‑2”).
+
+Context: Create when a protocol is cited; connect via whu:declareUsed from ActivityStep; may mp:supports a DataSet.
+
+Examples: “Digestion followed EPA 3052” → Method."""@en ;
+           mp:supports whu:DataSet ;
+           rdfs:comment "Static protocol or standard defining the steps of an experiment."@en ,
+                        "定义实验步骤的静态协议或标准。"@zh ;
+           rdfs:label "Method"@en .
+
+
+###  http://example.org/whu#ProcessedSpecimen
+whu:ProcessedSpecimen rdf:type owl:Class ;
+                      rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                        owl:onProperty iao:is_about ;
+                                        owl:someValuesFrom whu:ScalarMeasurementDatum
+                                      ] ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty p-plan:isInputVarOf ;
+                                        owl:someValuesFrom whu:Bio_chemical_Experiment
+                                      ] ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty p-plan:isOutputVarOf ;
+                                        owl:someValuesFrom whu:SpecimenPreprocessing
+                                      ] ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty prov:wasDerivedFrom ;
+                                        owl:someValuesFrom whu:Specimen
+                                      ] ;
+                      whu:prompt """Define: A specimen after preprocessing (e.g., drying, sieving, digestion) used as input to biochemical experiments.
+
+Context: Create when the text describes an output of SpecimenPreprocessing. Connect: prov:wasDerivedFrom → Specimen; p-plan:isOutputVarOf ← SpecimenPreprocessing; p-plan:isInputVarOf → Bio_chemical_Experiment; numeric quantity via iao:is_about.
+
+Examples: “Dried and acid-digested rice flour was used for ICP‑MS.” → ProcessedSpecimen with edges above."""@en ;
+                      rdfs:comment "A material specimen derived from a collected sample, having undergone preprocessing, and used in biochemical experiments. Semantically aligned with OBI's processed material."@en ,
+                                   "从采集样本加工得到的处理标本，参与后续生化实验，语义上与 OBI 中的 processed material 对齐。"@zh ;
+                      rdfs:label "Processed Specimen"@en .
+
+
+###  http://example.org/whu#Reagent
+whu:Reagent rdf:type owl:Class ;
+            rdfs:subClassOf mp:Material ,
+                            prov:Entity ,
+                            schema:Product ;
+            whu:prompt """ Define: Chemical/biological reagent used in preprocessing or measurement (e.g., HNO₃ 65%, H₂O₂ 30%, standards, reference materials).
+
+Context: Create when concentration/grade/brand are given; connect via prov:used from BioChemicalActivityStep.
+
+Examples: “suprapure HNO₃ (65%) from Merck” → Reagent."""@en ;
+            rdfs:comment "Chemical or biological reagent used in sample treatment or analysis."@en ,
+                         "用于样本处理或分析的化学或生物试剂。"@zh ;
+            rdfs:label "Reagent"@en .
+
+
+###  http://example.org/whu#ScalarMeasurementDatum
+whu:ScalarMeasurementDatum rdf:type owl:Class .
+
+
+###  http://example.org/whu#Software
+whu:Software rdf:type owl:Class ;
+             rdfs:subClassOf [ rdf:type owl:Restriction ;
+                               owl:onProperty whu:brand ;
+                               owl:someValuesFrom xsd:string
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty schema:softwareVersion ;
+                               owl:someValuesFrom xsd:string
+                             ] ;
+             whu:prompt """Define: Named software used in analysis/simulation.
+
+Context: Create Software with whu:brand (name) and schema:softwareVersion when present; connect via prov:used from ComputationalActivityStep/Experiment.
+
+Examples: “R (4.2.2)”, “SPSS 26”, “MATLAB R2021b”."""@en ;
+             rdfs:comment "Analytical or computational software used in data processing or simulation."@en ,
+                          "用于数据处理或仿真的分析或计算软件。"@zh ;
+             rdfs:label "Software"@en .
+
+
+###  http://example.org/whu#Specimen
+whu:Specimen rdf:type owl:Class ;
+             rdfs:subClassOf [ rdf:type owl:Restriction ;
+                               owl:onProperty iao:is_about ;
+                               owl:someValuesFrom whu:ScalarMeasurementDatum
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty p-plan:isInputVarOf ;
+                               owl:someValuesFrom whu:SpecimenPreprocessing
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty p-plan:isOutputVarOf ;
+                               owl:someValuesFrom whu:SpecimenCollection
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty prov:wasDerivedFrom ;
+                               owl:someValuesFrom whu:EnvironmentFeature
+                             ] ;
+             whu:prompt """Define: Physical biological/environmental sample collected from an EnvironmentFeature, used in downstream plans/experiments.
+
+Context: Create whu:Specimen when the text names collected materials (e.g., “rice grains”, “surface soil”, “river water”). Link with prov:wasDerivedFrom → EnvironmentFeature; p-plan:isOutputVarOf ← SpecimenCollection; p-plan:isInputVarOf → SpecimenPreprocessing. If measurements of count/mass/volume appear, attach via iao:is_about → whu:ScalarMeasurementDatum.
+
+Examples: “We collected 30 rice grain samples from supermarkets in Nanjing.” → Specimen (+ prov:wasDerivedFrom to city feature; iao:is_about count=30).""" ;
+             rdfs:comment "A biological or environmental specimen material, collected from a defined context, used in experimentation, and taxonomically classified. Semantically aligned with OBI:specimen."@en ,
+                          "从环境中采集的生物或环境样本材料，参与后续处理与实验流程，并具备生物分类标识。语义上与OBI中的 specimen 类对齐。"@zh ;
+             rdfs:label "Specimen"@en .
+
+
+###  http://example.org/whu#SpecimenCollection
+whu:SpecimenCollection rdf:type owl:Class ;
+                       rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                         owl:onProperty p-plan:isPrecededBy ;
+                                         owl:someValuesFrom whu:EnvironmentFeature
+                                       ] ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty prov:wasAssociatedWith ;
+                                         owl:someValuesFrom whu:BioChemicalActivityStep
+                                       ] ;
+                       whu:prompt """Define: A sampling plan describing how specimens are collected (where/when/design/tools).
+
+Context: Create SpecimenCollection when sampling methodology is stated; link steps via prov:wasAssociatedWith → BioChemicalActivityStep; output via p-plan:isOutputVarOf on Specimen.
+
+Examples: “We randomly collected 60 white‑rice samples from 10 districts during 2022–2023.” → SpecimenCollection producing Specimen."""@en ;
+                       rdfs:comment "A sampling plan that governs the collection of environmental specimens for subsequent experimental analysis."@en ,
+                                    "一个采样计划，管理从环境中采集样本的流程，用于后续实验分析。"@zh ;
+                       rdfs:label "Specimen Collection"@en .
+
+
+###  http://example.org/whu#SpecimenPreprocessing
+whu:SpecimenPreprocessing rdf:type owl:Class ;
+                          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                            owl:onProperty p-plan:hasInputVar ;
+                                            owl:someValuesFrom whu:Specimen
+                                          ] ,
+                                          [ rdf:type owl:Restriction ;
+                                            owl:onProperty p-plan:isPrecededBy ;
+                                            owl:someValuesFrom whu:SpecimenCollection
+                                          ] ,
+                                          [ rdf:type owl:Restriction ;
+                                            owl:onProperty prov:wasAssociatedWith ;
+                                            owl:someValuesFrom whu:BioChemicalActivityStep
+                                          ] ;
+                          whu:prompt """Define: A plan for intermediate handling before analysis (e.g., cooling, freezing, filtering, sieving, digestion).
+
+Context: Create when procedures convert Specimen to ProcessedSpecimen. Connect: p-plan:hasInputVar ← Specimen; p-plan:isOutputVarOf on ProcessedSpecimen; steps via prov:wasAssociatedWith → BioChemicalActivityStep.
+
+Examples: “Samples were freeze‑dried, ground, passed through 100‑mesh.” → SpecimenPreprocessing."""@zh ,
+                                     "Describe how specimens were preprocessed before experimentation (e.g., cooling, freezing, filtering)."@en ;
+                          rdfs:comment "A plan describing the intermediate handling of specimens before they are analyzed."@en ,
+                                       "样本在实验分析前的预处理计划，描述其存储、运输、或准备方式。"@zh ;
+                          rdfs:label "Specimen Preprocessing"@en .
+
+
+###  http://example.org/whu#TargetObject
+whu:TargetObject rdf:type owl:Class .
+
+
+###  http://example.org/whu#Target_analyte
+whu:Target_analyte rdf:type owl:Class ;
+                   rdfs:subClassOf whu:TargetObject ,
+                                   <http://purl.obolibrary.org/obo/BFO_0000040> ,
+                                   chebi:ChemicalEntity ;
+                   whu:prompt """Define: Chemical entity measured/assessed (e.g., As, Cd, Pb, Hg, Na, K).
+
+Context: Create when analytes are listed as measurement targets; typically link to data via iao:is_about (measurement) and to goals; align to CHEBI when possible.
+
+Examples: “We quantified Cd and Pb by ICP‑MS.” → Target_analyte nodes: Cd, Pb."""@en ;
+                   rdfs:comment "A chemical analyte of scientific interest or concern."@en ,
+                                "概念对应chebi:ChemicalEntity，明确为具体的物理分析对象。其通过iao:is_about关联到iao:measurement_datum，进而链接至whu:DataSet，形成了从目标实体到测量数值再到数据集的完整溯源链。"@zh ;
+                   rdfs:label "Target Analyte"@en .
+
+
+###  http://purl.obolibrary.org/obo/BFO_0000040
+<http://purl.obolibrary.org/obo/BFO_0000040> rdf:type owl:Class .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_ChemicalEntity
+chebi:ChemicalEntity rdf:type owl:Class .
+
+
+###  http://purl.org/mp#DataSet
+mp:DataSet rdf:type owl:Class .
+
+
+###  http://purl.org/mp#Material
+mp:Material rdf:type owl:Class .
+
+
+###  http://purl.org/net/p-plan#Step
+p-plan:Step rdf:type owl:Class .
+
+
+###  http://purl.org/net/p-plan#Variable
+p-plan:Variable rdf:type owl:Class .
+
+
+###  http://www.w3.org/ns/prov#Entity
+prov:Entity rdf:type owl:Class .
+
+
+###  https://schema.org/Organization
+schema:Organization rdf:type owl:Class .
+
+
+###  https://schema.org/Product
+schema:Product rdf:type owl:Class .
+
+
+[ whu:prompt """Define: Population count of the geographic area.
+
+Context: Map to integer; normalize from “24 million” → 24000000 when unambiguous.
+
+Examples: “population ~1.2 million” → gn:population=1200000""" ;
+  rdfs:comment " the population of the geographic area."@en ,
+               "地理区域的人口数量。"@zh
+] .
+
+[ rdfs:comment "This step involves a Software."@en ,
+                "该步骤涉及试剂。"@zh
+ ] .
+
+[ whu:prompt """Define: Altitude/elevation in meters above sea level.
+
+Context: Extract when explicitly given with a numeric value near a location.
+
+Examples: “elevation 20 m” → geo:alt=20""" ;
+   rdfs:comment "have an altitude value."@en ,
+                "具备海拔高度数值。"@zh
+ ] .
+
+[ rdfs:comment "This step involves a device."@en ,
+                "该步骤涉及设备。"@zh
+ ] .
+
+[ whu:prompt """Define: Longitude in decimal degrees.
+
+Context: Extract numeric longitude tied to an EnvironmentFeature.
+
+Examples: “(32.10 N, 118.80 E)” → geo:long=118.80""" ;
+   rdfs:comment "have a longitude coordinate."@en ,
+                "具备经度坐标。"@zh
+ ] .
+
+[ rdfs:comment "This step produces data set"@en ,
+                "该步骤生成数据。"@zh
+ ] .
+
+[ whu:prompt """Define: Latitude in decimal degrees.
+
+Context: Extract numeric latitude when an EnvironmentFeature or place has coordinates; ignore DMS unless a decimal value is stated or can be read as a simple float.
+
+Examples: “(32.10 N, 118.80 E)” → geo:lat=32.10""" ;
+   rdfs:comment " have a latitude coordinate."@en ,
+                "具备纬度坐标。"@zh
+ ] .
+
+[ rdfs:comment "This step involves a DataSet."@en ,
+                "该步骤涉及数据集。"@zh
+ ] .
+
+[ rdfs:comment "the dataSet about speciemen for example how many specimen has been collected."@en ,
+                "与样本相关信息，比如样本的数量、体积、质量等。"@zh
+ ] .
+
+[ rdfs:comment "This step involves an execution environment."@en ,
+                "该步骤涉及实验环境。"@zh
+ ] .
+
+[ rdfs:comment "This specimen is used as an input variable in a specimen preprocessing plan, such as filtering, centrifugation, or staining."@en ,
+                "该标本是样本预处理计划的输入变量，例如过滤、离心、染色等实验处理流程的输入。"@zh
+ ] .
+
+[ rdfs:comment "This step uses a method."@en ,
+                "该步骤使用方法。"@zh
+ ] .
+
+[ rdfs:comment "This specimen is the output variable of a specimen collection plan, indicating its generation through structured sampling."@en ,
+                "该标本是样本采集计划的输出变量，表示其通过结构化采样过程产生。"@zh
+ ] .
+
+[ rdfs:comment "This step is part of a computational experiment."@en ,
+                "该步骤属于计算实验。"@zh
+ ] .
+
+[ rdfs:comment "Indicates that the specimen is derived from a specific environmental context, which may influence its characteristics."@en ,
+                "表示该样本来源于特定的环境上下文，环境因素可能影响其性质。"@zh
+ ] .
+
+[ rdfs:comment "This step involves an execution environment."@en ,
+                "该步骤涉及实验环境。"@zh
+ ] .
+
+[ rdfs:comment "The processed specimen is derived from a collected specimen sample."@en ,
+                "该处理标本来源于采集得到的 specimen 原始样本。"@zh
+ ] .
+
+[ rdfs:comment "This step corresponds to a design step."@en ,
+                "该步骤对应一个设计步骤。"@zh
+ ] .
+
+[ whu:prompt "Extract the name of the software."@en ;
+   rdfs:comment "The name of the software tool."@en ,
+                "该软件的名称。"@zh
+ ] .
+
+[ rdfs:comment "This step uses a method."@en ,
+                "该步骤使用方法。"@zh
+ ] .
+
+[ whu:prompt "Extract the serial number of the device."@en ;
+   rdfs:comment "The serial number uniquely identifying the device."@en ,
+                "该设备的唯一序列号。"@zh
+ ] .
+
+[ whu:prompt "Extract the brand of the device."@en ;
+   rdfs:comment "The brand or label under which the device was sold."@en ,
+                "设备销售的品牌信息。"@zh
+ ] .
+
+[ whu:prompt "Extract the version number of the software."@en ;
+   rdfs:comment "The version number of the software tool."@en ,
+                "该软件的版本号。"@zh
+ ] .
+
+[ whu:prompt "Extract the model name or ID of the device."@en ;
+   rdfs:comment "The model identifier for the device."@en ,
+                "该设备的型号标识符。"@zh
+ ] .
+
+[ rdfs:comment "The organization that manufactured the device."@en ,
+                "生产该设备的机构。"@zh
+ ] .
+
+[ rdfs:comment "the activity steps involved in the specimen preprocessing plan."@en ,
+                "样本预处理计划涉及的活动步骤。"@zh
+ ] .
+
+[ rdfs:comment "The collection plan follows the environment feature, which means after introudce the envoirment background the paper would introduce how to collect the speceimen."@en ,
+                "样本采集方案的介绍安排在环境背景部分之后，表明论文先呈现环境背景信息，随后才描述样本采集的具体方法。"@zh
+ ] .
+
+[ rdfs:comment "just like material_processing, but with a specific focus on specimen preprocessing."@zh
+ ] .
+
+[ rdfs:comment "just like material_processing, but with a specific focus on specimen preprocessing."@zh
+ ] .
+
+[ rdfs:comment "This specimen is used as input in a biochemical experiment."@en ,
+                "该标本作为输入用于生化实验中。"@zh
+ ] .
+
+[ rdfs:comment "The processed specimen is the output of a specimen preprocessing step."@en ,
+                "该标本是样本预处理流程的输出产物。"@zh
+ ] .
+
+[ rdfs:comment "the activity steps involved in the specimen collection plan."@en ,
+                "样本采集计划涉及的活动步骤。"@zh
+ ] .
+
+[ rdfs:comment "the dataSet about speciemen for example how many specimen has been collected."@en ,
+                "与样本相关信息，比如样本的数量、体积、质量等。"@zh
+ ] .
+
+[ rdfs:comment "This experiment has a specific scientific goal or objective."@en ,
+                "这个实验有具体的目标。"@zh
+ ] .
+
+[ rdfs:comment "This experiment consists of biological or chemical steps."@en ,
+                "这个实验由生物或化学步骤组成。"@zh
+ ] .
+
+[ rdfs:comment "just like material_processing, but with a specific focus on specimen preprocessing."@zh
+ ] .
+
+[ rdfs:comment "This step involves a device."@en ,
+                "该步骤涉及设备。"@zh
+ ] .
+
+[ rdfs:comment "This step is part of a biochemical experiment."@en ,
+                "该步骤属于生物化学实验。"@zh
+ ] .
+
+[ rdfs:comment "This step involves a specimen."@en ,
+                "该步骤涉及样本。"@zh
+ ] .
+
+[ rdfs:comment "This step involves a reagent."@en ,
+                "该步骤涉及试剂。"@zh
+ ] .
+
+[ rdfs:comment "This step involves an execution environment."@en ,
+                "该步骤涉及实验环境。"@zh
+ ] .
+
+[ whu:prompt "This experiment is composed of computational steps involving software and data."@en ;
+   rdfs:comment "This experiment is composed of computational activity steps."@en ,
+                "这个实验由计算步骤组成。"@zh
+ ] .
+
+[ rdfs:comment "This step involves a device."@en ,
+                "该步骤涉及设备。"@zh
+ ] .
+
+[ rdfs:comment "This experiment has a specific scientific goal or objective."@en ,
+                "这个实验有具体的目标。"@zh
+ ] .
+
+[ rdfs:comment "This step produces a processed specimen."@en ,
+                "该步骤生成处理后的样本。"@zh
+ ] .
+
+[ rdfs:comment "This step corresponds to a design step."@en ,
+                "该步骤对应一个设计步骤。"@zh
+ ] .
+
+[ rdfs:comment "This step produces DataSet."@en ,
+                "该步骤生成数据集。"@zh
+ ] .
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

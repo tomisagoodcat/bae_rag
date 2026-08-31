@@ -1,0 +1,623 @@
+{
+  "status": "OK",
+  "uri": "bolt://localhost:7687",
+  "generated_utc": "2026-08-04T06:35:52.218432+00:00",
+  "snapshot": {
+    "nodes": 10570,
+    "relationships": 24928,
+    "top_labels": [
+      {
+        "label": "__KGBuilder__",
+        "count": 8563
+      },
+      {
+        "label": "__Entity__",
+        "count": 8137
+      },
+      {
+        "label": "MetaPath",
+        "count": 2007
+      },
+      {
+        "label": "mp_References",
+        "count": 1850
+      },
+      {
+        "label": "mp_Statement",
+        "count": 1436
+      },
+      {
+        "label": "whu_DataSet",
+        "count": 1103
+      },
+      {
+        "label": "mp_Claim",
+        "count": 850
+      },
+      {
+        "label": "mp_Attribution",
+        "count": 595
+      },
+      {
+        "label": "whu_BioChemicalStep",
+        "count": 386
+      },
+      {
+        "label": "whu_Method",
+        "count": 336
+      },
+      {
+        "label": "Document",
+        "count": 231
+      },
+      {
+        "label": "whu_SupportGraph",
+        "count": 231
+      },
+      {
+        "label": "whu_Specimen_ProcessingStep",
+        "count": 228
+      },
+      {
+        "label": "whu_ScalarMeasurementDatum",
+        "count": 219
+      },
+      {
+        "label": "Chunk",
+        "count": 195
+      },
+      {
+        "label": "whu_ScienceEvidence",
+        "count": 159
+      },
+      {
+        "label": "whu_ProcessedSpecimen",
+        "count": 106
+      },
+      {
+        "label": "whu_ComputationalStep",
+        "count": 86
+      },
+      {
+        "label": "whu_Device",
+        "count": 81
+      },
+      {
+        "label": "whu_Computational_Experiment",
+        "count": 74
+      },
+      {
+        "label": "whu_EnvironmentFeature",
+        "count": 66
+      },
+      {
+        "label": "whu_Specimen",
+        "count": 62
+      },
+      {
+        "label": "whu_Specimen_CollectionStep",
+        "count": 57
+      },
+      {
+        "label": "whu_Reagent",
+        "count": 49
+      },
+      {
+        "label": "whu_Bio_chemical_Experiment",
+        "count": 40
+      },
+      {
+        "label": "whu_Target_analyte",
+        "count": 36
+      },
+      {
+        "label": "envo_Material",
+        "count": 26
+      },
+      {
+        "label": "whu_SpecimenPreprocessing",
+        "count": 21
+      },
+      {
+        "label": "whu_SpecimenCollection",
+        "count": 19
+      },
+      {
+        "label": "whu_Goal",
+        "count": 16
+      },
+      {
+        "label": "whu_Software",
+        "count": 5
+      }
+    ],
+    "top_rels": [
+      {
+        "rel": "FROM_CHUNK",
+        "count": 8143
+      },
+      {
+        "rel": "detailOf",
+        "count": 4432
+      },
+      {
+        "rel": "hasDetailPath",
+        "count": 4432
+      },
+      {
+        "rel": "metaPathRelation",
+        "count": 3838
+      },
+      {
+        "rel": "FROM_DOCUMENT",
+        "count": 1720
+      },
+      {
+        "rel": "mp_supports",
+        "count": 743
+      },
+      {
+        "rel": "cito_isCitedBy",
+        "count": 390
+      },
+      {
+        "rel": "whu_hasPart",
+        "count": 252
+      },
+      {
+        "rel": "NEXT_CHUNK",
+        "count": 192
+      },
+      {
+        "rel": "whu_declareUsed",
+        "count": 172
+      },
+      {
+        "rel": "dcterms_hasPart",
+        "count": 104
+      },
+      {
+        "rel": "p_plan_isStepOfPlan",
+        "count": 79
+      },
+      {
+        "rel": "iao_is_about",
+        "count": 79
+      },
+      {
+        "rel": "p_plan_hasOutputVar",
+        "count": 73
+      },
+      {
+        "rel": "prov_wasDerivedFrom",
+        "count": 64
+      },
+      {
+        "rel": "p_plan_isPrecededBy",
+        "count": 57
+      },
+      {
+        "rel": "mp_challenges",
+        "count": 49
+      },
+      {
+        "rel": "p_plan_hasInputVar",
+        "count": 44
+      },
+      {
+        "rel": "whu_fellow",
+        "count": 26
+      },
+      {
+        "rel": "whu_hasContext",
+        "count": 16
+      },
+      {
+        "rel": "whu_hasGoal",
+        "count": 12
+      },
+      {
+        "rel": "whu_atLocation",
+        "count": 7
+      },
+      {
+        "rel": "whu_target",
+        "count": 4
+      }
+    ]
+  },
+  "specs": [
+    {
+      "cq_id": "CQ1",
+      "question": "CQ1. Which environment, collection process, and preprocessing process does an experiment’s input specimen originate from?",
+      "description": "Follows the EBM chain from a biochemical experiment input (ProcessedSpecimen) back through preprocessing and collection to EnvironmentFeature. All edges are required MATCH.",
+      "cypher": "MATCH (exp:whu_Bio_chemical_Experiment)<-[:p_plan_isStepOfPlan]-(bio:whu_BioChemicalStep)\nMATCH (bio)-[:p_plan_hasInputVar]->(ps:whu_ProcessedSpecimen)\nMATCH (pstep:whu_Specimen_ProcessingStep)-[:p_plan_hasOutputVar]->(ps)\nMATCH (pstep)-[:p_plan_isStepOfPlan]->(prep:whu_SpecimenPreprocessing)\nMATCH (pstep)-[:p_plan_hasInputVar]->(spec:whu_Specimen)\nMATCH (cstep:whu_Specimen_CollectionStep)-[:p_plan_hasOutputVar]->(spec)\nMATCH (cstep)-[:p_plan_isStepOfPlan]->(coll:whu_SpecimenCollection)\nMATCH (coll)-[:whu_hasContext]->(env:whu_EnvironmentFeature)\nRETURN\n  exp.WHU_HASNAME AS Experiment,\n  ps.WHU_HASNAME AS ProcessedSpecimen,\n  spec.WHU_HASNAME AS Specimen,\n  env.WHU_HASNAME AS Environment,\n  coll.WHU_HASNAME AS CollectionPlan,\n  cstep.WHU_HASNAME AS CollectionStep,\n  prep.WHU_HASNAME AS PreprocessingPlan,\n  pstep.WHU_HASNAME AS PreprocessingStep\nORDER BY Experiment, ProcessedSpecimen\nLIMIT 30",
+      "ontology_classes": [
+        "whu_Bio_chemical_Experiment",
+        "whu_BioChemicalStep",
+        "whu_ProcessedSpecimen",
+        "whu_Specimen",
+        "whu_EnvironmentFeature",
+        "whu_SpecimenCollection",
+        "whu_SpecimenPreprocessing",
+        "whu_Specimen_CollectionStep",
+        "whu_Specimen_ProcessingStep"
+      ],
+      "ontology_relations": [
+        "p_plan_isStepOfPlan",
+        "p_plan_hasInputVar",
+        "p_plan_hasOutputVar",
+        "whu_hasContext"
+      ],
+      "expected_output": "Experiment input specimens with environment, collection plan/step, and preprocessing plan/step.",
+      "result_type": "Experiment, ProcessedSpecimen, Specimen, Environment, CollectionPlan, CollectionStep, PreprocessingPlan, PreprocessingStep",
+      "required_columns_full": [
+        "Experiment",
+        "ProcessedSpecimen",
+        "Specimen",
+        "Environment",
+        "CollectionPlan",
+        "PreprocessingPlan"
+      ],
+      "required_columns_partial": [
+        "Experiment",
+        "ProcessedSpecimen",
+        "Environment"
+      ]
+    },
+    {
+      "cq_id": "CQ2",
+      "question": "CQ2. Which experiments, research steps, methods, and supporting resources generated a given data object?",
+      "description": "Binds each DataSet to its producing research step, parent experiment, and a declared resource (Method/Device/Reagent/Software). All edges required.",
+      "cypher": "MATCH (step)-[:p_plan_hasOutputVar]->(ds:whu_DataSet)\nWHERE step:whu_BioChemicalStep OR step:whu_ComputationalStep\nMATCH (step)-[:p_plan_isStepOfPlan]->(plan)\nWHERE plan:whu_Bio_chemical_Experiment OR plan:whu_Computational_Experiment\nMATCH (step)-[:whu_declareUsed]->(resource)\nWHERE resource:whu_Method\n   OR resource:whu_Device\n   OR resource:whu_Reagent\n   OR resource:whu_Software\nRETURN\n  ds.WHU_HASNAME AS DataSet,\n  [x IN labels(plan) WHERE NOT x STARTS WITH '__'][0] AS PlanType,\n  plan.WHU_HASNAME AS Experiment,\n  [x IN labels(step) WHERE NOT x STARTS WITH '__'][0] AS StepType,\n  step.WHU_HASNAME AS ResearchStep,\n  [x IN labels(resource) WHERE NOT x STARTS WITH '__'][0] AS ResourceType,\n  resource.WHU_HASNAME AS Resource\nORDER BY DataSet, ResearchStep, ResourceType\nLIMIT 30",
+      "ontology_classes": [
+        "whu_DataSet",
+        "whu_BioChemicalStep",
+        "whu_ComputationalStep",
+        "whu_Bio_chemical_Experiment",
+        "whu_Computational_Experiment",
+        "whu_Method",
+        "whu_Device",
+        "whu_Reagent",
+        "whu_Software"
+      ],
+      "ontology_relations": [
+        "p_plan_hasOutputVar",
+        "p_plan_isStepOfPlan",
+        "whu_declareUsed"
+      ],
+      "expected_output": "Datasets with generating experiment, research step, and declared resources.",
+      "result_type": "DataSet, Experiment, ResearchStep, ResourceType, Resource",
+      "required_columns_full": [
+        "DataSet",
+        "Experiment",
+        "ResearchStep",
+        "ResourceType",
+        "Resource"
+      ],
+      "required_columns_partial": [
+        "DataSet",
+        "Experiment",
+        "ResearchStep"
+      ]
+    },
+    {
+      "cq_id": "CQ3",
+      "question": "CQ3. Which datasets, methods, and research steps jointly constitute ScienceEvidence that supports or challenges a Statement or Claim?",
+      "description": "MPU chain with required edges only: ScienceEvidence -supports/challenges-> SupportGraph -supports/challenges-> Claim|Statement; ScienceEvidence -hasPart-> DataSet and Method; DataSet <-hasOutputVar- ResearchStep.",
+      "cypher": "MATCH (se:whu_ScienceEvidence)-[r1:mp_supports|mp_challenges]->(sg:whu_SupportGraph)\nMATCH (sg)-[r2:mp_supports|mp_challenges]->(target)\nWHERE target:mp_Claim OR target:mp_Statement\nMATCH (se)-[:whu_hasPart]->(ds:whu_DataSet)\nMATCH (se)-[:whu_hasPart]->(m:whu_Method)\nMATCH (step)-[:p_plan_hasOutputVar]->(ds)\nWHERE step:whu_BioChemicalStep OR step:whu_ComputationalStep\nRETURN\n  [x IN labels(target) WHERE NOT x STARTS WITH '__'][0] AS TargetType,\n  target.WHU_HASNAME AS Target,\n  type(r1) AS EvidenceToGraph,\n  type(r2) AS GraphToTarget,\n  se.WHU_HASNAME AS ScienceEvidence,\n  sg.WHU_HASNAME AS SupportGraph,\n  ds.WHU_HASNAME AS DataSet,\n  m.WHU_HASNAME AS Method,\n  step.WHU_HASNAME AS ResearchStep\nORDER BY Target, ScienceEvidence\nLIMIT 30",
+      "ontology_classes": [
+        "mp_Claim",
+        "mp_Statement",
+        "whu_ScienceEvidence",
+        "whu_SupportGraph",
+        "whu_DataSet",
+        "whu_Method",
+        "whu_BioChemicalStep",
+        "whu_ComputationalStep"
+      ],
+      "ontology_relations": [
+        "mp_supports",
+        "mp_challenges",
+        "whu_hasPart",
+        "p_plan_hasOutputVar"
+      ],
+      "expected_output": "Claims/Statements with ScienceEvidence composition (DataSet, Method), SupportGraph polarity, and producing research steps.",
+      "result_type": "Target, EvidenceToGraph, GraphToTarget, ScienceEvidence, SupportGraph, DataSet, Method, ResearchStep",
+      "required_columns_full": [
+        "Target",
+        "ScienceEvidence",
+        "SupportGraph",
+        "DataSet",
+        "Method",
+        "ResearchStep"
+      ],
+      "required_columns_partial": [
+        "Target",
+        "ScienceEvidence",
+        "SupportGraph",
+        "DataSet",
+        "Method"
+      ]
+    },
+    {
+      "cq_id": "CQ4",
+      "question": "CQ4. Which fine-grained research steps, inputs/outputs, and evidence elements constitute a mid-level research process?",
+      "description": "Expands a mid-level plan/experiment into research steps that must have both a typed input and a typed output. No OPTIONAL MATCH.",
+      "cypher": "MATCH (step)-[:p_plan_isStepOfPlan]->(plan)\nWHERE plan:whu_SpecimenCollection\n   OR plan:whu_SpecimenPreprocessing\n   OR plan:whu_Bio_chemical_Experiment\n   OR plan:whu_Computational_Experiment\nMATCH (step)-[:p_plan_hasInputVar]->(inp)\nMATCH (step)-[:p_plan_hasOutputVar]->(out)\nRETURN\n  [x IN labels(plan) WHERE NOT x STARTS WITH '__'][0] AS MidPlanType,\n  plan.WHU_HASNAME AS MidPlan,\n  [x IN labels(step) WHERE NOT x STARTS WITH '__'][0] AS StepType,\n  step.WHU_HASNAME AS ResearchStep,\n  [x IN labels(inp) WHERE NOT x STARTS WITH '__'][0] AS InputType,\n  inp.WHU_HASNAME AS Input,\n  [x IN labels(out) WHERE NOT x STARTS WITH '__'][0] AS OutputType,\n  out.WHU_HASNAME AS Output\nORDER BY MidPlanType, MidPlan, ResearchStep\nLIMIT 30",
+      "ontology_classes": [
+        "whu_SpecimenCollection",
+        "whu_SpecimenPreprocessing",
+        "whu_Bio_chemical_Experiment",
+        "whu_Computational_Experiment",
+        "whu_Specimen_CollectionStep",
+        "whu_Specimen_ProcessingStep",
+        "whu_BioChemicalStep",
+        "whu_ComputationalStep",
+        "whu_Specimen",
+        "whu_ProcessedSpecimen",
+        "whu_DataSet"
+      ],
+      "ontology_relations": [
+        "p_plan_isStepOfPlan",
+        "p_plan_hasInputVar",
+        "p_plan_hasOutputVar"
+      ],
+      "expected_output": "Mid-level plans with fine-grained steps and explicit input/output elements.",
+      "result_type": "MidPlan, ResearchStep, InputType, Input, OutputType, Output",
+      "required_columns_full": [
+        "MidPlan",
+        "ResearchStep",
+        "Input",
+        "Output"
+      ],
+      "required_columns_partial": [
+        "MidPlan",
+        "ResearchStep"
+      ]
+    },
+    {
+      "cq_id": "CQ5",
+      "question": "CQ5. Which documents, text chunks, and original text spans correspond to a given evidence MetaPath?",
+      "description": "Traces MetaPath members to Chunk and Document with required provenance edges and a non-null original text span.",
+      "cypher": "MATCH (mp:MetaPath)-[r:metaPathRelation]->(e)\nMATCH (e)-[:FROM_CHUNK]->(chunk:Chunk)\nMATCH (chunk)-[:FROM_DOCUMENT]->(doc:Document)\nWHERE mp.metaPathText IS NOT NULL\n  AND e.WHU_HASORIGINALTEXT IS NOT NULL\nRETURN\n  mp.mp_id AS MetaPathId,\n  mp.path_level AS Level,\n  mp.subgraph AS Subgraph,\n  mp.metaPathText AS PathText,\n  r.position AS Position,\n  [x IN labels(e) WHERE NOT x STARTS WITH '__'][0] AS EntityType,\n  e.WHU_HASNAME AS Entity,\n  e.WHU_HASORIGINALTEXT AS OriginalTextSpan,\n  chunk.index AS ChunkIndex,\n  chunk.filename AS ChunkFilename,\n  chunk.source_doc AS SourceDoc,\n  doc.path AS DocumentPath,\n  doc.document_type AS DocumentType\nORDER BY MetaPathId, Position\nLIMIT 30",
+      "ontology_classes": [
+        "MetaPath",
+        "Chunk",
+        "Document"
+      ],
+      "ontology_relations": [
+        "metaPathRelation",
+        "FROM_CHUNK",
+        "FROM_DOCUMENT"
+      ],
+      "expected_output": "MetaPaths with member entities, original text spans, chunks, and documents.",
+      "result_type": "MetaPathId, Entity, OriginalTextSpan, ChunkFilename, SourceDoc, DocumentPath",
+      "required_columns_full": [
+        "MetaPathId",
+        "Entity",
+        "OriginalTextSpan",
+        "ChunkFilename",
+        "DocumentPath"
+      ],
+      "required_columns_partial": [
+        "MetaPathId",
+        "Entity",
+        "OriginalTextSpan",
+        "ChunkFilename"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "cq_id": "CQ1",
+      "status": "Not supported",
+      "row_count": 0,
+      "sample_rows": [],
+      "gaps": [
+        "diagnostic_zero:full_cq1_chain_count",
+        "zero_result_rows:ontology_path_uninstantiated"
+      ],
+      "required_label_counts": {
+        "whu_Bio_chemical_Experiment": 40,
+        "whu_BioChemicalStep": 386,
+        "whu_ProcessedSpecimen": 106,
+        "whu_Specimen": 62,
+        "whu_EnvironmentFeature": 66,
+        "whu_SpecimenCollection": 19,
+        "whu_SpecimenPreprocessing": 21
+      },
+      "required_relation_counts": {
+        "p_plan_isStepOfPlan": 79,
+        "p_plan_hasInputVar": 44,
+        "p_plan_hasOutputVar": 73,
+        "whu_hasContext": 16
+      },
+      "diagnostics": {
+        "full_cq1_chain_count": {
+          "c": 0
+        }
+      },
+      "error": null
+    },
+    {
+      "cq_id": "CQ2",
+      "status": "Not supported",
+      "row_count": 0,
+      "sample_rows": [],
+      "gaps": [
+        "diagnostic_zero:full_cq2_chain_count",
+        "zero_result_rows:ontology_path_uninstantiated"
+      ],
+      "required_label_counts": {
+        "whu_DataSet": 1103,
+        "whu_Method": 336
+      },
+      "required_relation_counts": {
+        "p_plan_hasOutputVar": 73,
+        "p_plan_isStepOfPlan": 79,
+        "whu_declareUsed": 172
+      },
+      "diagnostics": {
+        "full_cq2_chain_count": {
+          "c": 0
+        }
+      },
+      "error": null
+    },
+    {
+      "cq_id": "CQ3",
+      "status": "Not supported",
+      "row_count": 0,
+      "sample_rows": [],
+      "gaps": [
+        "diagnostic_zero:full_cq3_chain_count",
+        "zero_result_rows:ontology_path_uninstantiated",
+        "join_break:no_connected_SE_to_SG_to_Claim_with_SE_parts;fragments={'full_cq3_chain_count': {'c': 0}}"
+      ],
+      "required_label_counts": {
+        "mp_Claim": 850,
+        "mp_Statement": 1436,
+        "whu_ScienceEvidence": 159,
+        "whu_SupportGraph": 231
+      },
+      "required_relation_counts": {
+        "mp_supports": 743,
+        "mp_challenges": 49,
+        "whu_hasPart": 252
+      },
+      "diagnostics": {
+        "full_cq3_chain_count": {
+          "c": 0
+        }
+      },
+      "error": null
+    },
+    {
+      "cq_id": "CQ4",
+      "status": "Not supported",
+      "row_count": 0,
+      "sample_rows": [],
+      "gaps": [
+        "diagnostic_zero:plan_step_with_both_IO",
+        "zero_result_rows:ontology_path_uninstantiated"
+      ],
+      "required_label_counts": {
+        "whu_Bio_chemical_Experiment": 40,
+        "whu_Computational_Experiment": 74
+      },
+      "required_relation_counts": {
+        "p_plan_isStepOfPlan": 79,
+        "p_plan_hasInputVar": 44,
+        "p_plan_hasOutputVar": 73
+      },
+      "diagnostics": {
+        "plan_step_with_both_IO": {
+          "c": 0
+        }
+      },
+      "error": null
+    },
+    {
+      "cq_id": "CQ5",
+      "status": "Fully supported",
+      "row_count": 30,
+      "sample_rows": [
+        {
+          "MetaPathId": "EBM_000001",
+          "Level": "low",
+          "Subgraph": "EBM",
+          "PathText": "[whu_SpecimenCollection: Rice Sample Collection] Twenty-six (26) rice samples were analyzed for a total of 36 elements. -[whu_hasContext] Twenty-six (26) rice …",
+          "Position": "1",
+          "EntityType": "whu_SpecimenCollection",
+          "Entity": "Rice Sample Collection",
+          "OriginalTextSpan": "Twenty-six (26) rice samples were analyzed for a total of 36 elements.",
+          "ChunkIndex": "1",
+          "ChunkFilename": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market.md",
+          "SourceDoc": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market",
+          "DocumentPath": "document.txt",
+          "DocumentType": "inline_text"
+        },
+        {
+          "MetaPathId": "EBM_000001",
+          "Level": "low",
+          "Subgraph": "EBM",
+          "PathText": "[whu_SpecimenCollection: Rice Sample Collection] Twenty-six (26) rice samples were analyzed for a total of 36 elements. -[whu_hasContext] Twenty-six (26) rice …",
+          "Position": "1",
+          "EntityType": "whu_SpecimenCollection",
+          "Entity": "Rice Sample Collection",
+          "OriginalTextSpan": "Twenty-six (26) rice samples were analyzed for a total of 36 elements.",
+          "ChunkIndex": "1",
+          "ChunkFilename": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market.md",
+          "SourceDoc": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market",
+          "DocumentPath": "document.txt",
+          "DocumentType": "inline_text"
+        },
+        {
+          "MetaPathId": "EBM_000001",
+          "Level": "low",
+          "Subgraph": "EBM",
+          "PathText": "[whu_SpecimenCollection: Rice Sample Collection] Twenty-six (26) rice samples were analyzed for a total of 36 elements. -[whu_hasContext] Twenty-six (26) rice …",
+          "Position": "1",
+          "EntityType": "whu_SpecimenCollection",
+          "Entity": "Rice Sample Collection",
+          "OriginalTextSpan": "Twenty-six (26) rice samples were analyzed for a total of 36 elements.",
+          "ChunkIndex": "1",
+          "ChunkFilename": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market.md",
+          "SourceDoc": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market",
+          "DocumentPath": "document.txt",
+          "DocumentType": "inline_text"
+        },
+        {
+          "MetaPathId": "EBM_000001",
+          "Level": "low",
+          "Subgraph": "EBM",
+          "PathText": "[whu_SpecimenCollection: Rice Sample Collection] Twenty-six (26) rice samples were analyzed for a total of 36 elements. -[whu_hasContext] Twenty-six (26) rice …",
+          "Position": "1",
+          "EntityType": "whu_SpecimenCollection",
+          "Entity": "Rice Sample Collection",
+          "OriginalTextSpan": "Twenty-six (26) rice samples were analyzed for a total of 36 elements.",
+          "ChunkIndex": "1",
+          "ChunkFilename": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market.md",
+          "SourceDoc": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market",
+          "DocumentPath": "document.txt",
+          "DocumentType": "inline_text"
+        },
+        {
+          "MetaPathId": "EBM_000001",
+          "Level": "low",
+          "Subgraph": "EBM",
+          "PathText": "[whu_SpecimenCollection: Rice Sample Collection] Twenty-six (26) rice samples were analyzed for a total of 36 elements. -[whu_hasContext] Twenty-six (26) rice …",
+          "Position": "1",
+          "EntityType": "whu_SpecimenCollection",
+          "Entity": "Rice Sample Collection",
+          "OriginalTextSpan": "Twenty-six (26) rice samples were analyzed for a total of 36 elements.",
+          "ChunkIndex": "1",
+          "ChunkFilename": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market.md",
+          "SourceDoc": "doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market",
+          "DocumentPath": "document.txt",
+          "DocumentType": "inline_text"
+        }
+      ],
+      "gaps": [],
+      "required_label_counts": {
+        "MetaPath": 2007,
+        "Chunk": 195,
+        "Document": 231
+      },
+      "required_relation_counts": {
+        "metaPathRelation": 3838,
+        "FROM_CHUNK": 8143,
+        "FROM_DOCUMENT": 1720
+      },
+      "diagnostics": {
+        "full_cq5_chain_count": {
+          "c": 86635
+        },
+        "cq5_chunk_coverage_in_rows": "30/30",
+        "cq5_document_coverage_in_rows": "30/30"
+      },
+      "error": null
+    }
+  ]
+}

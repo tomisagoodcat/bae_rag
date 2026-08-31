@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+_extract_cell_10.py
+_extract_*.py
+
+logs/*.log
+logs/mid_extract_log.txt
+!logs/.gitkeep
+
+output/

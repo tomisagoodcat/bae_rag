@@ -1,0 +1,16 @@
+node_type,count,example_1,example_2,example_3,example_4,example_5
+whu_DataSet,1103,Potassium Content Ranges,A Geochemical Atlas of Jamaica,Statistical test results (t-tests and ANOVA),Fig. 3: MeHg Levels in Rice Grain,Strontium content in rice samples
+whu_BioChemicalStep,386,ICP-OES K measurement on NIST 8436,Total Mercury Analysis,TXRF Analysis,Solid-Phase HgT Portable Analyzer,THg Digestion and CVAFS Analysis
+whu_Specimen_ProcessingStep,228,heating with KOH,Grinding,Grinding July rice samples,Digestion for trace elements,Pipetting
+whu_ScalarMeasurementDatum,219,Iron in brown rice,Mercury Brown Rice Mean,Magnesium Range Brown Rice,Manganese Range White Rice,MeHg concentration in flooded polished white rice
+whu_ProcessedSpecimen,106,Milled white rice from Wanshan,Digested sample solution,Acidified unfiltered aqueous sample,NIST 1570a Spinach Leaves,Brown rice powder
+whu_ComputationalStep,86,Descriptive statistics,Data analysis using SPSS 11.5,Statistical analysis using Stata,Unpaired t-tests and ANOVA,Pearson Correlation of THg and MeHg
+whu_Device,81,AAS Model 5100 PC Perkin Elmer,Ortec HPGe Detector (71% efficiency),Fritsch Pulverisette 2 Mortar,SLOWPOKE-2 reactor,Blender
+whu_EnvironmentFeature,66,Guangdong Province,Shanghai,Eastern Guizhou Province,Guangxi Province,"Wanshan, Guizhou"
+whu_Specimen,62,IAEA 336 Lichen,Water from Site 1,INAA-analyzed sample,Soil samples,Rice samples
+whu_Specimen_CollectionStep,57,September 2009 Sampling at Three Sites,September Individual Plant Collection,Individual Plant Collection July September,Rice Collection Step,Individual Plant Collection September
+whu_Reagent,49,"Mixed acid HNO3:H2SO4 (4:1, v/v)",Hydroxylamine Hydrochloride,Copper Sulfate,Cobalt solution (10 mg/L),HNO3 (20%)
+envo_Material,26,NIST 8436 Durum Wheat Flour,rice,Surface water,Milli-Q water,aqueous sample
+whu_SpecimenPreprocessing,21,Sample Preparation and Preservation,Air Drying Crushing Sieving Rice Samples,September Rice Sample Air-Drying and Grinding,Rice sample preparation,Rice Sample Preprocessing
+whu_SpecimenCollection,19,July 2009 Paddy Sampling,September 2009 Wanshan Rice Sampling,Wanshan rice sampling,Rice Sample Collection from 7 Provinces,Rice Sample Collection
+whu_Software,5,Microsoft Excel 2007,XLSTAT2011,Stata,Stata,SPSS 11.5

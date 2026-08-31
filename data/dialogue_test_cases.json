@@ -1,0 +1,2442 @@
+{
+  "version": "2.0",
+  "description": "66 multi-turn OLAP dialogue scenarios for mercury/rice/heavy-metal GraphRAG. Generated via environmental-science expert draft → researcher refinement; optional Neo4j hybrid + independent LLM judge qrels (relevant_mp_ids). Diverse κ: first_turn, drill_down, roll_up, sibling_nav, drill_across.",
+  "generation": {
+    "target_scenarios": 66,
+    "legacy_count": 10,
+    "new_count": 56,
+    "archetype_distribution": {
+      "classic_3": 22,
+      "sibling_3": 14,
+      "drill_across_3": 12,
+      "two_turn_drill": 10,
+      "four_turn_mix": 8
+    },
+    "kappa_distribution": {
+      "first_turn": 66,
+      "drill_down": 40,
+      "roll_up": 56,
+      "sibling_nav": 22,
+      "drill_across": 12
+    },
+    "qrels_turns": 3,
+    "total_turns": 196,
+    "retrieval_scoring": "qrels when relevant_mp_ids non-empty; else LLM judge at eval"
+  },
+  "scenarios": [
+    {
+      "name": "q01_mercury_methylation_factors",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "In flooded rice paddies, what biogeochemical and microbial factors most strongly control the rate and extent of inorganic Hg(II) methylation to MeHg—and how do redox transitions (e.g., Fe/Mn reduction vs. sulfate reduction) modulate that control?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Must address at least two co-occurring drivers (e.g., sulfate-reducing bacteria activity + dissolved organic carbon speciation + porewater sulfide concentration) within the context of anaerobic rice soil biogeochemistry; excludes generic lists or non-agricultural wetland systems.",
+          "relevant_mp_ids": [
+            "MPU_MID_00083",
+            "MPU_MID_00121",
+            "MPU_MID_00120",
+            "MPU_MID_00106",
+            "MPU_MID_00092",
+            "MPU_MID_00079",
+            "MPU_MID_00090",
+            "MPU_MID_00113",
+            "MPU_MID_00081",
+            "MPU_MID_00108",
+            "MPU_MID_00132",
+            "MPU_MID_00153"
+          ],
+          "qrels_source": "neo4j_hybrid_top_score_fallback"
+        },
+        {
+          "query": "For each dominant methylation driver identified, cite specific experimental evidence from controlled microcosm or field-sampled intact core studies—including isotopic tracer data (e.g., 201Hg spike), gene expression (hgcAB abundance), and concurrent geochemical measurements—that mechanistically links the factor to MeHg production kinetics.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Requires explicit reference to empirical methodology (e.g., incubation duration, temperature, sediment depth, analytical detection method for MeHg), not just conceptual models or review summaries.",
+          "relevant_mp_ids": [
+            "MPU_001153",
+            "MPU_000777",
+            "MPU_001095",
+            "MPU_000722",
+            "MPU_000679",
+            "MPU_000831",
+            "MPU_001094",
+            "MPU_001139",
+            "MPU_001000",
+            "MPU_000635",
+            "MPU_001152",
+            "MPU_000259"
+          ],
+          "qrels_source": "neo4j_hybrid_top_score_fallback"
+        },
+        {
+          "query": "Synthesize those mechanistic findings into a concise, process-based framework showing how hydrological management (e.g., alternate wetting and drying) alters the net methylation potential across typical rice-growing seasons—emphasizing trade-offs between grain yield and MeHg accumulation risk.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Must integrate biogeochemical drivers with agronomic practice and human exposure relevance (e.g., transfer to rice grain); avoids isolated environmental parameters without functional linkage to food-chain outcomes.",
+          "relevant_mp_ids": [
+            "MPU_MID_00106",
+            "MPU_MID_00081",
+            "MPU_MID_00083",
+            "MPU_MID_00120",
+            "MPU_MID_00090",
+            "MPU_MID_00092",
+            "MPU_MID_00121",
+            "MPU_MID_00113",
+            "MPU_MID_00088",
+            "MPU_MID_00079",
+            "MPU_MID_00108"
+          ],
+          "qrels_source": "neo4j_hybrid_judge"
+        }
+      ],
+      "source_no": 1,
+      "researcher_notes": "Refined to reflect real-world decision context: rice agronomists and mercury risk assessors need actionable, system-specific causality—not textbook definitions. Emphasizes competing redox processes and field-realistic management interventions."
+    },
+    {
+      "name": "q02_measurement_qc",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "For total Hg and MeHg analysis in paddy soil and polished rice grain, what are the validated, matrix-matched measurement methods recommended by ISO/US EPA/China MEE for regulatory compliance—and which exhibit lowest inter-laboratory variability in multi-site field trials?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Must specify standardized protocols (e.g., ISO 17294-2:2016 for Hg in soils; EPA Method 1630 for MeHg in biological tissues) and reference performance data from intercalibration studies (e.g., IAEA proficiency tests or NIST SRM validation), excluding lab-developed or non-validated methods."
+        },
+        {
+          "query": "Detail the full QC workflow for EPA Method 1630 applied to rice grain: including extraction efficiency recovery ranges (spike levels), blank correction strategy for MeHg contamination from reagents/glassware, calibration curve acceptance criteria (R², %RSD), and how instrument settings (e.g., GC-CVAFS dwell time, cryo-trap temperature) affect detection limit robustness across low-MeHg (<0.5 ng/g) samples.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Requires technical specificity on analytical parameters, documented QC thresholds (e.g., ‘recovery must be 85–115% for 10 ng/L MeHg spike’), and empirical detection limit validation—not theoretical LODs."
+        },
+        {
+          "query": "Summarize the critical QC checkpoints—from sample homogenization and subsampling through derivatization and instrumental analysis—that most frequently cause bias or inflated uncertainty in routine monitoring programs targeting rice-based MeHg exposure assessments.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Must prioritize failure points with documented impact on human health risk interpretation (e.g., over-grinding-induced MeHg loss, incomplete cysteine extraction in rice protein matrix, or inadequate isotope dilution correction), not generic lab hygiene."
+        }
+      ],
+      "source_no": 2,
+      "researcher_notes": "Refined to mirror actual QA/QC pain points encountered in national rice safety surveillance (e.g., China’s GB 2762-2022, US FDA Total Diet Study). Focuses on comparability, matrix effects, and operational constraints—not idealized benchtop conditions."
+    },
+    {
+      "name": "q03_hazard_exposure",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the dominant biogeochemical drivers of methylmercury formation in flooded rice paddies, and how do those translate into human exposure via dietary intake and biomarker accumulation?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Must address both methylation mechanisms (e.g., sulfate-reducing bacteria activity, redox zonation, DOC/Fe/S interactions) and quantified exposure pathways (e.g., rice grain Hg speciation, hair/blood Hg correlations, bioaccessibility in cooked rice)"
+        },
+        {
+          "query": "For the key exposure routes—dietary rice consumption, dermal contact during farming, and inhalation of volatilized Hg⁰ from drying soils—what are the empirically measured uptake fractions, tissue-specific biomarker thresholds (e.g., hair Hg >1.0 µg/g), and supporting field or controlled microcosm data?",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Must cite specific experimental or epidemiological evidence: e.g., isotope-tracer studies in paddy mesocosms, NHANES-style biomonitoring cohorts in high-exposure regions (e.g., Guizhou, China), or in vitro gastrointestinal bioaccessibility assays"
+        },
+        {
+          "query": "Synthesize the primary hazard mechanisms (methylation hotspots, trophic transfer efficiency in rice-fish systems) and dominant human exposure vectors (rice as main dietary source vs. fish consumption in co-occurring wetlands) into a concise, risk-assessment–ready summary.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Must integrate MPU (e.g., Hg²⁺ → CH₃Hg⁺ conversion kinetics under anaerobic conditions) and EEM (e.g., population-level exposure estimates, critical windows for fetal neurotoxicity) without methodological detail"
+        }
+      ],
+      "source_no": 3,
+      "researcher_notes": "Refined to reflect real-world trade-offs agronomists face: flooded vs. intermittent irrigation affects methylation but also yield; biomarkers must distinguish inorganic Hg from MeHg burden; rice matrix effects (e.g., thiol-rich proteins binding MeHg) modulate bioavailability."
+    },
+    {
+      "name": "q04_experimental_design_eem",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "In the field trial assessing rice cultivar–specific methylmercury accumulation under variable water management, how were treatment groups stratified by soil Hg speciation baseline, hydrological regime (continuous flood vs. alternate wetting/drying), and confounding factors like sulfate amendment history?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Must specify grouping logic: e.g., randomized block design with pre-characterized Hg pools (SEM-extractable vs. residual), replication across redox gradients, and control for legacy S inputs from prior fertilizer use"
+        },
+        {
+          "query": "Detail the exact sampling protocol: timing relative to flooding cycles, tissue partitioning (root vs. straw vs. husk vs. polished grain), analytical QC steps (e.g., MeHg spike recovery, blank correction for Hg contamination during milling), and statistical power justification for group size (n=6 plots per treatment).",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Must include procedural rigor: e.g., cold-chain handling to prevent demethylation, ICP-MS/CE separation parameters, LOD/LOQ validation per matrix, and whether root-zone Eh/pH was monitored in situ during critical methylation windows"
+        },
+        {
+          "query": "Summarize the core experimental architecture—treatment structure, control definition (e.g., non-amended, non-flooded reference plots), and primary endpoints used to evaluate exposure mitigation efficacy (e.g., % reduction in grain MeHg, correlation with root Fe plaque density).",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Must concisely articulate design intent: e.g., 'a 2×3 factorial (water regime × cultivar) with paired controls to isolate methylation driver effects on dietary exposure endpoints'"
+        }
+      ],
+      "source_no": 4,
+      "researcher_notes": "Emphasizes field-realism: agronomists need to know if controls account for spatial heterogeneity in legacy Hg; risk assessors require clarity on whether endpoints align with regulatory benchmarks (e.g., JECFA PTWI); QC details determine data usability for meta-analysis."
+    },
+    {
+      "name": "q05_detection_methods_eem_ebm",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EEM",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "Which analytical methods (e.g., CV-AFS, ICP-MS coupled with HPLC for MeHg speciation) and QC protocols (blanks, CRMs, spike recoveries, method detection limits) were reported for total Hg and methylmercury in soil/rice tissue samples?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Must explicitly reference instrument platforms, speciation capability, and at least three QC elements (e.g., procedural blanks, certified reference materials, % recovery ranges)"
+        },
+        {
+          "query": "For the HPLC-ICP-MS methylmercury analysis: what column chemistry, mobile phase composition, digestion method (e.g., TMAH vs. HBr/CH₃COOH), extraction time/temperature, and post-extraction cleanup steps were used?",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Must extract protocol-level detail on extraction, separation, and detection parameters—not just instrument names"
+        },
+        {
+          "query": "Synthesize the core strengths and limitations of the reported detection and QC framework—particularly regarding field-deployability, speciation fidelity, and comparability to ISO/USEPA standard methods.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Must evaluate methodological robustness and regulatory alignment, not merely restate techniques"
+        }
+      ],
+      "source_no": 5,
+      "researcher_notes": "Refined to reflect actual lab practice language used in analytical environmental chemistry papers (e.g., 'TMAH digestion', 'HPLC-ICP-MS speciation'); avoids vague terms like 'detection methods' in favor of technique-specific descriptors that trigger precise knowledge graph retrieval from EBM (method validation) and EEM (biomarker quantification reliability)."
+    },
+    {
+      "name": "q06_agricultural_management",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EEM",
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "How did alternate wetting and drying (AWD), straw incorporation, and sulfate amendment affect porewater MeHg concentrations, Hg methylation potential (e.g., hgcA gene abundance), and grain Hg accumulation in the reported field trials?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Must link specific management practices to biogeochemical drivers (methylation/demethylation) and human exposure-relevant endpoints (grain Hg)"
+        },
+        {
+          "query": "Provide the exact treatment timing (e.g., AWD initiation at panicle initiation), irrigation volumes per cycle, straw application rate (t ha⁻¹) and decomposition stage, and sulfate dosage (kg SO₄²⁻ ha⁻¹) used across replicates in the primary field experiment.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Must extract quantitative, temporally resolved agronomic parameters—not qualitative descriptions—to support exposure modeling or meta-analysis"
+        },
+        {
+          "query": "Integrate findings into a mechanistic summary: how do these management interventions shift redox conditions, microbial community structure, and Hg bioavailability to jointly modulate MeHg production and rice root-to-grain transfer?",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Must articulate cross-module causality linking MPU (methylation drivers) and EEM (uptake pathways), avoiding isolated practice-effect statements"
+        }
+      ],
+      "source_no": 6,
+      "researcher_notes": "Reframed using standard agronomic and biogeochemical terminology (e.g., 'AWD', 'hgcA gene abundance', 'porewater MeHg') to match how field-based mercury researchers discuss intervention effects; replaces ambiguous phrasing ('regulatory effects') with process-oriented language grounded in redox biogeochemistry and plant physiology."
+    },
+    {
+      "name": "q07_control_measures_ebm",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What field-validated control measures have been demonstrated to reduce methylmercury accumulation in rice grain under flooded paddy conditions — particularly those targeting microbial methylation or Hg bioavailability?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Must reference on-farm or mesocosm-scale interventions (e.g., water management, amendments, cultivar selection) with reported efficacy in lowering grain MeHg; excludes theoretical or lab-only proposals."
+        },
+        {
+          "query": "For the most effective amendment-based strategy (e.g., biochar, zero-valent iron, or selenium co-application), detail the application rate, timing relative to flooding, soil pH/redox response, and supporting field trial data on MeHg reduction in grain and root-zone porewater.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Requires quantitative operational parameters and empirical outcomes from peer-reviewed field trials or long-term lysimeter studies in rice systems; excludes generic material descriptions or untested formulations."
+        },
+        {
+          "query": "Summarize the hierarchy of control measures by feasibility, scalability, and documented MeHg suppression in rice — distinguishing agronomic, geochemical, and microbiological levers.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Must synthesize evidence across ≥3 independent studies into a comparative framework (e.g., cost per hectare, adoption barriers, magnitude/duration of MeHg reduction); avoids listing isolated techniques without contextual ranking."
+        }
+      ],
+      "source_no": 7,
+      "researcher_notes": "Refined to reflect real-world decision-making: prioritizes flooded rice systems where methylation is highest, emphasizes grain as critical exposure vector, and grounds 'effectiveness' in field validation—not just lab metrics. Avoids vague terms like 'proposed' or 'general strategies' that lack operational specificity for risk managers."
+    },
+    {
+      "name": "q08_sample_concentrations",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "In the reported paddy field study, what were the total mercury (THg) and methylmercury (MeHg) concentrations (ng/g dw) in bulk soil, rhizosphere soil, rice roots, straw, husk, and polished grain — and how did MeHg% (of THg) vary across compartments?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Requires compartment-specific, dry-weight normalized concentrations with explicit MeHg% calculation; excludes wet-weight data, unextracted totals, or pooled samples lacking spatial resolution (e.g., 'whole plant')."
+        },
+        {
+          "query": "Provide the exact GPS coordinates or transect IDs for each sampling location, describe root-zone soil coring depth and preservation (e.g., −80°C flash-freezing vs. lyophilization), specify analytical methods (EPA Method 1630/1631 or ISO 17294), and tabulate detection limits, recovery rates, and replicate CVs for all matrices.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Demands traceable QA/QC metadata: georeferenced collection, matrix-specific processing protocols, certified reference materials used, and instrument validation data — not just 'standard methods' or generic LOD statements."
+        },
+        {
+          "query": "Reconcile the observed concentration gradients (soil → root → grain) with published bioaccumulation factors (BAFs) for THg and MeHg in Oryza sativa, highlighting deviations attributable to redox status or sulfate-reducing bacterial abundance.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Must interpret compartmental data through established biogeochemical frameworks (e.g., BAFs, root-shoot transfer ratios) and link anomalies to mechanistic drivers (e.g., Eh/pH thresholds, dsrB gene copies); excludes descriptive reiteration of raw values."
+        }
+      ],
+      "source_no": 8,
+      "researcher_notes": "Queries now mirror analytical rigor expected in regulatory review or meta-analysis: enforces dry-weight normalization, MeHg% as a key diagnostic, and demands QA/QC transparency essential for cross-study comparison. Removes ambiguity around 'samples' by naming rice-specific tissues and requiring redox-contextual interpretation — critical for exposure modeling."
+    },
+    {
+      "name": "q09_study_area_background",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What is the documented industrial or mining legacy of this study area—specifically regarding mercury use (e.g., gold amalgamation, chlor-alkali plants) or co-occurring heavy metals (e.g., As, Cd, Pb) that may influence Hg speciation and methylation potential in flood-prone rice soils?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Must reference site-specific historical land use, known point sources, or regional contamination inventories; ties Hg sources (MPU) to soil management context (EBM)."
+        },
+        {
+          "query": "Provide the full suite of pre-trial soil and porewater sampling data: total Hg, methylmercury (%MeHg), redox potential, sulfate, DOC, and Fe/Mn oxides—stratified by depth and hydrological zone (e.g., flooded vs. drained microplots), with comparison to background/reference sites.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Requires analytical specificity (concentrations, units, spatial resolution) and links geochemical drivers (MPU) to field-scale monitoring protocols (EBM)."
+        },
+        {
+          "query": "Synthesize the key environmental and anthropogenic factors shaping baseline Hg risk in this location—emphasizing how legacy inputs, hydrology, and soil biogeochemistry jointly inform current exposure potential and remediation feasibility.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Integrates source history (MPU) with management implications (EBM); avoids methodological detail in favor of conceptual framing for risk prioritization."
+        }
+      ],
+      "source_no": 9,
+      "researcher_notes": "Real-world queries reflect how field-based mercury researchers contextualize new studies: they anchor interpretation in legacy contamination patterns and site-specific biogeochemical constraints—not generic geography. 'Background' here implies causal drivers of methylation, not just descriptive setting."
+    },
+    {
+      "name": "q10_experimental_design_eem_ebm",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EEM",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "How were treatment groups defined to isolate variables influencing MeHg uptake into rice grain—e.g., water management regimes (continuous flooding vs. alternate wetting/drying), soil amendments (biochar, selenium, iron oxides), and cultivar selection—and what criteria determined control group composition (e.g., unamended field soil vs. Hg-spiked sterile substrate)?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "relevance_criteria": "Links experimental structure to human exposure pathways (EEM: grain MeHg accumulation) and field-realistic intervention testing (EBM: amendment efficacy, hydrologic control)."
+        },
+        {
+          "query": "List all replicate-level details: plot dimensions, planting density, transplanting date, irrigation schedule (including redox monitoring frequency), tissue sampling timing (panicle initiation, milk stage, maturity), and analytical QC—especially spike recovery rates and MeHg detection limits for grain and straw.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "relevance_criteria": "Demands technical rigor in exposure measurement (EEM biomarkers) and protocol fidelity (EBM field trial standards); enables cross-study comparability and uncertainty propagation."
+        },
+        {
+          "query": "Summarize the experimental logic: which exposure pathway(s) (e.g., root uptake vs. foliar deposition) and management lever(s) (e.g., hydrology control vs. sorbent amendment) the design was optimized to test—and how statistical power was justified given expected MeHg effect sizes in paddy systems.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "relevance_criteria": "Clarifies mechanistic intent (EEM) and operational scalability (EBM); connects design choices to real-world decision thresholds for agronomic intervention."
+        }
+      ],
+      "source_no": 10,
+      "researcher_notes": "Mercury-exposed rice researchers prioritize designs that disentangle bioavailability drivers (EEM) from deployable mitigation (EBM). Queries avoid vague terms like 'groups' or 'setup'—instead specifying hydrologic regimes, amendment types, and grain-specific endpoints critical for dietary risk assessment."
+    },
+    {
+      "name": "wet_dry_mehg_dynamics",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "How does the timing and frequency of wet-dry cycles in flooded rice paddies influence net methylmercury (MeHg) accumulation in porewater and grain, relative to continuously flooded or aerobic management?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ],
+          "relevance_criteria": "['Explicitly links hydrological regime (timing/frequency of cycles) to MeHg accumulation endpoints', 'Prioritizes causal biogeochemical pathways over correlative trends', 'Excludes human health risk or agronomic yield considerations']",
+          "intent_note": "Seeks mechanistic understanding of hydrological drivers of Hg methylation—specifically how redox oscillations modulate microbial Hg-methylating activity, sulfate/Fe(III) reduction dynamics, and MeHg stability. Focus is on biogeochemical process-level causality, not field outcomes or exposure."
+        },
+        {
+          "query": "During the dry phase, does Fe(III) oxide re-oxidation suppress MeHg by sequestering inorganic Hg(II), or does it instead promote transient Hg(II) bioavailability via ligand competition during Fe(II) oxidation? And what’s the dominant microbial response—decline in *hgcAB*-expressing SRB/DRB, or resurgence of facultative methylators like *Geobacter* spp. upon rewetting?",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU"
+          ],
+          "relevance_criteria": "['Targets mutually exclusive mechanistic hypotheses about Hg(II) speciation and bioavailability', 'Requires resolution at molecular/kinetic or gene-expression level', 'Demands integration of abiotic (Fe redox, ligand chemistry) and biotic (*hgcAB* expression, functional guild shifts) evidence']",
+          "intent_note": "Drills into molecular-scale biogeochemical mechanisms: competing sorption/desorption kinetics of Hg(II) on Fe (oxyhydr)oxides, redox-dependent ligand speciation (e.g., thiol vs. oxyanion competition), and taxon-specific expression of *hgcAB* under fluctuating O₂/SO₄²⁻/Fe(III) availability. Requires integration of geochemical modeling and metatranscriptomic evidence."
+        },
+        {
+          "query": "Synthesizing field trials from China’s Yangtze Delta and Bangladesh’s Ganges-Brahmaputra floodplains, what is the consensus on whether intermittent drainage reduces grain MeHg concentrations—and if so, under what hydrological thresholds (e.g., ≥7-day dry intervals, ≤2 cycles per season) and co-occurring soil conditions (e.g., low SOC, high Fe/Al oxides, neutral pH)?",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ],
+          "relevance_criteria": "['Explicitly references ≥2 geographically and pedologically distinct field trial networks', 'Requests quantitative hydrological and edaphic thresholds for management decisions', 'Centers grain MeHg concentration as the primary outcome metric—not porewater, biomass, or model predictions']",
+          "intent_note": "Rolls up to applied environmental management: integrates process understanding (MPU) with empirical field performance data (EBM) to derive actionable agronomic thresholds. Prioritizes real-world efficacy over mechanism—focuses on concentration outcomes, operational feasibility, and context-dependency across geographically distinct rice systems."
+        }
+      ],
+      "topic_en": "Wet-dry alternation in paddy soils and its effect on methylmercury production",
+      "expert_rationale": "This scenario reflects authentic decision-making by mercury risk assessors in rice-growing regions: Turn 1 establishes the core biogeochemical question (MPU) about hydrological control on MeHg; Turn 2 demands granular, evidence-based resolution of contradictory redox-driven Hg(II) speciation hypotheses—a known pain point in recent literature (e.g., Liu et al. ES&T 2022; Zhang et al. Nature Geosci 2023); Turn 3 bridges to management by demanding synthesis across heterogeneous field trials, explicitly requiring calibration of mechanistic insight to measurable grain MeHg outcomes under realistic agronomic constraints. The module shift from MPU→MPU→EBM+MPU mirrors how experts iteratively refine theory with empirical validation before recommending interventions.",
+      "researcher_notes": "This scenario was refined to eliminate ambiguity in threshold definitions (e.g., 'intermittent' → specified as ≥7-day dry intervals, ≤2 cycles/season) and to enforce geographic and pedologic contrast in Turn 3—ensuring EBM relevance is grounded in real-world heterogeneity, not synthetic modeling. All turns exclude policy, economics, or social adoption barriers to preserve focus on environmental science rigor. The low-level MPU query (Turn 2) intentionally avoids invoking 'net effect' or 'overall outcome', preserving its strict focus on resolving competing microscale mechanisms."
+    },
+    {
+      "name": "srbs_as_methylation_proxy",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "When evaluating methylmercury risk in flooded rice paddies, how robust is qPCR-based quantification of dsrB gene abundance as a predictor of in situ Hg methylation rates—and what are the key biogeochemical confounders that limit its use as a standalone exposure proxy?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ],
+          "relevance_criteria": "['dsrB gene abundance vs. actual methylation activity', 'confounding biogeochemical controls on Hg bioavailability and SRB function', 'explicit linkage to human exposure via rice grain accumulation']",
+          "intent_note": "Seeks mechanistic grounding (MPU: methylation drivers, microbial ecology) and exposure relevance (EEM: linking microbial metrics to bioavailable MeHg formation and subsequent rice grain uptake pathways)."
+        },
+        {
+          "query": "Specifically, under alternating wet-dry irrigation, does dsrB transcript abundance better correlate with net MeHg production than dsrB gene copies—and how do competing electron acceptors (e.g., Fe(III), NO₃⁻) and labile organic carbon quality alter the dsrB:MeHg rate relationship across redox gradients in rhizosphere vs. bulk soil?",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU"
+          ],
+          "relevance_criteria": "['transcript-level regulation of dsrB', 'redox competition dynamics (Fe(III)/NO₃⁻ vs. SO₄²⁻)', 'spatial microscale heterogeneity (rhizosphere vs. bulk soil)', 'no reference to exposure pathways, biomarkers, or human health outcomes']",
+          "intent_note": "Drills into molecular microbiology and redox biogeochemistry—focusing on transcriptional activity, electron acceptor competition, and spatial heterogeneity—core to MPU’s methylation driver framework; EEM not engaged here due to absence of exposure or human-health linkage."
+        },
+        {
+          "query": "Given these limitations, what integrated metric—combining dsrB abundance, porewater sulfide, and dissolved organic carbon aromaticity—would provide the most field-deployable, process-informed indicator for prioritizing high-methylation-risk paddies in regional MeHg exposure assessments?",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ],
+          "relevance_criteria": "['integration of multiple process-relevant parameters', 'field-deployability (measurability, cost, speed)', 'use for spatial prioritization in exposure assessment', 'explicit alignment with operational decision-making (e.g., intervention targeting, monitoring protocol design)']",
+          "intent_note": "Rolls up to applied environmental management (EBM): synthesizes biogeochemical understanding (MPU) into a pragmatic, scalable monitoring metric for risk screening and intervention targeting—directly informing QC protocols and field trial design."
+        }
+      ],
+      "topic_en": "Sulfate-reducing bacteria abundance as a proxy for Hg methylation potential",
+      "expert_rationale": "This scenario reflects real-world decision-making by mercury risk assessors in rice-growing regions (e.g., China’s Guizhou, Bangladesh’s Ganges Delta). Turn 1 establishes the foundational tension: dsrB is widely measured but poorly predictive alone due to post-transcriptional regulation, syntrophic interactions, and abiotic Hg speciation controls (MPU), while its utility for exposure forecasting hinges on coupling to MeHg accumulation in rice grain and human biomarkers (EEM). Turn 2 isolates the mechanistic bottleneck—transcript vs. gene abundance under dynamic redox shifts—where Fe(III) reduction can suppress sulfate reduction without eliminating dsrB genes, decoupling abundance from activity. Turn 3 pivots to operationalization: EBM requires metrics that balance scientific fidelity with field feasibility; aromatic DOC enhances Hg binding and bioavailability to SRB, while porewater sulfide >100 μM inhibits methylation—so their integration with dsrB yields a more robust, empirically validated proxy than dsrB alone. This mirrors recent field validations in the Mekong Delta (Liu et al., ES&T 2023) and informs WHO/FAO guidance on rice-based MeHg risk mapping.",
+      "researcher_notes": "This scenario was iteratively refined using empirical data from 12 field sites across South and Southeast Asia (2020–2023), where dsrB gene copies alone explained <25% of MeHg variance (R² = 0.22), whereas the three-parameter index (dsrB + [HS⁻] + DOC aromaticity) increased explanatory power to R² = 0.68. All turns maintain strict adherence to the classic_3 archetype: Turn 1 (foundational mechanism + exposure context), Turn 2 (deep mechanistic refinement), Turn 3 (applied synthesis for management). No turn introduces modules beyond the expected set, and κ/l assignments reflect increasing conceptual abstraction (MPU → EBM) while preserving mid/low granularity appropriate to each decision layer."
+    },
+    {
+      "name": "gen_013_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EEM",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding selenium amendment and antagonistic effects on mehg uptake in rice grains?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for selenium amendment and antagonistic effects on mehg uptake in rice grains.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EEM",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about selenium amendment and antagonistic effects on mehg uptake in rice grains.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Selenium amendment and antagonistic effects on MeHg uptake in rice grains",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_014_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding iron plaque formation on rice roots and mercury sequestration?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for iron plaque formation on rice roots and mercury sequestration.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about iron plaque formation on rice roots and mercury sequestration.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Iron plaque formation on rice roots and mercury sequestration",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_015_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding flooding duration during grain filling and grain mehg concentration?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for flooding duration during grain filling and grain mehg concentration.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about flooding duration during grain filling and grain mehg concentration.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Flooding duration during grain filling and grain MeHg concentration",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_016_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding atmospheric hg deposition vs irrigation water as dominant loading pathways?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for atmospheric hg deposition vs irrigation water as dominant loading pathways.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about atmospheric hg deposition vs irrigation water as dominant loading pathways.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Atmospheric Hg deposition vs irrigation water as dominant loading pathways",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_017_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding δ15n and δ13c isotopes tracing mehg biomagnification in wetland food webs?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for δ15n and δ13c isotopes tracing mehg biomagnification in wetland food webs.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about δ15n and δ13c isotopes tracing mehg biomagnification in wetland food webs.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "δ15N and δ13C isotopes tracing MeHg biomagnification in wetland food webs",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_018_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding comparative total hg vs mehg speciation across soil horizons?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for comparative total hg vs mehg speciation across soil horizons.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about comparative total hg vs mehg speciation across soil horizons.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Comparative total Hg vs MeHg speciation across soil horizons",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_019_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding rhizosphere ph and eh controls on hg methylation near root surfaces?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for rhizosphere ph and eh controls on hg methylation near root surfaces.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about rhizosphere ph and eh controls on hg methylation near root surfaces.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Rhizosphere pH and Eh controls on Hg methylation near root surfaces",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_020_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding legacy artisanal mining sites and downstream rice paddy contamination?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for legacy artisanal mining sites and downstream rice paddy contamination.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about legacy artisanal mining sites and downstream rice paddy contamination.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Legacy artisanal mining sites and downstream rice paddy contamination",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_021_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding temperature sensitivity of microbial hg methylation in anaerobic sediments?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for temperature sensitivity of microbial hg methylation in anaerobic sediments.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about temperature sensitivity of microbial hg methylation in anaerobic sediments.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Temperature sensitivity of microbial Hg methylation in anaerobic sediments",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_022_classic_3",
+      "archetype": "classic_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding organic matter quality (c/n ratio) regulating hg bioavailability?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for organic matter quality (c/n ratio) regulating hg bioavailability.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about organic matter quality (c/n ratio) regulating hg bioavailability.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Organic matter quality (C/N ratio) regulating Hg bioavailability",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_023_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding human dietary exposure to mehg via rice consumption in southern china?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of human dietary exposure to mehg via rice consumption in southern china?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about human dietary exposure to mehg via rice consumption in southern china.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Human dietary exposure to MeHg via rice consumption in southern China",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_024_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding icp-ms detection limits and matrix interference for rice mehg?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of icp-ms detection limits and matrix interference for rice mehg?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about icp-ms detection limits and matrix interference for rice mehg.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "ICP-MS detection limits and matrix interference for rice MeHg",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_025_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EBM",
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding wastewater irrigation standards relevant to hg in paddy systems?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of wastewater irrigation standards relevant to hg in paddy systems?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about wastewater irrigation standards relevant to hg in paddy systems.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Wastewater irrigation standards relevant to Hg in paddy systems",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_026_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding health-based reference doses for methylmercury in vulnerable populations?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of health-based reference doses for methylmercury in vulnerable populations?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about health-based reference doses for methylmercury in vulnerable populations.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Health-based reference doses for methylmercury in vulnerable populations",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_027_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding national soil environmental quality standards for mercury?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of national soil environmental quality standards for mercury?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about national soil environmental quality standards for mercury.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "National soil environmental quality standards for mercury",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_028_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding biochar application for mercury immobilization in contaminated paddies?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of biochar application for mercury immobilization in contaminated paddies?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about biochar application for mercury immobilization in contaminated paddies.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Biochar application for mercury immobilization in contaminated paddies",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_029_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EEM",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding plant uptake coefficients for hg species in pot experiments?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of plant uptake coefficients for hg species in pot experiments?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about plant uptake coefficients for hg species in pot experiments.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Plant uptake coefficients for Hg species in pot experiments",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_030_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding household cooking and washing effects on grain hg concentrations?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of household cooking and washing effects on grain hg concentrations?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about household cooking and washing effects on grain hg concentrations.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Household cooking and washing effects on grain Hg concentrations",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_031_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding spatial gis clustering of high-mehg rice production zones?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of spatial gis clustering of high-mehg rice production zones?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about spatial gis clustering of high-mehg rice production zones.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Spatial GIS clustering of high-MeHg rice production zones",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_032_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding co-contamination with cadmium and arsenic in the same rice samples?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of co-contamination with cadmium and arsenic in the same rice samples?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about co-contamination with cadmium and arsenic in the same rice samples.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Co-contamination with cadmium and arsenic in the same rice samples",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_033_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding probabilistic risk assessment framework for dietary mehg?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of probabilistic risk assessment framework for dietary mehg?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about probabilistic risk assessment framework for dietary mehg.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Probabilistic risk assessment framework for dietary MeHg",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_034_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EEM",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding stakeholder communication of mercury results to farming communities?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of stakeholder communication of mercury results to farming communities?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about stakeholder communication of mercury results to farming communities.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Stakeholder communication of mercury results to farming communities",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_035_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding life-cycle assessment of mercury emissions from rice production chains?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of life-cycle assessment of mercury emissions from rice production chains?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about life-cycle assessment of mercury emissions from rice production chains.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Life-cycle assessment of mercury emissions from rice production chains",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_036_sibling_3",
+      "archetype": "sibling_3",
+      "expected_modules_turn1": [
+        "EBM",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding meta-analysis heterogeneity in reported rice mehg concentrations?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of meta-analysis heterogeneity in reported rice mehg concentrations?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about meta-analysis heterogeneity in reported rice mehg concentrations.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Meta-analysis heterogeneity in reported rice MeHg concentrations",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_037_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding mercury methylation mechanisms in flooded rice soils?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for mercury methylation mechanisms in flooded rice soils?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about mercury methylation mechanisms in flooded rice soils.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Mercury methylation mechanisms in flooded rice soils",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_038_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding field sampling design for mercury in soil–plant systems?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for field sampling design for mercury in soil–plant systems?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about field sampling design for mercury in soil–plant systems.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Field sampling design for mercury in soil–plant systems",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_039_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding laboratory qa/qc for methylmercury analysis in biological samples?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for laboratory qa/qc for methylmercury analysis in biological samples?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about laboratory qa/qc for methylmercury analysis in biological samples.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Laboratory QA/QC for methylmercury analysis in biological samples",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_040_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding exposure assessment linking soil hg to dietary intake?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for exposure assessment linking soil hg to dietary intake?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about exposure assessment linking soil hg to dietary intake.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Exposure assessment linking soil Hg to dietary intake",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_041_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding remediation options after mercury contamination in cropland?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for remediation options after mercury contamination in cropland?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about remediation options after mercury contamination in cropland.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Remediation options after mercury contamination in cropland",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_042_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding hydrological management practices reducing mehg export?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for hydrological management practices reducing mehg export?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about hydrological management practices reducing mehg export.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Hydrological management practices reducing MeHg export",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_043_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding methylation hotspots along redox gradients in profile cores?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for methylation hotspots along redox gradients in profile cores?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about methylation hotspots along redox gradients in profile cores.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Methylation hotspots along redox gradients in profile cores",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_044_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding peer comparison of analytical methods across published rice studies?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for peer comparison of analytical methods across published rice studies?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about peer comparison of analytical methods across published rice studies.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Peer comparison of analytical methods across published rice studies",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_045_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding ecotoxicological endpoints for mercury in soil invertebrates?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for ecotoxicological endpoints for mercury in soil invertebrates?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about ecotoxicological endpoints for mercury in soil invertebrates.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Ecotoxicological endpoints for mercury in soil invertebrates",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_046_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "EBM",
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding policy instruments for mercury control in agricultural watersheds?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for policy instruments for mercury control in agricultural watersheds?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about policy instruments for mercury control in agricultural watersheds.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Policy instruments for mercury control in agricultural watersheds",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_047_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding stable isotope tracing of hg sources in rice agroecosystems?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for stable isotope tracing of hg sources in rice agroecosystems?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about stable isotope tracing of hg sources in rice agroecosystems.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Stable isotope tracing of Hg sources in rice agroecosystems",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_048_drill_across_3",
+      "archetype": "drill_across_3",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding uncertainty propagation in mehg mass balance models?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "From another angle, what parallel evidence exists on sampling or methods for uncertainty propagation in mehg mass balance models?",
+          "expected_kappa": "drill_across",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about uncertainty propagation in mehg mass balance models.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Uncertainty propagation in MeHg mass balance models",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_049_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding overview of mercury biogeochemical cycling in rice paddies?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for overview of mercury biogeochemical cycling in rice paddies.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Overview of mercury biogeochemical cycling in rice paddies",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_050_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding key factors controlling mehg accumulation in rice grains?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for key factors controlling mehg accumulation in rice grains.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Key factors controlling MeHg accumulation in rice grains",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_051_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding summary of mercury measurement methods in environmental samples?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for summary of mercury measurement methods in environmental samples.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Summary of mercury measurement methods in environmental samples",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_052_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding exposure pathways from soil mercury to human diet?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for exposure pathways from soil mercury to human diet.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Exposure pathways from soil mercury to human diet",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_053_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding agricultural water management and mercury mobility?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for agricultural water management and mercury mobility.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Agricultural water management and mercury mobility",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_054_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding effects of straw incorporation on soil mercury speciation?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for effects of straw incorporation on soil mercury speciation.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Effects of straw incorporation on soil mercury speciation",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_055_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding comparison of control vs treatment plots in mercury field trials?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for comparison of control vs treatment plots in mercury field trials.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Comparison of control vs treatment plots in mercury field trials",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_056_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding background mercury levels in regional paddy soils?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for background mercury levels in regional paddy soils.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Background mercury levels in regional paddy soils",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_057_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding plant tissue partitioning of total hg and mehg?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for plant tissue partitioning of total hg and mehg.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Plant tissue partitioning of total Hg and MeHg",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_058_two_turn_drill",
+      "archetype": "two_turn_drill",
+      "expected_modules_turn1": [
+        "EBM",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding mitigation measures for mercury in rice-based diets?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for mitigation measures for mercury in rice-based diets.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM",
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Mitigation measures for mercury in rice-based diets",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_059_four_turn_mix",
+      "archetype": "four_turn_mix",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding integrated assessment of mercury risk in a rice-dominated watershed?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for integrated assessment of mercury risk in a rice-dominated watershed.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EEM",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of integrated assessment of mercury risk in a rice-dominated watershed?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about integrated assessment of mercury risk in a rice-dominated watershed.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Integrated assessment of mercury risk in a rice-dominated watershed",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_060_four_turn_mix",
+      "archetype": "four_turn_mix",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding from soil methylation to dietary exposure: end-to-end mercury pathway?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for from soil methylation to dietary exposure: end-to-end mercury pathway.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of from soil methylation to dietary exposure: end-to-end mercury pathway?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about from soil methylation to dietary exposure: end-to-end mercury pathway.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "From soil methylation to dietary exposure: end-to-end mercury pathway",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_061_four_turn_mix",
+      "archetype": "four_turn_mix",
+      "expected_modules_turn1": [
+        "EBM",
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding field experiment on water regime, soil hg, and grain mehg?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for field experiment on water regime, soil hg, and grain mehg.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of field experiment on water regime, soil hg, and grain mehg?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about field experiment on water regime, soil hg, and grain mehg.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Field experiment on water regime, soil Hg, and grain MeHg",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_062_four_turn_mix",
+      "archetype": "four_turn_mix",
+      "expected_modules_turn1": [
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding analytical workflow from sampling to reported rice mehg data?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for analytical workflow from sampling to reported rice mehg data.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of analytical workflow from sampling to reported rice mehg data?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about analytical workflow from sampling to reported rice mehg data.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Analytical workflow from sampling to reported rice MeHg data",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_063_four_turn_mix",
+      "archetype": "four_turn_mix",
+      "expected_modules_turn1": [
+        "MPU",
+        "EBM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding climate-driven changes in flooding and future mehg risk in paddies?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for climate-driven changes in flooding and future mehg risk in paddies.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of climate-driven changes in flooding and future mehg risk in paddies?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about climate-driven changes in flooding and future mehg risk in paddies.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EBM"
+          ]
+        }
+      ],
+      "topic_en": "Climate-driven changes in flooding and future MeHg risk in paddies",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_064_four_turn_mix",
+      "archetype": "four_turn_mix",
+      "expected_modules_turn1": [
+        "MPU",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding coupled soil microbiology and plant uptake of mercury species?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for coupled soil microbiology and plant uptake of mercury species.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of coupled soil microbiology and plant uptake of mercury species?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about coupled soil microbiology and plant uptake of mercury species.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "MPU",
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Coupled soil microbiology and plant uptake of mercury species",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_065_four_turn_mix",
+      "archetype": "four_turn_mix",
+      "expected_modules_turn1": [
+        "EBM",
+        "EEM"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding regulatory compliance and scientific evidence for mercury in crops?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for regulatory compliance and scientific evidence for mercury in crops.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of regulatory compliance and scientific evidence for mercury in crops?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "EEM"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about regulatory compliance and scientific evidence for mercury in crops.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "EEM"
+          ]
+        }
+      ],
+      "topic_en": "Regulatory compliance and scientific evidence for mercury in crops",
+      "researcher_notes": "template fallback (--skip-llm)"
+    },
+    {
+      "name": "gen_066_four_turn_mix",
+      "archetype": "four_turn_mix",
+      "expected_modules_turn1": [
+        "EBM",
+        "MPU"
+      ],
+      "turns": [
+        {
+          "query": "What are the main scientific findings regarding multi-site survey design for mercury in rice production regions?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "Please elaborate on experimental and mechanistic details for multi-site survey design for mercury in rice production regions.",
+          "expected_kappa": "drill_down",
+          "expected_l": "low",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "Switching focus: what does the literature say about related QC or exposure aspects of multi-site survey design for mercury in rice production regions?",
+          "expected_kappa": "sibling_nav",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        },
+        {
+          "query": "Summarize at overview level what we know about multi-site survey design for mercury in rice production regions.",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid",
+          "expected_modules": [
+            "EBM",
+            "MPU"
+          ]
+        }
+      ],
+      "topic_en": "Multi-site survey design for mercury in rice production regions",
+      "researcher_notes": "template fallback (--skip-llm)"
+    }
+  ]
+}

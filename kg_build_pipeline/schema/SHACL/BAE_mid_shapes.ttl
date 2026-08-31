@@ -1,0 +1,428 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix whu: <https://bdi.whu.edu.cn/> .
+@prefix mp: <http://purl.org/mp#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix p-plan: <http://purl.org/net/p-plan#> .
+@prefix bfo: <http://purl.obolibrary.org/obo/BFO_> .
+
+#################################################################
+# BAE Mid-level SHACL Shapes v1.0
+#
+# Source of truth:
+#   1) entity(3).json
+#   2) relation(3).json
+#   3) potential_schema(2).json
+# RDF/IRI alignment:
+#   BAE_v3_clean_schema_aligned.ttl
+#
+# Validation stage:
+#   Run AFTER mid-level extraction and BEFORE low-level extraction.
+#
+# Design principle:
+#   - SHACL checks graph-structural facts that can be determined from the
+#     current graph itself.
+#   - Missing relations whose necessity depends on document semantics are
+#     WARNINGS, not automatic facts to be fabricated.
+#   - Document-level coverage/completeness checks (M07, M11, M12) remain
+#     explicitly represented but deactivated because the current BAE schema
+#     does not define Document/Chunk membership or role predicates required
+#     to scope those checks safely.
+#   - M08 is intentionally omitted by user request.
+#################################################################
+
+whu:BAE_Mid_SHACL_v1
+    a owl:Ontology ;
+    rdfs:label "BAE Mid-level SHACL Shapes v1.0"@en ;
+    rdfs:comment "中层抽取后的结构验证规则。Schema JSON 为执行基准，BAE aligned TTL 提供正式 RDF 类与属性 IRI。Violation 表示当前图结构与 Schema 冲突；Warning 表示需要结合原文由 LLM Reviewer 判断是否确有漏抽。M08 按要求不纳入本文件。"@zh .
+
+#################################################################
+# M00 — Mid-level entity must have original text
+#################################################################
+
+whu:M00_MidLevelOriginalTextShape
+    a sh:NodeShape ;
+    sh:targetClass whu:EnvironmentFeature ;
+    sh:targetClass whu:SpecimenCollection ;
+    sh:targetClass whu:SpecimenPreprocessing ;
+    sh:targetClass whu:BioChemicalExperiment ;
+    sh:targetClass whu:ComputationalExperiment ;
+    sh:targetClass whu:ScienceEvidence ;
+    sh:targetClass whu:SupportGraph ;
+    sh:name "M00 Mid-level original-text evidence"@en ;
+    sh:description "每个中层实体必须具有非空 whu:hasOriginalText。该属性是中层实体存在的原文证据锚点；缺失意味着节点无法被可靠回溯，应重新抽取或删除无证据节点。"@zh ;
+    rdfs:comment "LLM guidance: do not invent missing original text. The value must come from the source document and should preserve the supporting contiguous span."@en ;
+    sh:property [
+        sh:path whu:hasOriginalText ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:minLength 1 ;
+        sh:severity sh:Violation ;
+        sh:message "M00: 中层实体缺少非空 whu:hasOriginalText；请回到对应 Chunk/原文重新抽取，不得补写不存在的文本。"@zh
+    ] .
+
+#################################################################
+# M01 — SpecimenCollection hasContext EnvironmentFeature
+#################################################################
+
+whu:M01_SpecimenCollectionContextShape
+    a sh:NodeShape ;
+    sh:targetClass whu:SpecimenCollection ;
+    sh:name "M01 SpecimenCollection context"@en ;
+    sh:description "若 SpecimenCollection 建立 whu:hasContext，其目标必须是 EnvironmentFeature。由于只有原文明确出现独立地点/场所时才应建立 hasContext，因此缺少该关系只作为 Warning，由 LLM 检查原文。"@zh ;
+    rdfs:comment "LLM guidance: WHERE is EnvironmentFeature. Soil/water/sediment as material is not EnvironmentFeature. A missing hasContext is not permission to fabricate a place."@en ;
+    sh:property [
+        sh:path whu:hasContext ;
+        sh:class whu:EnvironmentFeature ;
+        sh:severity sh:Violation ;
+        sh:message "M01: whu:hasContext 的目标不是 whu:EnvironmentFeature，违反当前 Schema 的类型约束。"@zh
+    ] ;
+    sh:property [
+        sh:path whu:hasContext ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "M01: SpecimenCollection 未连接 EnvironmentFeature；请检查采样原文是否存在明确地点。若无明确地点，则保留当前结构，不得强制补全。"@zh
+    ] .
+
+#################################################################
+# M02 — SpecimenPreprocessing fellow SpecimenCollection
+#################################################################
+
+whu:M02_SpecimenPreprocessingFellowShape
+    a sh:NodeShape ;
+    sh:targetClass whu:SpecimenPreprocessing ;
+    sh:name "M02 SpecimenPreprocessing upstream relation"@en ;
+    sh:description "SpecimenPreprocessing 的 whu:fellow 若存在，只能指向上游 SpecimenCollection。若没有 fellow，则提示检查是否漏抽上游采样过程或关系。"@zh ;
+    rdfs:comment "Direction is downstream -> upstream: SpecimenPreprocessing -> whu:fellow -> SpecimenCollection."@en ;
+    sh:property [
+        sh:path whu:fellow ;
+        sh:class whu:SpecimenCollection ;
+        sh:severity sh:Violation ;
+        sh:message "M02: SpecimenPreprocessing 的 whu:fellow 目标必须是 SpecimenCollection。"@zh
+    ] ;
+    sh:property [
+        sh:path whu:fellow ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "M02: SpecimenPreprocessing 没有 whu:fellow 上游关系；请由 LLM 检查全文是否存在对应 SpecimenCollection。"@zh
+    ] .
+
+#################################################################
+# M03 — BioChemicalExperiment fellow allowed upstream types
+#################################################################
+
+whu:M03_BioChemicalExperimentFellowShape
+    a sh:NodeShape ;
+    sh:targetClass whu:BioChemicalExperiment ;
+    sh:name "M03 BioChemicalExperiment upstream relation"@en ;
+    sh:description "BioChemicalExperiment 的 whu:fellow 目标只能是 SpecimenPreprocessing 或另一个 BioChemicalExperiment。没有 fellow 时仅报警，由 LLM 判断是否存在明确上游过程。"@zh ;
+    rdfs:comment "Allowed signatures from potential_schema: BioChemicalExperiment -> fellow -> SpecimenPreprocessing; BioChemicalExperiment -> fellow -> BioChemicalExperiment."@en ;
+    sh:property [
+        sh:path whu:fellow ;
+        sh:or (
+            [ sh:class whu:SpecimenPreprocessing ]
+            [ sh:class whu:BioChemicalExperiment ]
+        ) ;
+        sh:severity sh:Violation ;
+        sh:message "M03: BioChemicalExperiment 的 whu:fellow 目标类型非法；仅允许 SpecimenPreprocessing 或 BioChemicalExperiment。"@zh
+    ] ;
+    sh:property [
+        sh:path whu:fellow ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "M03: BioChemicalExperiment 未发现 whu:fellow 上游关系；请检查相关 Chunk 是否漏抽上游预处理或前序生化实验。"@zh
+    ] .
+
+#################################################################
+# M04 — ComputationalExperiment fellow allowed upstream types
+#################################################################
+
+whu:M04_ComputationalExperimentFellowShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ComputationalExperiment ;
+    sh:name "M04 ComputationalExperiment upstream relation"@en ;
+    sh:description "ComputationalExperiment 的 whu:fellow 目标只能是 BioChemicalExperiment 或另一个 ComputationalExperiment。没有 fellow 时仅报警，不自动创建上游节点。"@zh ;
+    rdfs:comment "Allowed signatures from potential_schema: ComputationalExperiment -> fellow -> BioChemicalExperiment; ComputationalExperiment -> fellow -> ComputationalExperiment."@en ;
+    sh:property [
+        sh:path whu:fellow ;
+        sh:or (
+            [ sh:class whu:BioChemicalExperiment ]
+            [ sh:class whu:ComputationalExperiment ]
+        ) ;
+        sh:severity sh:Violation ;
+        sh:message "M04: ComputationalExperiment 的 whu:fellow 目标类型非法；仅允许 BioChemicalExperiment 或 ComputationalExperiment。"@zh
+    ] ;
+    sh:property [
+        sh:path whu:fellow ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "M04: ComputationalExperiment 未发现 whu:fellow 上游关系；请检查相关 Chunk 是否存在明确的生化实验或前序计算实验。"@zh
+    ] .
+
+#################################################################
+# M05 — ScienceEvidence provenance relation, when present
+#################################################################
+
+whu:M05_ScienceEvidenceProvenanceShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ScienceEvidence ;
+    sh:name "M05 ScienceEvidence computational provenance"@en ;
+    sh:description "当前 Schema 允许 ScienceEvidence -> prov:wasDerivedFrom -> ComputationalExperiment，但仅当原文明示该证据包由计算/统计/建模实验生成时才建立。SHACL 只检查已存在关系的目标类型，不强制 minCount。"@zh ;
+    rdfs:comment "LLM guidance: absence of prov:wasDerivedFrom is not by itself an error. Only re-extract when document evidence explicitly supports a computational provenance link."@en ;
+    sh:property [
+        sh:path prov:wasDerivedFrom ;
+        sh:class whu:ComputationalExperiment ;
+        sh:severity sh:Violation ;
+        sh:message "M05: ScienceEvidence 的 prov:wasDerivedFrom 目标必须是 ComputationalExperiment。"@zh
+    ] .
+
+#################################################################
+# M06 — ScienceEvidence must participate in argumentation
+#################################################################
+
+whu:M06_ScienceEvidenceArgumentShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ScienceEvidence ;
+    sh:name "M06 ScienceEvidence argumentative connection"@en ;
+    sh:description "ScienceEvidence 应通过 mp:supports 或 mp:challenges 参与论证，且仅允许连接 whu:SupportGraph（不得直连 mp:Claim）。本规则要求至少存在一个指向 SupportGraph 的支持/挑战关系。缺失时作为 Warning 交由 LLM 复核。"@zh ;
+    rdfs:comment "LLM guidance: do not infer support/challenge from co-occurrence. The argumentative connector must be explicit or unambiguous in the source span."@en ;
+    sh:property [
+        sh:path [
+            sh:alternativePath (
+                mp:supports
+                mp:challenges
+            )
+        ] ;
+        sh:qualifiedValueShape [
+            sh:or (
+                [ sh:class whu:SupportGraph ]
+              
+            )
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "M06: ScienceEvidence 未发现指向 SupportGraph 的 mp:supports/mp:challenges；请检查论证原文，不能仅凭共现补关系。不得直连 Claim。"@zh
+    ] .
+
+#################################################################
+# M13 — SupportGraph must link focal Claim via supports/challenges
+#################################################################
+
+whu:M13_SupportGraphFocalClaimShape
+    a sh:NodeShape ;
+    sh:targetClass whu:SupportGraph ;
+    sh:name "M13 SupportGraph focal Claim link"@en ;
+    sh:description "若图中存在 whu:SupportGraph，则至少应有一条 mp:supports 或 mp:challenges 指向 mp:Claim。这是论证容器与 focal Claim 共创建时的 mandatory focal link。缺失记为 Violation（HARD）。"@zh ;
+    rdfs:comment "LLM guidance: only add SupportGraph->Claim when the same argumentative span contains an explicit focal proposition. Do not fabricate Claim nodes to satisfy this shape. Existence is enforced by M13; legality of the edge type remains M09."@en ;
+    sh:property [
+        sh:path [
+            sh:alternativePath (
+                mp:supports
+                mp:challenges
+            )
+        ] ;
+        sh:qualifiedValueShape [
+            sh:class mp:Claim
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "M13: SupportGraph 缺少指向 mp:Claim 的 mp:supports/mp:challenges；请检查 focal Claim 是否漏抽或漏连，不得无原文补边。"@zh
+    ] .
+
+#################################################################
+# M07 — Document-scoped ScienceEvidence/SupportGraph continuity
+#
+# This rule is intentionally represented but DEACTIVATED.
+# Reason: current BAE schema JSON/TTL does not provide a formal Document/Chunk
+# membership property that safely restricts "same paper" checks. Activating a
+# global graph check could incorrectly connect evidence from different papers.
+#################################################################
+
+whu:M07_DocumentScopedEvidenceGraphShape
+    a sh:NodeShape ;
+    sh:targetClass whu:SupportGraph ;
+    sh:deactivated true ;
+    sh:name "M07 Same-document ScienceEvidence–SupportGraph continuity"@en ;
+    sh:description "规则语义：若同一论文中已经存在 ScienceEvidence，则检查其是否通过 mp:supports/mp:challenges 与相应 SupportGraph 构成论证链。当前 Schema 未定义可用于 SHACL 安全限定“同一论文”的 Document/Chunk 成员关系，因此本规则仅作为 LLM/Cypher 文档级检查说明，不执行。"@zh ;
+    rdfs:comment "LLM guidance: scope the review to one document. Locate the relevant Results/Discussion chunks, then decide whether the missing edge is real. Never connect entities across documents merely to satisfy continuity."@en .
+
+#################################################################
+# M09 — Mid-level subject-predicate-object legality
+#
+# This SPARQL constraint checks structural edges whose subject AND object are
+# both mid-level classes. The allowed tuples are derived from current
+# potential_schema(2).json. It does NOT require all tuples to exist; it only
+# rejects a mid-to-mid tuple that is not in the allowed schema.
+#################################################################
+
+whu:M09_MidLevelTripleLegalityShape
+    a sh:NodeShape ;
+    sh:targetClass whu:EnvironmentFeature ;
+    sh:targetClass whu:SpecimenCollection ;
+    sh:targetClass whu:SpecimenPreprocessing ;
+    sh:targetClass whu:BioChemicalExperiment ;
+    sh:targetClass whu:ComputationalExperiment ;
+    sh:targetClass whu:ScienceEvidence ;
+    sh:targetClass whu:SupportGraph ;
+    sh:name "M09 Legal mid-level triple patterns"@en ;
+    sh:description "所有中层实体之间的结构关系必须属于当前 potential_schema 允许的 subject–predicate–object 组合。本规则只检查已经存在的中层到中层边，不要求模板中的每一条边都出现。"@zh ;
+    rdfs:comment "Allowed pure mid-level tuples: Preprocessing-fellow-Collection; Bio-fellow-Preprocessing/Bio; Computational-fellow-Bio/Computational; ScienceEvidence-wasDerivedFrom-Computational; ScienceEvidence-supports/challenges-SupportGraph; SupportGraph-supports/challenges-Claim; Collection-hasContext-EnvironmentFeature. ScienceEvidence must not link directly to Claim. M09 only checks legality of existing mid-to-mid edges; SupportGraph must have a focal Claim edge as an existence constraint under M13 (Violation)."@en ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Violation ;
+        sh:message "M09: 发现不在 potential_schema 中的中层 subject–predicate–object 组合：{$this} {?p} {?o}。"@zh ;
+        sh:select """
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX mp: <http://purl.org/mp#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+
+            SELECT $this ?p ?o
+            WHERE {
+                $this ?p ?o .
+
+                # Only evaluate predicates that can participate in the current
+                # mid-level structural graph. prov:hadMember is included so an
+                # unsupported mid-to-mid membership edge is still detected by
+                # the generic schema-legality rule even though no dedicated M08
+                # shape exists.
+                FILTER (?p IN (
+                    whu:hasContext,
+                    whu:fellow,
+                    prov:wasDerivedFrom,
+                    mp:supports,
+                    mp:challenges,
+                    prov:hadMember
+                ))
+
+                # M09 applies only when the object is also a mid-level entity.
+                VALUES ?midObjectClass {
+                    whu:EnvironmentFeature
+                    whu:SpecimenCollection
+                    whu:SpecimenPreprocessing
+                    whu:BioChemicalExperiment
+                    whu:ComputationalExperiment
+                    whu:ScienceEvidence
+                    whu:SupportGraph
+                    mp:Claim
+                }
+                ?o rdf:type ?midObjectClass .
+
+                # A violation is reported only when no allowed tuple matches.
+                FILTER NOT EXISTS {
+                    VALUES (?allowedS ?allowedP ?allowedO) {
+                        (whu:SpecimenPreprocessing   whu:fellow          whu:SpecimenCollection)
+                        (whu:BioChemicalExperiment  whu:fellow          whu:SpecimenPreprocessing)
+                        (whu:BioChemicalExperiment  whu:fellow          whu:BioChemicalExperiment)
+                        (whu:ComputationalExperiment whu:fellow         whu:BioChemicalExperiment)
+                        (whu:ComputationalExperiment whu:fellow         whu:ComputationalExperiment)
+                        (whu:ScienceEvidence        prov:wasDerivedFrom whu:ComputationalExperiment)
+                        (whu:ScienceEvidence        mp:supports         whu:SupportGraph)
+                        (whu:ScienceEvidence        mp:challenges       whu:SupportGraph)
+  
+                        (whu:SupportGraph           mp:supports         mp:Claim)
+                        (whu:SupportGraph           mp:challenges       mp:Claim)
+                        (whu:SpecimenCollection     whu:hasContext      whu:EnvironmentFeature)
+                    }
+                    $this rdf:type ?allowedS .
+                    ?o rdf:type ?allowedO .
+                    FILTER (?p = ?allowedP)
+                }
+            }
+        """
+    ] .
+
+#################################################################
+# M10 — Isolated mid-level entity warning
+#################################################################
+
+whu:M10_IsolatedMidLevelEntityShape
+    a sh:NodeShape ;
+    sh:targetClass whu:EnvironmentFeature ;
+    sh:targetClass whu:SpecimenCollection ;
+    sh:targetClass whu:SpecimenPreprocessing ;
+    sh:targetClass whu:BioChemicalExperiment ;
+    sh:targetClass whu:ComputationalExperiment ;
+    sh:targetClass whu:ScienceEvidence ;
+    sh:targetClass whu:SupportGraph ;
+    sh:name "M10 Isolated mid-level entity"@en ;
+    sh:description "中层实体若没有任何可识别的结构连接，则标记为 Warning。该规则用于发现漏关系或误抽节点，不表示所有中层实体必须形成固定模板链。"@zh ;
+    rdfs:comment "LLM guidance: inspect the entity original_text and nearby chunks. If no relation is textually supported, keep the node isolated or remove it as appropriate; do not fabricate a chain."@en ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Warning ;
+        sh:message "M10: 中层实体当前为结构孤立节点；请检查是否漏抽合法关系或该节点本身是否误抽。"@zh ;
+        sh:select """
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX mp: <http://purl.org/mp#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+            PREFIX bfo: <http://purl.obolibrary.org/obo/BFO_>
+
+            SELECT $this
+            WHERE {
+                FILTER NOT EXISTS {
+                    $this ?pOut ?o .
+                    FILTER (?pOut IN (
+                        whu:hasContext,
+                        whu:fellow,
+                        prov:wasDerivedFrom,
+                        mp:supports,
+                        mp:challenges,
+                        prov:hadMember,
+                        whu:hasGoal,
+                        p-plan:isInputVarOf,
+                        p-plan:isOutputVarOf,
+                        bfo:0000051
+                    ))
+                }
+                FILTER NOT EXISTS {
+                    ?s ?pIn $this .
+                    FILTER (?pIn IN (
+                        whu:hasContext,
+                        whu:fellow,
+                        prov:wasDerivedFrom,
+                        mp:supports,
+                        mp:challenges,
+                        prov:hadMember,
+                        p-plan:isStepOfPlan,
+                        p-plan:isInputVarOf,
+                        p-plan:isOutputVarOf,
+                        prov:atLocation
+                    ))
+                }
+            }
+        """
+    ] .
+
+#################################################################
+# M11 — Document-level class coverage check
+#
+# DEACTIVATED: this needs Document -> Chunk and Chunk-role metadata that are
+# not formally defined in the current schema JSON / aligned BAE TTL.
+#################################################################
+
+whu:M11_DocumentMidLevelCoverageShape
+    a sh:NodeShape ;
+    sh:deactivated true ;
+    sh:name "M11 Document-level mid-level class coverage"@en ;
+    sh:description "规则语义：若论文存在相应语义 Chunk（如明显的 EEM 实验文本），但整篇论文完全没有对应中层类（如 BioChemicalExperiment），则触发 Review。当前本体没有 Document/Chunk 成员和 Chunk role 的正式 RDF 属性，因此不在 SHACL 中强制执行。"@zh ;
+    rdfs:comment "Implementation guidance: implement M11 in the document-level LLM/Cypher/Python review layer using the extraction pipeline's document_id, chunk_id and role metadata. The reviewer must locate source evidence before requesting re-extraction."@en .
+
+#################################################################
+# M12 — Document-level semantic chain gap review
+#
+# DEACTIVATED for the same scoping reason as M11. This is deliberately a
+# semantic-review rule, not a template-completion rule.
+#################################################################
+
+whu:M12_DocumentMidLevelChainGapShape
+    a sh:NodeShape ;
+    sh:deactivated true ;
+    sh:name "M12 Document-level mid-level chain-gap review"@en ;
+    sh:description "规则语义：当同一论文已经出现上下游中层节点但链条存在明显缺口时，定位相关 Chunk 交给 LLM 判断是否真正漏抽。只有存在原文证据时才重新抽取；不得为了满足模板而强制补齐中层链。"@zh ;
+    rdfs:comment "Implementation guidance: this rule requires same-document scoping and source-text semantics. Use SHACL/Cypher findings as candidates, then let the LLM reviewer verify the relevant chunks. Never infer a missing node solely from the expected BAE chain."@en .

@@ -1,0 +1,34 @@
+rel_type,count,src_type,tgt_type,src_in_eem,tgt_in_eem,src_in_mpu,tgt_in_mpu,shared_participant_edge,example
+dcterms_hasPart,104,whu_DataSet,whu_ScalarMeasurementDatum,True,True,True,False,True,Rice Mercury and Methylmercury Concentra -[dcterms_hasPart]-> THg Average Concentration
+p_plan_isStepOfPlan,40,whu_Specimen_ProcessingStep,whu_SpecimenPreprocessing,True,False,False,False,True,Homogenization -[p_plan_isStepOfPlan]-> Rice Sample Preprocessing
+iao_is_about,35,whu_DataSet,whu_Specimen,True,True,True,False,True,Rice Brands and Types -[iao_is_about]-> Rice Samples
+whu_declareUsed,30,whu_BioChemicalStep,whu_Reagent,True,True,False,False,True,MeHg Extraction and Detection in Soil an -[whu_declareUsed]-> Copper Sulfate
+whu_declareUsed,28,whu_Specimen_ProcessingStep,envo_Material,True,True,False,False,True,Filtration and acidification -[whu_declareUsed]-> Hydrochloric acid
+p_plan_isPrecededBy,27,whu_BioChemicalStep,whu_BioChemicalStep,True,True,False,False,True,INAA Intermediate/Long-Lived Radioisotop -[p_plan_isPrecededBy]-> Acid Digestion
+whu_declareUsed,27,whu_BioChemicalStep,whu_Device,True,True,False,False,True,INAA Short-Lived Analysis -[whu_declareUsed]-> Ortec HPGe Detector (71% efficiency)
+iao_is_about,26,whu_DataSet,whu_ProcessedSpecimen,True,True,True,False,True,Reference Material Data (Table 1) -[iao_is_about]-> NIST 1547 Peach Leaves
+p_plan_hasOutputVar,20,whu_BioChemicalStep,whu_ProcessedSpecimen,True,True,False,False,True,INAA of NIST 1568a Rice Flour -[p_plan_hasOutputVar]-> NIST 1568a Rice Flour
+p_plan_hasOutputVar,19,whu_BioChemicalStep,whu_DataSet,True,True,False,True,True,THg digestion and CVAFS analysis -[p_plan_hasOutputVar]-> Average THg concentration in rice
+prov_wasDerivedFrom,19,whu_ProcessedSpecimen,whu_Specimen,True,True,False,False,True,Ground Rice Powder -[prov_wasDerivedFrom]-> Brown Rice Samples
+iao_is_about,18,whu_DataSet,whu_Reagent,True,True,True,False,True,Reference Material Data Table 1 -[iao_is_about]-> IAEA 336 Lichen
+p_plan_hasOutputVar,18,whu_ComputationalStep,whu_DataSet,True,True,False,True,True,Dietary Intake Calculation -[p_plan_hasOutputVar]-> Dietary Intake Estimates
+p_plan_isPrecededBy,18,whu_Specimen_ProcessingStep,whu_Specimen_ProcessingStep,True,True,False,False,True,Washing -[p_plan_isPrecededBy]-> Husk Removal
+prov_wasDerivedFrom,18,whu_Specimen,whu_EnvironmentFeature,True,False,False,False,True,Rice samples -[prov_wasDerivedFrom]-> China
+p_plan_hasInputVar,17,whu_BioChemicalStep,whu_ProcessedSpecimen,True,True,False,False,True,ICP-OES Analysis -[p_plan_hasInputVar]-> Digested Rice Samples
+whu_declareUsed,17,whu_ComputationalStep,whu_DataSet,True,True,False,True,True,PDI Calculation for MeHg Intake -[whu_declareUsed]-> Dietary Intake Rates (rice and fish)
+whu_hasContext,16,whu_SpecimenCollection,whu_EnvironmentFeature,False,False,False,False,False,Rice Sample Collection -[whu_hasContext]-> Jamaica
+p_plan_hasInputVar,15,whu_Specimen_ProcessingStep,whu_Specimen,True,True,False,False,True,Grinding of Rice Samples -[p_plan_hasInputVar]-> Rice Samples
+whu_declareUsed,11,whu_Specimen_ProcessingStep,whu_Device,True,True,False,False,True,Bran Removal -[whu_declareUsed]-> Rice Mill JNMJ3
+whu_fellow,9,whu_SpecimenPreprocessing,whu_SpecimenCollection,False,False,False,False,False,Air Drying Crushing Sieving Rice Samples -[whu_fellow]-> Rice Sampling in Southern China
+p_plan_hasOutputVar,8,whu_Specimen_CollectionStep,whu_Specimen,True,True,False,False,True,Rice Collection -[p_plan_hasOutputVar]-> Rice Samples
+p_plan_hasOutputVar,8,whu_Specimen_ProcessingStep,whu_ProcessedSpecimen,True,True,False,False,True,Acid digestion -[p_plan_hasOutputVar]-> Digested sample solution
+whu_declareUsed,8,whu_ComputationalStep,whu_Software,True,True,False,False,True,Pearson correlation between rice THg and -[whu_declareUsed]-> SPSS 11.5
+p_plan_hasInputVar,7,whu_ComputationalStep,whu_DataSet,True,True,False,True,True,PDI Calculation -[p_plan_hasInputVar]-> Daily Intake Rates
+whu_atLocation,7,whu_Specimen_CollectionStep,whu_EnvironmentFeature,True,False,False,False,True,September sampling of different pair of  -[whu_atLocation]-> site 3
+p_plan_isPrecededBy,6,whu_Specimen_ProcessingStep,whu_Specimen_CollectionStep,True,True,False,False,True,July Rice Sample Processing -[p_plan_isPrecededBy]-> July Plant Collection
+p_plan_hasInputVar,5,whu_BioChemicalStep,whu_DataSet,True,True,False,True,True,ICP-OES Analysis -[p_plan_hasInputVar]-> Calibration Standards for F-AAS and ICP-
+p_plan_isPrecededBy,4,whu_BioChemicalStep,whu_Specimen_ProcessingStep,True,True,False,False,True,Methylmercury Analysis -[p_plan_isPrecededBy]-> Sieving
+p_plan_isStepOfPlan,4,whu_Specimen_CollectionStep,whu_SpecimenCollection,True,False,False,False,True,Fish Collection in Guangdong Ponds -[p_plan_isStepOfPlan]-> Fish Sampling in Guangdong
+whu_declareUsed,4,whu_Specimen_CollectionStep,envo_Material,True,True,False,False,True,Aqueous sample collection at sites -[whu_declareUsed]-> Water from canal and sites
+p_plan_isPrecededBy,1,whu_ComputationalStep,whu_BioChemicalStep,True,True,False,False,True,PDI Calculation -[p_plan_isPrecededBy]-> MeHg GC-CVAFS Determination
+p_plan_isPrecededBy,1,whu_ComputationalStep,whu_ComputationalStep,True,True,False,False,True,Province-specific PDI Calculation -[p_plan_isPrecededBy]-> General PDI Calculation

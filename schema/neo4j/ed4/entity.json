@@ -1,0 +1,178 @@
+{
+  "entities": [
+    {
+      "label": "WHU_SPECIMENCOLLECTION",
+      "description": "Define: A sampling plan describing how specimens are collected (where/when/design/tools).\r\n\r\nContext: Create SpecimenCollection when sampling methodology is stated; link steps via prov:wasAssociatedWith → BioChemicalActivityStep; output via p-plan:isOutputVarOf on Specimen.\r\n\r\nExamples: “We randomly collected 60 white‑rice samples from 10 districts during 2022–2023.” → SpecimenCollection producing Specimen."
+    },
+    {
+      "label": "WHU_BIOCHEMICALACTIVITYSTEP",
+      "description": "Define: Atomic biochemical procedure that declares a whu:Method, consumes ProcessedSpecimen/Reagent/Device, and generates ProcessedSpecimen and/or DataSet.\r\n\r\nContext: Create per step (e.g., “acid digestion”, “instrument run”). Link p-plan:isStepOfPlan → Bio_chemical_Experiment; prov:used (Device/Reagent/ProcessedSpecimen); prov:generated (DataSet/ProcessedSpecimen); optional p-plan:correspondsToStep; whu:hasExecutionEnvironment.\r\n\r\nExamples: “Microwave digestion with HNO₃ (65%) using MARS 6; run ICP‑MS.” → two steps: digestion and measurement."
+    },
+    {
+      "label": "MP_MICROPUBLICATION",
+      "description": "Definition: A Micropublication is a structured evidence graph containing a central Claim/Statement and supporting elements (DataSet, Method, Attribution, References).\r\nContext: Extract when the text presents an explicit scientific assertion plus its evidence components. Link the MPU to its Claim/Statement and to supporting Data/Method/Attribution/References.\r\nExamples:\r\n- Positive: 'The study claims cadmium exceeds limits, supported by Dataset S1 (ICP-MS) and Method M1 (digestion), attributed to Dr. Li.'\r\n- Positive: 'Claim: Nitrate levels are rising; supported by monitoring data and sampling protocol; attributed to the Environmental Science Lab.'\r\n- Negative: 'Cadmium is discussed' (no structured evidence) -> skip."
+    },
+    {
+      "label": "WHU_DEVICE",
+      "description": "Define: Scientific instrument used in biochemical steps.\r\n\r\nContext: Create Device and fill schema:hasBrand (brand/name), schema:hasModel, schema:hasSerialNumber if stated; connect via prov:used from BioChemicalActivityStep.\r\n\r\nExamples: “Agilent 7700 ICP‑MS”, “Thermo Fisher iCAP Q; SN: Q12345”.",
+      "properties": [
+        {
+          "name": "SCHEMA_HASBRAND",
+          "type": "STRING",
+          "description": "Extract the brand of the device."
+        },
+        {
+          "name": "SCHEMA_HASMODEL",
+          "type": "STRING",
+          "description": "Extract the model name or ID of the device."
+        },
+        {
+          "name": "SCHEMA_HASSERIALNUMBER",
+          "type": "STRING",
+          "description": "Extract the serial number of the device."
+        }
+      ]
+    },
+    {
+      "label": "WHU_DATASET",
+      "description": "Definition: A structured dataset used or generated in scientific activities, emphasizing data provenance, semantic targets, and hierarchical organization.\r\nContext: Use this class only when the text explicitly indicates an instance of this concept. Avoid speculative inference; rely on explicit mentions, definitions, or unambiguous descriptions.\r\n It is modeled as a subclass of <http://purl.obolibrary.org/obo/IAO_IAO_0000100>, mp:Data, dcat:Dataset, prov:Entity. \r\nNotes: \r\n1. if whu:DataSet has numerical value, then it should be a whu:ScalarMeasurementDatum, and link to whu:DataSet. \r\n2. it's best that every whu:Dataset whu:supports mp:Claim\r\nExamples:\r\n- Positive: \"The sample is a DataSet collected during the field campaign.\" -> create node of type whu:DataSet.\r\n- Negative: \"The study mentions DataSet as a background topic\" (no instance stated) -> skip."
+    },
+    {
+      "label": "WHU_GOAL",
+      "description": "Define: Stated scientific objective of an experiment/plan (e.g., “quantify Hg in rice”, “compare urban vs rural PM2.5 metals”).\r\n\r\nContext: Create only when explicitly stated; link from experiment via whu:hasGoal.\r\n\r\nExamples: “to quantify As, Cd, Pb in white rice” → Goal."
+    },
+    {
+      "label": "WHU_COMPUTATIONAL_EXPERIMENT",
+      "description": "Define: Data‑only analysis (statistics/modeling/transforms) using software to produce derived datasets or results.\r\n\r\nContext: Create when methods like t‑test/ANOVA/PCA/regression/ML are reported. Link prov:wasAssociatedWith → ComputationalActivityStep; prov:used → Software; whu:hasGoal → Goal.\r\n\r\nExamples: “We ran PCA in R 4.2.2; t‑tests assessed group differences (p<0.05).” → Computational_Experiment."
+    },
+    {
+      "label": "WHU_ENVIRONMENTFEATURE",
+      "description": "\r\n    Define: An environmental or geographic context (e.g., soil, river, urban air, farmland, site, province/city) that can carry coordinates and optional demographics.\r\n\r\nContext: Create a node of type whu:EnvironmentFeature when the text names a sampling location or environmental setting used to derive specimens or frame experiments. If coordinates appear, map them to geo:lat, geo:long, geo:alt; if population appears, map to gn:population.\r\n\r\nExamples:\r\n\r\n“Samples were taken from paddy fields in Nanjing (32.1°N, 118.8°E, 20 m).” → EnvironmentFeature with geo:lat=32.1, geo:long=118.8, geo:alt=20.\r\n\r\n“Urban air in Shanghai; population 24M.” → EnvironmentFeature with gn:population=24000000.\r\n    \r\n    ",
+      "properties": [
+        {
+          "name": "GEO_LAT",
+          "type": "FLOAT",
+          "description": "Define: Latitude in decimal degrees.\r\n\r\nContext: Extract numeric latitude when an EnvironmentFeature or place has coordinates; ignore DMS unless a decimal value is stated or can be read as a simple float.\r\n\r\nExamples: “(32.10 N, 118.80 E)” → geo:lat=32.10"
+        },
+        {
+          "name": "GEO_LONG",
+          "type": "FLOAT",
+          "description": "Define: Longitude in decimal degrees.\r\n\r\nContext: Extract numeric longitude tied to an EnvironmentFeature.\r\n\r\nExamples: “(32.10 N, 118.80 E)” → geo:long=118.80"
+        },
+        {
+          "name": "GEO_ALT",
+          "type": "FLOAT",
+          "description": "Define: Altitude/elevation in meters above sea level.\r\n\r\nContext: Extract when explicitly given with a numeric value near a location.\r\n\r\nExamples: “elevation 20 m” → geo:alt=20"
+        },
+        {
+          "name": "GN_POPULATION",
+          "type": "INTEGER",
+          "description": "Define: Population count of the geographic area.\r\n\r\nContext: Map to integer; normalize from “24 million” → 24000000 when unambiguous.\r\n\r\nExamples: “population ~1.2 million” → gn:population=1200000"
+        }
+      ]
+    },
+    {
+      "label": "WHU_COMPUTATIONALACTIVITYSTEP",
+      "description": "Define: Atomic computational operation that declares a whu:Method, uses Software and input DataSet, and generates a new DataSet or result.\r\n\r\nContext: Create per transform/test/modeling step. Link p-plan:isStepOfPlan → Computational_Experiment; prov:used (Software, DataSet); prov:generated (DataSet).\r\n\r\nExamples: “Log‑transform concentrations; run one‑way ANOVA; compute Pearson r.” → separate ComputationalActivitySteps."
+    },
+    {
+      "label": "MP_ATTRIBUTION",
+      "description": "Definition: Attribution specifies the agents responsible for creating, asserting, or being accountable for a Representation.\r\nContext: Extract when authorship/responsibility/source agency is explicitly assigned (persons, institutions, projects). Avoid inference without explicit statements.\r\nExamples:\r\n- Positive: 'This claim was asserted by Dr. Smith.' -> mp:Attribution linked to the claim and agent\r\n- Positive: 'Data provided by the EPA.' -> mp:Attribution linked to the dataset and EPA\r\n- Negative: 'Researchers often believe...' (no specific agent) -> skip."
+    },
+    {
+      "label": "MP_STATEMENT",
+      "description": "Definition: A Statement is an assertion with a truth value (true/false), typically supported by evidence.\r\nContext: Extract when the text presents a complete proposition (claim, observation, factual assertion). Model as a subclass of mp:Sentence if available in your schema.\r\nExamples:\r\n- Positive: 'Cadmium levels exceeded 0.2 mg/kg.' -> mp:Statement\r\n- Positive: 'Arsenic contamination is above safety limits.' -> mp:Statement\r\n- Negative: 'Heavy metals are discussed.' (no evaluable proposition) -> skip."
+    },
+    {
+      "label": "WHU_TARGET_ANALYTE",
+      "description": "Define: Chemical entity measured/assessed (e.g., As, Cd, Pb, Hg, Na, K).\r\n\r\nContext: Create when analytes are listed as measurement targets; typically link to data via iao:is_about (measurement) and to goals; align to CHEBI when possible.\r\n\r\nExamples: “We quantified Cd and Pb by ICP‑MS.” → Target_analyte nodes: Cd, Pb."
+    },
+    {
+      "label": "MP_REFERENCES",
+      "description": "Definition: References encodes bibliographic citations or source links tied to a Representation and may support or contextualize it.\r\nContext: Extract when explicit citations (e.g., 'Smith 2020', DOI/URL, numbered references) are tied to a specific Representation.\r\nExamples:\r\n- Positive: 'According to Smith (2020), ...' -> mp:References linked to the cited work and to the Statement/Claim\r\n- Positive: 'Dataset S1 from DOI:10.1234/abcd was used.' -> mp:References linked to the DataSet\r\n- Negative: 'Previous studies have shown...' (no specific source) -> skip."
+    },
+    {
+      "label": "WHU_SCALARMEASUREMENTDATUM",
+      "description": "Definition: A scalar numerical measurement datum with one numeric value, an optional unit (string label), and an optional comparator (e.g., '<', '<=', 'between').\r\nContext: Use whu:ScalarMeasurementDatum when the text provides an explicit numeric measurement (possibly with unit and comparator). Ideal for values like '0.2 mg/kg', 'Hg < 0.2 mg/kg', or ranges '12–15 mg/kg'.\r\nExamples:\r\n- Positive: 'Cadmium concentration was 0.15 mg/kg.' -> value=0.15, unit='mg/kg'\r\n- Positive: 'Hg < 0.2 mg/kg.' -> value=0.2, unit='mg/kg', comparator='<'\r\n- Positive: 'Temperature 25 °C.' -> value=25, unit='°C'\r\n- Negative: 'High cadmium level' (no explicit number) -> skip.",
+      "properties": [
+        {
+          "name": "IAO_HASMEASUREMENTVALUE",
+          "type": "FLOAT",
+          "description": "Definition: The datum must have a single numeric value.\r\nContext: Extract only when an explicit number is given (integer/decimal, possibly in scientific notation).\r\nExamples:\r\n- Positive: '0.15 mg/kg' -> value = 0.15\r\n- Negative: 'high cadmium level' (no number) -> skip."
+        },
+        {
+          "name": "IAO_HASMEASUREMENTUNIT",
+          "type": "STRING",
+          "description": "Definition: The datum may have a measurement unit label.\r\nContext: Extract the unit when it is explicitly present next to the value.\r\nExamples:\r\n- Positive: '0.15 mg/kg' -> unit = 'mg/kg'\r\n- Negative: '0.15' (no unit stated) -> leave unit empty."
+        },
+        {
+          "name": "WHU_HASCOMPARATOR",
+          "type": "STRING",
+          "description": "Definition: The datum may include a comparator indicating relation to the value (e.g., '<', '<=', 'between').\r\nContext: Extract only when an explicit comparator appears with the value (or a range is stated).\r\nExamples:\r\n- Positive: 'Hg < 0.2 mg/kg' -> comparator = '<'\r\n- Positive: '12–15 mg/kg' -> comparator = 'between'\r\n- Negative: 'Hg levels were measured' -> skip comparator."
+        }
+      ]
+    },
+    {
+      "label": "WHU_PROCESSEDSPECIMEN",
+      "description": "Define: A specimen after preprocessing (e.g., drying, sieving, digestion) used as input to biochemical experiments.\r\n\r\nContext: Create when the text describes an output of SpecimenPreprocessing. Connect: prov:wasDerivedFrom → Specimen; p-plan:isOutputVarOf ← SpecimenPreprocessing; p-plan:isInputVarOf → Bio_chemical_Experiment; numeric quantity via iao:is_about.\r\n\r\nExamples: “Dried and acid-digested rice flour was used for ICP‑MS.” → ProcessedSpecimen with edges above."
+    },
+    {
+      "label": "WHU_SPECIMENPREPROCESSING",
+      "description": "Describe how specimens were preprocessed before experimentation (e.g., cooling, freezing, filtering)."
+    },
+    {
+      "label": "MP_CLAIM",
+      "description": "Definition: A Claim is the central assertion argued by a Micropublication.\r\nContext: Extract when the text explicitly advances a principal scientific assertion to be supported or challenged by evidence.\r\nExamples:\r\n- Positive: 'We conclude cadmium exceeds the permissible limit.' -> mp:Claim\r\n- Negative: 'We measured cadmium.' (methodological fact, not a central assertion) -> consider mp:Statement instead."
+    },
+    {
+      "label": "WHU_SPECIMEN",
+      "description": "Define: Physical biological/environmental sample collected from an EnvironmentFeature, used in downstream plans/experiments.\r\n\r\nContext: Create whu:Specimen when the text names collected materials (e.g., “rice grains”, “surface soil”, “river water”). Link with prov:wasDerivedFrom → EnvironmentFeature; p-plan:isOutputVarOf ← SpecimenCollection; p-plan:isInputVarOf → SpecimenPreprocessing. If measurements of count/mass/volume appear, attach via iao:is_about → whu:ScalarMeasurementDatum.\r\n\r\nExamples: “We collected 30 rice grain samples from supermarkets in Nanjing.” → Specimen (+ prov:wasDerivedFrom to city feature; iao:is_about count=30)."
+    },
+    {
+      "label": "WHU_METHOD",
+      "description": "Define: Static protocol or named method/standard that steps can declare as used (e.g., “EPA 6020B”, “AOAC 2015.01”, “ISO 17294‑2”).\r\n\r\nContext: Create when a protocol is cited; connect via whu:declareUsed from ActivityStep; may mp:supports a DataSet.\r\n\r\nExamples: “Digestion followed EPA 3052” → Method."
+    },
+    {
+      "label": "WHU_BIO_CHEMICAL_EXPERIMENT",
+      "description": " # Define: A **bio-chemical experiment** represents a collection of activities performed on a physical **specimen** (or **processed specimen**). Its purpose is twofold: 1. To process the sample using specified **devices**, **reagents**, and methods (e.g., ICP-MS for metals, HPLC for compounds). 2. To measure environmental or biological targets, thereby generating raw **data**. This resulting data serves as crucial scientific evidence and often acts as the direct input for subsequent computational experiments, forming a key link in the research chain. # Context:  Create when analytical measurement on material is described. Link steps via prov:wasAssociatedWith → BioChemicalActivityStep; goals via whu:hasGoal; precedes via p-plan:isPrecededBy ← SpecimenPreprocessing. # Examples **Bio-chemical Experiment 1: Characterization of Porewater Dissolved Organic Matter (DOM)** "
+        ,    "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Extract the name of the BIO_CHEMICAL_EXPERIMENT, normally the key words of this experiment."
+
+        },
+                {
+          "name": "WHU_HASORIGINALTEXT",
+
+          "type": "STRING",
+          "description": "The original text of node come from"
+
+        }]
+                },
+    {
+      "label": "MP_REPRESENTATION",
+      "description": "Definition: A Representation is any publishable/argumentative entity in the Micropublications model (e.g., Claim, Statement, Data, Method, Attribution, References).\r\nContext: Use this class only when typing elements that participate in evidence relations (support/challenge) or composition within a Micropublication.\r\nExamples:\r\n- Positive: 'Statement S2 supports Claim C1.' -> both S2 and C1 are mp:Representation.\r\n- Positive: 'Dataset S1 supports Claim C3.' -> both S1 and C3 are mp:Representation.\r\n- Negative: 'General background text' (no argumentative role) -> skip."
+    },
+    {
+      "label": "WHU_REAGENT",
+      "description": " Define: Chemical/biological reagent used in preprocessing or measurement (e.g., HNO₃ 65%, H₂O₂ 30%, standards, reference materials).\r\n\r\nContext: Create when concentration/grade/brand are given; connect via prov:used from BioChemicalActivityStep.\r\n\r\nExamples: “suprapure HNO₃ (65%) from Merck” → Reagent."
+    },
+    {
+      "label": "WHU_SOFTWARE",
+      "description": "Define: Named software used in analysis/simulation.\r\n\r\nContext: Create Software with whu:brand (name) and schema:softwareVersion when present; connect via prov:used from ComputationalActivityStep/Experiment.\r\n\r\nExamples: “R (4.2.2)”, “SPSS 26”, “MATLAB R2021b”.",
+      "properties": [
+        {
+          "name": "WHU_BRAND",
+          "type": "STRING",
+          "description": "Extract the name of the software."
+        },
+        {
+          "name": "SCHEMA_SOFTWAREVERSION",
+          "type": "STRING",
+          "description": "Extract the version number of the software."
+        }
+      ]
+    }
+  ]
+}

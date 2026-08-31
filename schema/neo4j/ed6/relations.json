@@ -1,0 +1,88 @@
+{
+  "relations": [
+    {
+      "label": "whu_hasGoal",
+      "description": "Define: Links an experiment to its explicit scientific objective (Goal).\n\nContext: Look for “to quantify/assess/compare/evaluate …”. Subject: Bio_chemical_Experiment or Computational_Experiment; Object: Goal.\n\nExamples: “to compare metal levels across regions” → hasGoal(experiment, goal). "
+    },
+    {
+      "label": "p_plan_isPrecededBy",
+      "description": "Define: Declares an execution order between plans/steps.\n\nContext: Use when the text states sequence terms (“after”, “then”, “subsequently”).\n\nExamples: “After preprocessing, ICP‑MS was conducted.” → isPrecededBy(Bio_chemical_Experiment, SpecimenPreprocessing)."
+    },
+    {
+      "label": "prov_used",
+      "description": "Define: An activity step used an input entity (DataSet/Device/ProcessedSpecimen/Reagent/Software).\n\nContext: Triggers: “using/with/processed by/analysed in/implemented in”.\n\nExamples: “Data were analysed in R 4.2.2” → used(ComputationalActivityStep, Software:R)."
+    },
+    {
+      "label": "prov_wasAssociatedWith",
+      "description": "Define: A plan/experiment is associated with specific activity steps.\n\nContext: Link SpecimenCollection/Preprocessing to BioChemicalActivityStep; link Computational_Experiment to ComputationalActivityStep.\n\nExamples: “The collection involved grab sampling and composite mixing.” → 两个 BioChemicalActivityStep 与 SpecimenCollection 关联。"
+    },
+    {
+      "label": "mp_supports",
+      "description": "Definition: Connects a supporting Representation to another Representation that it provides evidence for.\nContext: Extract when the text states that one element supports or provides evidence for another element.\nExamples:\n- Positive: 'Dataset S1 supports Claim C3.' -> (whu:DataSet) -[mp:supports]-> (mp:Claim)\n- Positive: 'Method M1 supports Statement S2.' -> (whu:Method) -[mp:supports]-> (mp:Statement)\n- Negative: 'Discussed together' without explicit support -> skip."
+    },
+    {
+      "label": "mp_argues",
+      "description": "Definition: Links a Micropublication to the Claim it advances.\nContext: Extract when the text explicitly states that a Micropublication (or its equivalent evidence package) argues a specific Claim.\nExamples:\n- Positive: 'MPU X argues Claim C1.' -> (mp:Micropublication) -[mp:argues]-> (mp:Claim)\n- Negative: Mentioned together without asserting 'argues' -> skip."
+    },
+    {
+      "label": "mp_hasSupport",
+      "description": "Definition: Links a Micropublication to elements that provide evidential support.\nContext: Extract when the text explicitly ties datasets, methods, statements, attributions, or references to a Micropublication as support.\nExamples:\n- Positive: 'MPU X is supported by Dataset S1 and Method M1.' -> mp:hasSupport triples\n- Negative: Co-occurrence without explicit support -> skip."
+    },
+    {
+      "label": "whu_hasElement",
+      "description": "Definition: Connects a Micropublication to its constituent elements (Claim, Statement, DataSet, Method, References, Attribution).\nContext: Extract when the text explicitly states one element is part of another element.\nExamples:\n- Positive: 'Micropublication P1 hasElement Claim 1.' -> (mp:Micropublication) -[whu:hasElement]-> (mp:Claim)\n- Positive: 'Micropublication P2 hasElement Statement 2.' -> (mp:Micropublication) -[whu:hasElement]-> (mp:Statement)\n- Negative: Co-mention without explicit hasElement -> skip."
+    },
+    {
+      "label": "mp_challenges",
+      "description": "Definition: Connects a challenging Representation to another Representation it contradicts/refutes.\nContext: Extract when the text states that one element challenges/contradicts/refutes another.\nExamples:\n- Positive: 'Dataset S1 challenges Claim C3.'\n- Positive: 'Method M1 contradicts Statement S2.'\n- Negative: Co-mention without contradiction -> skip."
+    },
+    {
+      "label": "schema_hasManufacturer",
+      "description": "Define: Organization that manufactured the Device.\n\nContext: Use when explicit company/organization is named; if only brand occurs, keep hasBrand and skip manufacturer unless clearly stated.\n\nExamples: “Thermo Fisher Scientific” → hasManufacturer=Thermo Fisher Scientific."
+    },
+    {
+      "label": "whu_declareUsed",
+      "description": "Define: Declares that an ActivityStep follows a specific Method/standard.\n\nContext: Extract only when the text states “following/according to/using [Method/Standard]”. Subject: BioChemicalActivityStep or ComputationalActivityStep; Object: Method.\n\nExamples: “Digestion followed EPA 3052” → declareUsed(step, Method:EPA 3052)."
+    },
+    {
+      "label": "p_plan_correspondsToStep",
+      "description": "Define: Maps an executed ActivityStep to a designed p-plan:Step.\n\nContext: Use when the paper enumerates planned steps (Step 1/2/3) and later refers to actual execution.\n\nExamples: “as in Step 2 (acid digestion)” → correspondsToStep(ActivityStep_digestion, Step_2)."
+    },
+    {
+      "label": "p_plan_isStepOfPlan",
+      "description": "Define: States an ActivityStep belongs to an experiment plan.\n\nContext: Connect BioChemicalActivityStep → Bio_chemical_Experiment; ComputationalActivityStep → Computational_Experiment.\n\nExamples: “instrument run” → isStepOfPlan(runStep, Bio_chemical_Experiment)."
+    },
+    {
+      "label": "prov_generated",
+      "description": "Define: An activity step produced a DataSet or ProcessedSpecimen.\n\nContext: Look for “produced/yielded/generated/obtained/output”.\n\nExamples: “ICP‑MS generated concentration data.” → generated(BioChemicalActivityStep, DataSet)."
+    },
+    {
+      "label": "p_plan_hasInputVar",
+      "description": "Define: Associates a plan/step with its input variable.\n\nContext: For SpecimenPreprocessing, link the consumed Specimen; for p-plan:Step, link its p-plan:Variable.\n\nExamples: “Preprocessing used homogenized rice grains.” → hasInputVar(Preprocessing, Specimen)"
+    },
+    {
+      "label": "iao_is_about",
+      "description": "Definition: the dataSet about speciemen for example how many specimen has been collected.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:ProcessedSpecimen to an object of type whu:DataSet. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:ProcessedSpecimen) //purl.obolibrary.org/obo/iao is about> Y (whu:DataSet).\" -> (whu:ProcessedSpecimen) -[<http://purl.obolibrary.org/obo/IAO_is_about>]-> (whu:DataSet)\n- Negative: \"X and Y are discussed together\" (no explicit //purl.obolibrary.org/obo/IAO_is_about>) -> skip."
+    },
+    {
+      "label": "p_plan_isInputVarOf",
+      "description": "Define: A Specimen or ProcessedSpecimen serves as input to a plan.\n\nContext: Use when text says “used for … experiment/preprocessing”.\n\nExamples: “Processed powder was used for ICP‑MS.” → isInputVarOf(ProcessedSpecimen, Bio_chemical_Experiment)."
+    },
+    {
+      "label": "p_plan_isOutputVarOf",
+      "description": "Define: A Specimen/ProcessedSpecimen is the output of a plan.\n\nContext: For Specimen ← SpecimenCollection; for ProcessedSpecimen ← SpecimenPreprocessing.\n\nExamples: “The digestion produced solutions.” → isOutputVarOf(ProcessedSpecimen, SpecimenPreprocessing)."
+    },
+    {
+      "label": "prov_wasDerivedFrom",
+      "description": "Define: A material/result derives from a source entity.\n\nContext: Use for (Specimen → EnvironmentFeature) and (ProcessedSpecimen → Specimen).\n\nExamples: “Processed digests were derived from collected rice grains.” → wasDerivedFrom(ProcessedSpecimen, Specimen)."
+    },
+    {
+      "label": "whu_hasExecutionEnvironment",
+      "description": "Define: Links a biochemical step to its execution environment (temperature, humidity, duration).\n\nContext: Use when controlled conditions are reported with numeric values/units.\n\nExamples: “digestion at 180 °C for 30 min” → hasExecutionEnvironment with temperature=180, duration=30 min."
+    },
+    {
+      "label": "dcterms_hasPart",
+      "description": "Definition: The 'hasPart' relation connects a DataSet to its constituent DataItems, indicating that these data items are part of the dataset.\nContext: Extract this relation when the text explicitly states that a dataset includes, contains, or is composed of specific data items, measurements, or observations. The subject should be the dataset, and the object should be the contained data item(s).\nExamples:\n- Positive: \"Dataset S1 includes measurements of cadmium concentration.\" -> (whu:DataSet) -[dcterms:hasPart]-> (whu:DataItem)\n- Positive: \"Dataset 2020-ENV contains temperature readings.\" -> (whu:DataSet) -[dcterms:hasPart]-> (whu:DataItem)\n- Negative: \"The study mentions both Dataset S1 and cadmium concentration\" (no explicit inclusion stated) -> skip."
+    }
+  ]
+}

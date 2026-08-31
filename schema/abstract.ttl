@@ -1,0 +1,380 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix whu: <http://example.org/whu#> .
+@prefix bfo: <http://purl.obolibrary.org/obo/BFO_> .
+@prefix chebi: <http://purl.obolibrary.org/obo/CHEBI_> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix deo: <http://purl.org/spar/deo/> .
+@prefix envo: <http://purl.obolibrary.org/obo/ENVO_> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix iao: <http://purl.obolibrary.org/obo/IAO_> .
+@prefix mp: <http://purl.org/mp#> .
+@prefix ncbitaxon: <http://purl.obolibrary.org/obo/NCBITaxon_> .
+@prefix obi: <http://purl.obolibrary.org/obo/obi#> .
+@prefix omath: <http://ontomathpro.org/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix p-plan: <http://purl.org/net/p-plan#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+ 
+@prefix ro: <http://purl.obolibrary.org/obo/RO_> .
+ 
+@prefix schema: <https://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix stato: <http://purl.obolibrary.org/obo/STATO_> .
+@prefix uo: <http://purl.obolibrary.org/obo/UO_> .
+ 
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+whu:Specimen a owl:Class ;
+    rdfs:label "Specimen"@en ;
+    rdfs:comment "A biological or environmental specimen material, collected from a defined context, used in experimentation, and taxonomically classified. Semantically aligned with OBI:specimen."@en ;
+    rdfs:comment "从环境中采集的生物或环境样本材料，参与后续处理与实验流程，并具备生物分类标识。语义上与OBI中的 specimen 类对齐。"@zh ;
+   
+    mp:statement xsd:string ;
+    rdfs:subClassOf 
+        ##################################################
+        ### 属于语义科学的 Material 类型
+        ##################################################
+        mp:Material ,
+
+        ##################################################
+        ### 明确为 prov:Entity，用于因果关系建模
+        ##################################################
+        prov:Entity .
+
+        ##################################################
+        ### 可选地指明其来源环境上下文
+        ##################################################
+ #与 whu:Specimen 相关的object properties###
+### ObjectProperty: prov:wasDerivedFrom
+prov:wasDerivedFrom a owl:ObjectProperty ;
+    rdfs:domain whu:Specimen ;
+    rdfs:range whu:EnvironmentFeature ;
+    rdfs:comment "Indicates that the specimen is derived from a specific environmental context, which may influence its characteristics."@en ;
+    rdfs:comment "表示该样本来源于特定的环境上下文，环境因素可能影响其性质。"@zh  .
+
+### ObjectProperty: p-plan:isOutputVarOf
+p-plan:isOutputVarOf a owl:ObjectProperty ;
+    rdfs:domain whu:Specimen ;
+    rdfs:range whu:SpecimenCollection ;
+    rdfs:comment "This specimen is the output variable of a specimen collection plan, indicating its generation through structured sampling."@en ;
+    rdfs:comment "该标本是样本采集计划的输出变量，表示其通过结构化采样过程产生。"@zh  .
+
+### ObjectProperty: p-plan:isInputVarOf
+p-plan:isInputVarOf a owl:ObjectProperty ;
+    rdfs:domain whu:Specimen ;
+    rdfs:range whu:SpecimenPreprocessing ;
+    rdfs:comment "This specimen is used as an input variable in a specimen preprocessing plan, such as filtering, centrifugation, or staining."@en ;
+    rdfs:comment "该标本是样本预处理计划的输入变量，例如过滤、离心、染色等实验处理流程的输入。"@zh .
+
+
+### ObjectProperty: obi:has_taxonomic_identifier
+obi:has_taxonomic_identifier a owl:ObjectProperty ;
+    rdfs:domain whu:Specimen ;
+    rdfs:range ncbitaxon:0000000 ;
+    rdfs:comment "Specimen is taxonomically classified using the NCBI Taxonomy ontology (e.g., species, genus, family)."@en ;
+    rdfs:comment "标本通过 NCBI 分类本体进行生物分类标识，例如种、属、科等。"@zh .
+
+### ObjectProperty: qudt:quantityValue
+qudt:quantityValue a owl:ObjectProperty ;
+    rdfs:domain whu:Specimen ;
+    rdfs:range qudt:QuantityValue ;
+    rdfs:comment "Describes the specimen's quantity, volume, or mass using QUDT standard measurement units."@en ;
+    rdfs:comment "使用 QUDT 标准单位描述样本的数量、体积或质量等测量信息。"@zh  .
+
+### ObjectProperty: skos:closeMatch
+skos:closeMatch a owl:ObjectProperty ;
+    rdfs:domain whu:Specimen ;
+    rdfs:range obi:0001479 ;
+    rdfs:comment "Semantically aligned with OBI's definition of specimen, representing a material entity collected for investigation."@en ;
+    rdfs:comment "在语义上与 OBI 中 specimen 概念对齐，表示为研究采集的物质实体。"@zh .
+    
+
+
+
+
+###########################Method####################
+
+mp:Method  a owl:Class ;
+        
+        owl:equivalentClass [ a owl:Class ;
+                              owl:intersectionOf ( mp:Representation
+                                                   [ a owl:Restriction ;
+                                                     owl:onProperty mp:methodSupports ;
+                                                     owl:someValuesFrom mp:Representation
+                                                   ]
+                                                 )
+                            ] ;
+        
+        rdfs:subClassOf mp:Representation .
+
+
+
+###  http://purl.org/mp/Micropublication
+
+#####################################DataSet#########################
+
+whu:DataSet a owl:Class ;
+    rdfs:label "DataSet"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "A structured dataset used or generated in scientific activities, emphasizing data provenance, semantic targets, and hierarchical organization."@en ;
+    rdfs:comment "科学活动中生成或使用的结构化数据集，强调数据溯源、语义目标及层次化组织。"@zh .
+  ### ObjectProperty: whu:DataSetSupportStatement
+whu:DataSetSupportStatement a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range mp:Statement ;
+    rdfs:comment "Indicates that this dataset provides supporting evidence for a scientific statement."@en ;
+    rdfs:comment "表示该数据集为某个科学陈述提供支持性证据。"@zh .
+
+### ObjectProperty: whu:DataSetSupportClaim
+whu:DataSetSupportClaim a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range mp:Claim ;
+    rdfs:comment "Indicates that this dataset supports a scientific claim, contributing to its credibility."@en ;
+    rdfs:comment "表示该数据集支持某项科学主张，有助于增强其可信度。"@zh .
+
+### ObjectProperty: whu:DataSetchallengeStatement
+whu:DataSetchallengeStatement a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range mp:Statement ;
+    rdfs:comment "Indicates that this dataset challenges or contradicts a scientific statement."@en ;
+    rdfs:comment "表示该数据集对某个科学陈述提出质疑或与之相矛盾。"@zh .
+
+### ObjectProperty: whu:DataSetchallengeClaim
+whu:DataSetchallengeClaim a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range mp:Claim ;
+    rdfs:comment "Indicates that this dataset challenges a scientific claim, raising doubts about its validity."@en ;
+    rdfs:comment "表示该数据集对某项科学主张提出质疑，挑战其有效性。"@zh .
+
+
+prov:generatedBy a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range whu:ActivityStep .
+
+### ObjectProperty: prov:usedBy
+prov:usedBy a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range whu:ActivityStep .
+
+### ObjectProperty: dct:isPartOf
+dct:isPartOf a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range whu:DataSet .
+
+### ObjectProperty: dct:hasPart
+dct:hasPart a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range whu:DataSet .
+
+### ObjectProperty: schema:about
+schema:about a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range whu:TargetObject .
+
+### ObjectProperty: iao:has_member
+iao:has_member a owl:ObjectProperty ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range iao:data_item .
+
+
+
+##################################Enviorment 
+
+
+#################################Experiment#############
+
+whu:Experiment a owl:Class ;
+    rdfs:label "Experiment"@en ;
+    rdfs:comment "An experimental process that involves the use of samples or materials to measure properties of the samples or the environment."@en ;
+    rdfs:comment "实验过程，涉及使用样品或材料来测量样品或环境的性质。"@zh.
+
+  ### ObjectProperty: prov:wasAssociatedWith
+prov:wasAssociatedWith a owl:ObjectProperty ;
+    rdfs:domain whu:Experiment ;
+    rdfs:range whu:ActivityStep ;
+    rdfs:comment "Indicates the specific activity steps associated with conducting this experiment."@en ;
+    rdfs:comment "表示与本实验相关联的具体研究活动步骤。"@zh .
+
+### ObjectProperty: ro:has_goal
+ro:has_goal a owl:ObjectProperty ;
+    rdfs:domain whu:Experiment ;
+    rdfs:range whu:Goal ;
+    rdfs:comment "Specifies the research goal or intended objective of this experiment."@en ;
+    rdfs:comment "明确本实验的研究目标或预期目的。"@zh .
+
+##############################goal#####################
+
+whu:Goal a owl:Class ;
+    rdfs:subClassOf prov:Entity;
+    mp:statement xsd:string ;
+    rdfs:label "Goal"@en ;
+    rdfs:comment "A scientific goal or objective."@en ;
+    rdfs:comment "科学目标或目标。"@zh ;
+    whu:prompt "Identify the scientific goal or objective of the experiment."@en .
+
+
+
+
+########################Claim##########################
+
+mp:Claim a owl:Class ;  # 定义 mp:Claim 是一个 OWL 类
+    rdfs:label "Claim"@en ;
+        mp:statement xsd:string ;
+    rdfs:comment "A claim is a statement that is argued by a micropublication."@en ;
+    rdfs:comment "陈述是一种被微出版物主张的陈述。"@zh ;
+    whu:prompt "Identify the claim of the micropublication."@en .
+
+ 
+
+
+################################################tragetObject####################
+whu:TargetObject a owl:Class ;
+    mp:statement xsd:string ;
+    rdfs:label "Target Object"@en ;
+    rdfs:comment "An object of scientific interest or concern."@en ;
+    rdfs:comment "科学研究的目标对象。"@zh .
+  ### ObjectProperty: ro:is_target_of
+ro:is_target_of a owl:ObjectProperty ;
+    rdfs:domain whu:TargetObject ;
+    rdfs:range whu:Goal ;
+    rdfs:comment "Indicates that this object is the target of a scientific goal or objective."@en ;
+    rdfs:comment "表示该对象是某个科学目标或研究目的所针对的对象。"@zh .
+
+### ObjectProperty: iao:0000136
+iao:0000136 a owl:ObjectProperty ;
+    rdfs:domain whu:TargetObject ;
+    rdfs:range whu:Method ;
+    rdfs:comment "Indicates that the method is about or involves this target object."@en ;
+    rdfs:comment "表示该研究方法与本目标对象相关，或以其为研究内容。"@zh .
+
+### ObjectProperty: ro:denotes
+ro:denotes a owl:ObjectProperty ;
+    rdfs:domain whu:TargetObject ;
+    rdfs:range mp:Data ;
+    rdfs:comment "Indicates that this target object is denoted or represented by specific data."@en ;
+    rdfs:comment "表示该目标对象由某些具体数据所指示或表示。"@zh .
+
+
+        ###################################class 之间关系################################
+###########################mehotd support data###########################
+
+whu:MethodsupportsData a owl:ObjectProperty ;
+    rdfs:subPropertyOf mp:methodSupports ;
+    rdfs:domain mp:Method ;
+    #rdfs:range mp:Data;
+    rdfs:range whu:DataSet;
+    rdfs:label "Methodsupports Data"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "A method supports a data."@en ;
+    rdfs:comment "方法支持数据。"@zh ;
+    whu:prompt "Identify the data supported by a method."@en .
+
+######################################
+
+
+
+whu:EnvironmentFeature a owl:Class ;# 基本类，不可分解，实例通过skos与envo对应#
+    rdfs:label "Environment Feature"@en ;
+        #将之前neo4j grah 中schema定义结合，单并没有进行综合。
+    rdfs:comment "A spatial feature representing any real-world location, geographic entity, or phenomenon with associated geometry. In the context of a Neo4j Graph RAG system, this class is designed to model provinces, cities, sites, or other geographic regions as described in environmental research. It is primarily used to associate precise geometry or coordinates (e.g., latitude, longitude, polygons) to enable advanced geospatial queries, environmental analyses, and spatial data visualization. By integrating both environmental semantics from ENVO and geospatial properties from WGS84, this class supports robust spatial reasoning and facilitates cross-disciplinary research.Represents environmental context integrating geographic coordinates, administrative divisions, environmental conditions, and material constituents, including chemical pollutants."@en ;
+    rdfs:comment "代表环境上下文，集成地理坐标、行政区划、环境状态以及物质组成，包括化学污染物。"@zh ;
+    whu:prompt "Extract entities describing environment features including location coordinates, administrative features, environmental conditions, materials, and pollutants."@en ;
+    whu:prompt "A spatial feature representing any real-world location, geographic entity, or phenomenon with associated geometry. In the context of a Neo4j Graph RAG system, this class is designed to model provinces, cities, sites, or other geographic regions as described in environmental research. It is primarily used to associate precise geometry or coordinates (e.g., latitude, longitude, polygons) to enable advanced geospatial queries, environmental analyses, and spatial data visualization. By integrating both environmental semantics from ENVO and geospatial properties from WGS84, this class supports robust spatial reasoning and facilitates cross-disciplinary research.Represents environmental context integrating geographic coordinates, administrative divisions, environmental conditions, and material constituents, including chemical pollutants."@zh ;
+mp:statement xsd:string ;
+    # 明确继承于多重父类，体现其空间、环境、地理特征的集成角色
+    rdfs:subClassOf prov:Location, geo:Feature, gn:Feature, envo:00002297 ; # envo:EnvironmentFeature (ENVO标准术语)
+
+    # 地理坐标属性约束：纬度
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty geo:lat ;
+        owl:someValuesFrom xsd:float ;
+        rdfs:comment " have a latitude coordinate."@en ;
+        rdfs:comment "具备纬度坐标。"@zh;
+        whu:prompt " have a latitude coordinate."
+    ] ;
+
+    # 地理坐标属性约束：经度
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty geo:long ;
+        owl:someValuesFrom xsd:float ;
+        rdfs:comment "have a longitude coordinate."@en ;
+        rdfs:comment "具备经度坐标。"@zh;
+        whu:prompt " have a longitude coordinate."
+    ] ;
+
+    # 地理坐标属性约束：海拔
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty geo:alt ;
+        owl:someValuesFrom xsd:float ;
+        rdfs:comment "have an altitude value."@en ;
+        rdfs:comment "具备海拔高度数值。"@zh;
+        whu:prompt " have an altitude value."
+    ] ;
+
+    # 社会经济信息约束：人口数量
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty gn:population ;
+        owl:someValuesFrom xsd:integer ;
+        rdfs:comment " the population of the geographic area."@en ;
+        rdfs:comment "地理区域的人口数量。"@zh;
+        whu:prompt " the population of the geographic area."
+    ] ;
+
+    # 社会经济信息约束：上级行政区域
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty gn:parentFeature ;
+        owl:someValuesFrom gn:Feature ;
+        rdfs:comment "its higher-level geographic or administrative region."@en ;
+        rdfs:comment "其所属的更高层次地理或行政区域。"@zh;
+        whu:prompt "its higher-level geographic or administrative region."
+    ] ;
+
+    # 环境状态约束
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_quality ;
+        owl:someValuesFrom envo:01000254 ; # envo:EnvironmentalCondition
+        rdfs:comment "the environmental condition (e.g., tropical, polar)."@en ;
+        rdfs:comment "环境状态（如热带、极地等）。"@zh;
+        whu:prompt "the environmental condition (e.g., tropical, polar)."
+    ] ;
+
+    # 环境物质组成约束：ENVO物质
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_constituent ;
+        owl:someValuesFrom envo:00010483 ; # envo:Material
+        rdfs:comment "environmental material constituents (soil, water)."@en ;
+        rdfs:comment "包含环境物质组成（如土壤、水等）。"@zh;
+        whu:prompt "include environmental material constituents (soil, water)."
+    ] ;
+
+    # 环境物质组成约束：CHEBI化学污染物
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_constituent ;
+        owl:someValuesFrom chebi:24431 ; # chebi:ChemicalEntity
+        rdfs:comment "include chemical pollutants (e.g., Hg, Cr)."@en ;
+        rdfs:comment "包含化学污染物（如汞、铬等）。"@zh;   
+        whu:prompt "include chemical pollutants (e.g., Hg, Cr)."
+    ] ;
+
+    # 与ENVO标准术语的语义对齐
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty skos:closeMatch ;
+        owl:someValuesFrom envo:00002297 ; # envo:EnvironmentFeature的子类
+        rdfs:comment "Semantically aligned with standard ENVO environmental classifications."@en ;
+        rdfs:comment "在语义上与ENVO环境分类术语标准化对齐。"@zh;
+        whu:prompt "Semantically aligned with standard ENVO environmental classifications."
+    ] .

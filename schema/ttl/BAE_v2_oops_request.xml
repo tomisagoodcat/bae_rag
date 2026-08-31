@@ -1,0 +1,738 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OOPSRequest>
+  <OntologyUrl></OntologyUrl>
+  <OntologyContent><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+   xmlns:owl="http://www.w3.org/2002/07/owl#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+   xmlns:whu="http://example.org/whu#"
+>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_hasMeasurementUnit">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ScalarMeasurementDatum"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#wasDerivedFrom">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#Specimen"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ProcessedSpecimen"/>
+    <rdfs:range rdf:resource="http://example.org/whu#EnvironmentFeature"/>
+    <rdfs:range rdf:resource="http://example.org/whu#Specimen"/>
+    <whu:prompt xml:lang="en">Define: Specimen derived from EnvironmentFeature; ProcessedSpecimen derived from Specimen.
+Examples: "Rice grains collected from paddy soil" → wasDerivedFrom(Specimen, EnvironmentFeature).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#TargetObject">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Target Object</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Entity under investigation. Distinct from Specimen (physical carrier).</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Core entity the experiment intends to investigate (pollutant, compound, estimated variable).
+Prefer subclasses TargetAnalyte (bio) or TargetVariable (computational).
+### Examples
+"mercury"; "Hg content"; "cadmium".
+### Note
+Specimen = rice grains (carrier); TargetObject = Hg in rice (investigated entity).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#supports">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ScienceEvidence"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#DataSet"/>
+    <rdfs:domain rdf:resource="http://purl.org/mp#Method"/>
+    <rdfs:range rdf:resource="http://purl.org/mp#Claim"/>
+    <rdfs:range rdf:resource="http://purl.org/mp#Statement"/>
+    <rdfs:range rdf:resource="http://example.org/whu#SupportGraph"/>
+    <rdfs:label xml:lang="en">supports</rdfs:label>
+    <whu:prompt xml:lang="en">Define: Evidence/data/method supports a Statement or Claim (or SupportGraph).
+Examples: "Results support that MeHg decreased" → supports(ScienceEvidence, Claim).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#DataSetService">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Data Service</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Data"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/dcat#DataService"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Dynamic service providing datasets via endpoint URL.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+External dynamic data service with endpoint URL and served datasets.
+### Examples
+"data available at https://…"; repository API endpoints.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#TargetVariable">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Target Variable</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://example.org/whu#TargetObject"/>
+    <rdfs:comment xml:lang="en">Estimated/modeled variable for ComputationalExperiment; align IAO/STATO.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Statistical or modeled variable estimated in ComputationalExperiment.
+### Examples
+"Hg content"; "hazard quotient"; "bioaccumulation factor".
+### Links
+Goal -hasTarget→ TargetVariable; DataSet/ScalarMeasurementDatum -iao:is_about→ TargetVariable.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#hasExecutionEnvironment">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ResearchStep"/>
+    <rdfs:range rdf:resource="http://example.org/whu#ExecutionEnvironment"/>
+    <rdfs:label xml:lang="en">has execution environment</rdfs:label>
+    <whu:prompt xml:lang="en">Define: Links a ResearchStep to controlled conditions (temperature, humidity, duration).
+Examples: "digestion at 180 °C for 30 min" → hasExecutionEnvironment(step, env).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#correspondsToStep">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://www.w3.org/ns/prov#Activity"/>
+    <rdfs:range rdf:resource="http://example.org/whu#ResearchStep"/>
+    <rdfs:label xml:lang="en">corresponds to step</rdfs:label>
+    <rdfs:comment xml:lang="en">Optional link from executed prov:Activity to paper-recorded ResearchStep.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Data">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Data</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:comment xml:lang="en">Argumentative data representation in the Micropublication sense.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Argumentative data element that can support or challenge Statement/Claim.
+Prefer creating whu:DataSet for structured scientific datasets; use mp:Data only when a more specific subclass does not apply.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_is_about">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#DataSet"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ScalarMeasurementDatum"/>
+    <rdfs:range rdf:resource="http://example.org/whu#TargetObject"/>
+    <rdfs:range rdf:resource="http://example.org/whu#Specimen"/>
+    <rdfs:range rdf:resource="http://example.org/whu#ProcessedSpecimen"/>
+    <whu:prompt xml:lang="en">Define: Dataset or measurement is about a TargetObject or specimen.
+Examples: "Hg = 12 mg/kg in rice grains" → is_about(ScalarMeasurementDatum, TargetAnalyte:Hg).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_hasMeasurementValue">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ScalarMeasurementDatum"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#isPrecededBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ResearchStep"/>
+    <rdfs:range rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:range rdf:resource="http://example.org/whu#ResearchStep"/>
+    <rdfs:label xml:lang="en">is preceded by</rdfs:label>
+    <whu:prompt xml:lang="en">Define: Logical order between plans or steps ("after", "then", "subsequently").
+EBM order: SpecimenCollection precedes SpecimenPreprocessing; Preprocessing precedes BioChemicalExperiment.
+Examples: "After preprocessing, ICP-MS was conducted" → isPrecededBy(BioChemicalExperiment, SpecimenPreprocessing).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#hadMember">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://www.w3.org/ns/prov#Collection"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:label xml:lang="en">had member</rdfs:label>
+    <whu:prompt xml:lang="en">Define: Collection membership.
+ScienceEvidence hadMember DataSet|Method; SupportGraph hadMember Statement.
+Examples: ScienceEvidence aggregates Method EPA3052 and DataSet Table2.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#ScienceEvidence">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Science Evidence</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Collection"/>
+    <rdfs:subClassOf rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b4"/>
+    <rdfs:subClassOf rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b5"/>
+    <rdfs:comment xml:lang="en">Composite evidence unit aggregating DataSet and Method; supports/challenges Statement or Claim.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Identifiable composite evidence unit whose members include DataSet and Method.
+### Context
+Create when data+method jointly support or challenge a Statement/Claim. Same DataSet/Method may join multiple ScienceEvidence.
+### Links
+ScienceEvidence -prov:hadMember→ DataSet;
+ScienceEvidence -prov:hadMember→ Method;
+ScienceEvidence -mp:supports|mp:challenges→ Statement|Claim|SupportGraph.
+### Trace
+Member DataSet should connect back to ResearchStep via hasOutputVar.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#ComputationalExperiment">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Computational Experiment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b3"/>
+    <rdfs:comment xml:lang="en">Statistical modeling or computational analysis over DataSet.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Computational/statistical experiment: DataSet_raw → DataSet_final.
+### Context
+Risk assessment, ANOVA, regression, modeling. Has Goal targeting TargetVariable.
+### Links
+Often isPrecededBy BioChemicalExperiment;
+ResearchStep -isStepOfPlan→ ComputationalExperiment;
+hasInputVar/hasOutputVar DataSet; declaredUsed Software|Method.
+### Examples
+"health risk assessment"; "ANOVA of concentration across treatments".</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#BioChemicalExperiment">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Bio-Chemical Experiment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b2"/>
+    <rdfs:comment xml:lang="en">Experiment that processes specimens to generate measurement data.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Biochemical/chemical experimental plan: treated specimens → measurement DataSet.
+### Context
+Assays, digestion–instrument runs, wet-lab analyses. Has Goal targeting TargetAnalyte.
+### Links
+isPrecededBy SpecimenPreprocessing (typical);
+ResearchStep -isStepOfPlan→ BioChemicalExperiment;
+hasInputVar ProcessedSpecimen; hasOutputVar DataSet;
+hasGoal → Goal.
+### Examples
+"Hg determination by ICP-MS"; "MeHg extraction and analysis".</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#EBM">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Environment &amp; Evidence Background Module</rdfs:label>
+    <rdfs:comment xml:lang="en">Top-level semantic view grouping EnvironmentContext, SpecimenCollection, SpecimenPreprocessing. NOT instantiable in operational KG.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#EEM">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Experiment Evidence Module</rdfs:label>
+    <rdfs:comment xml:lang="en">Top-level semantic view grouping BioChemicalExperiment and ComputationalExperiment. NOT instantiable in operational KG.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#Device">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Device</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Scientific instrument used in research steps.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Analytical or experimental instrument (model, manufacturer if present).
+### Examples
+"ICP-MS Agilent 7700"; "TOC analyzer".
+### Links
+ResearchStep -declaredUsed→ Device.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#challenges">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ScienceEvidence"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#DataSet"/>
+    <rdfs:range rdf:resource="http://purl.org/mp#Claim"/>
+    <rdfs:range rdf:resource="http://purl.org/mp#Statement"/>
+    <rdfs:range rdf:resource="http://example.org/whu#SupportGraph"/>
+    <rdfs:label xml:lang="en">challenges</rdfs:label>
+    <whu:prompt xml:lang="en">Define: Evidence/data challenges a Statement or Claim.
+Examples: "Findings contradict the prior claim" → challenges(ScienceEvidence, Claim).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#Software">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Software</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Analytical or computational software.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Software tools for analysis or simulation (name + version if present).
+### Examples
+"SPSS 26"; "R 4.2"; "MATLAB".
+### Links
+ResearchStep -declaredUsed→ Software (typically ComputationalExperiment steps).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Claim">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Claim</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Statement"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:comment xml:lang="en">A scientific assertion argued by the publication; terminal node of the argumentation chain.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+A scientific assertion (interpretive conclusion) argued in the paper.
+### Context
+Extract when text states main findings / conclusions that are supported or challenged by data/methods.
+### Examples
+"mercury levels exceed safety thresholds"; "no significant contamination detected".
+### Links
+Claim ← supports/challenges — ScienceEvidence | SupportGraph(Statement).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#hasTarget">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#Goal"/>
+    <rdfs:range rdf:resource="http://example.org/whu#TargetObject"/>
+    <rdfs:label xml:lang="en">has target</rdfs:label>
+    <whu:prompt xml:lang="en">Define: A Goal targets a TargetObject (analyte or variable).
+Examples: "quantify Hg in rice" → hasTarget(goal, TargetAnalyte:Hg).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#ResearchStep">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Research Step</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Step"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:comment xml:lang="en">Paper-recorded static research step (not executed prov:Activity). Belongs to a mid-level Plan via isStepOfPlan; uses typed IO via hasInputVar/hasOutputVar.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+A paper-recorded research step (sampling, preprocessing, instrument run, statistical analysis), modeled as p-plan:Step.
+### Context
+Create one node per concrete procedural step. Link:
+- isStepOfPlan → Collection|Preprocessing|BioChemicalExperiment|ComputationalExperiment
+- hasInputVar / hasOutputVar → Specimen|ProcessedSpecimen|DataSet
+- declaredUsed → Method|Device|Reagent|Software
+### Examples
+"acid digestion"; "ICP-MS measurement"; "ANOVA of concentration data".
+### Do not
+Do not create separate BioChemicalActivityStep / ComputationalActivityStep classes; use ResearchStep for all.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#statement">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="en">statement text</rdfs:label>
+    <whu:prompt xml:lang="en">Store the original text span from which the entity was extracted.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b6">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.w3.org/ns/prov#hadMember"/>
+    <owl:someValuesFrom rdf:resource="http://purl.org/mp#Statement"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/spar/fabio/Figure">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Figure</rdfs:label>
+    <whu:prompt xml:lang="en">Extract named figures that present datasets or evidence (e.g., Figure 4). Link related DataSet when co-referenced.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b7">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://purl.org/mp#supports"/>
+    <owl:someValuesFrom rdf:resource="http://purl.org/mp#Claim"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#hasHumidity">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ExecutionEnvironment"/>
+    <rdfs:range rdf:resource="http://qudt.org/schema/qudt/QuantityValue"/>
+    <rdfs:label xml:lang="en">has humidity</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b2">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://purl.org/net/p-plan#isPrecededBy"/>
+    <owl:someValuesFrom rdf:resource="http://example.org/whu#SpecimenPreprocessing"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#hasDuration">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ExecutionEnvironment"/>
+    <rdfs:range rdf:resource="http://qudt.org/schema/qudt/QuantityValue"/>
+    <rdfs:label xml:lang="en">has duration</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Sentence">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Sentence</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/dc/terms/hasPart">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#DataSet"/>
+    <rdfs:range rdf:resource="http://example.org/whu#DataItem"/>
+    <rdfs:label xml:lang="en">has part</rdfs:label>
+    <whu:prompt xml:lang="en">Define: DataSet contains DataItem / ScalarMeasurementDatum.
+Examples: "Dataset S1 includes Cd concentration measurements" → hasPart(DataSet, ScalarMeasurementDatum).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#EnvironmentContext">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Environment Context</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:comment xml:lang="en">Conceptual mid-level EBM module. NOT materialized in the operational KG; use EnvironmentFeature nodes instead.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#EnvironmentFeature">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Environment Feature</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Operational environment/geography node. Multiple features may realize conceptual EnvironmentContext.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Physical, ecological or geographic context: soil, water, site, region, climate condition.
+### Context
+Extract named locations, environmental media, site types. Align to ENVO/GeoNames when possible (skos:closeMatch).
+Optional: geo:lat, geo:long, geo:alt, gn:parentFeature.
+### Examples
+"paddy soil in Nanjing"; "river delta"; "urban air".
+### Links
+SpecimenCollection -hasContext→ EnvironmentFeature; Specimen -wasDerivedFrom→ EnvironmentFeature.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://qudt.org/schema/qudt/QuantityValue">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Quantity Value</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#prompt">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
+    <rdfs:label xml:lang="en">extraction prompt</rdfs:label>
+    <rdfs:comment xml:lang="en">LLM extraction guidance for KG-mappable classes and properties.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b3">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://purl.org/net/p-plan#isPrecededBy"/>
+    <owl:someValuesFrom rdf:resource="http://example.org/whu#BioChemicalExperiment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#Activity">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">PROV Activity</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000100">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">data set</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#DataItem">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Data Item</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Fine-grained data item within a DataSet.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+A constituent data item of a DataSet (row/field/observation). Prefer ScalarMeasurementDatum when numeric.
+### Links
+DataSet -dct:hasPart→ DataItem.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#SpecimenPreprocessing">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Specimen Preprocessing</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b1"/>
+    <rdfs:comment xml:lang="en">Plan for intermediate handling of specimens before analysis. EBM: Specimen → ProcessedSpecimen.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Preprocessing plan: storage, transport, digestion, filtration, homogenization before analysis.
+### Context
+Extract cooling/freezing/filtering/digestion preparation procedures.
+### Links
+isPrecededBy SpecimenCollection;
+ResearchStep -isStepOfPlan→ SpecimenPreprocessing;
+hasInputVar Specimen; hasOutputVar ProcessedSpecimen.
+### Order
+Preceded by SpecimenCollection; precedes BioChemicalExperiment.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000030">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">information content entity</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#hasContext">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#SpecimenCollection"/>
+    <rdfs:range rdf:resource="http://example.org/whu#EnvironmentFeature"/>
+    <rdfs:label xml:lang="en">has context</rdfs:label>
+    <rdfs:comment xml:lang="en">Links a specimen-collection plan to one or more environment features.</rdfs:comment>
+    <whu:prompt xml:lang="en">Define: SpecimenCollection has environmental/geographic context.
+Subject: SpecimenCollection; Object: EnvironmentFeature.
+Examples: "Samples collected from paddy soils in Nanjing" → hasContext(collection, EnvironmentFeature:paddy soil Nanjing).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#Step">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Step</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Plan"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#isStepOfPlan">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ResearchStep"/>
+    <rdfs:range rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:label xml:lang="en">is step of plan</rdfs:label>
+    <rdfs:comment xml:lang="en">ResearchStep belongs to a mid-level plan (Collection, Preprocessing, Experiment).</rdfs:comment>
+    <whu:prompt xml:lang="en">Define: ResearchStep belongs to a Plan.
+Connect step → SpecimenCollection | SpecimenPreprocessing | BioChemicalExperiment | ComputationalExperiment.
+Examples: "instrument run" → isStepOfPlan(runStep, BioChemicalExperiment).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#SupportGraph">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Support Graph</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Collection"/>
+    <rdfs:subClassOf rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b6"/>
+    <rdfs:subClassOf rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b7"/>
+    <rdfs:comment xml:lang="en">Argumentation structure targeting a single Claim; members are Statements and their support/challenge relations.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Argument package for one Claim, aggregating Statements that support or challenge it.
+### Context
+One SupportGraph focuses on one Claim; encapsulate multi-statement argumentation.
+### Links
+SupportGraph -prov:hadMember→ Statement;
+SupportGraph -mp:supports|mp:challenges→ Claim;
+ScienceEvidence -mp:supports|mp:challenges→ SupportGraph (or its Statements).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#declaredUsed">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:subPropertyOf rdf:resource="http://www.w3.org/ns/prov#used"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ResearchStep"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:label xml:lang="en">declared used</rdfs:label>
+    <rdfs:comment xml:lang="en">Links a ResearchStep to Method, Device, Reagent or Software declared in the paper text.</rdfs:comment>
+    <whu:prompt xml:lang="en">Define: A research step declares use of a Method, Device, Reagent or Software.
+Context: Extract only when text says following/according to/using [resource].
+Subject: ResearchStep; Object: Method|Device|Reagent|Software.
+Examples: "Digestion followed EPA 3052" → declaredUsed(step, Method:EPA3052).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#Specimen">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Specimen</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Collected biological or environmental specimen (physical carrier).</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Physical sample collected from an environment before or without full preprocessing.
+### Context
+Must be traceable to EnvironmentFeature; typically output of SpecimenCollection ResearchStep.
+### Examples
+"rice grains"; "fish tissue"; "soil cores"; "river water samples".
+### Links
+ResearchStep(Collection) -hasOutputVar→ Specimen;
+ResearchStep(Preprocessing) -hasInputVar→ Specimen;
+Specimen -wasDerivedFrom→ EnvironmentFeature.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#hasInputVar">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ResearchStep"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:label xml:lang="en">has input variable</rdfs:label>
+    <whu:prompt xml:lang="en">Define: ResearchStep consumes Specimen, ProcessedSpecimen or DataSet as typed input.
+Examples: "ICP-MS used digested solutions" → hasInputVar(step, ProcessedSpecimen).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/spar/fabio/Table">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Table</rdfs:label>
+    <whu:prompt xml:lang="en">Extract named tables that present datasets or evidence (e.g., Table 2). Link related DataSet when co-referenced.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b5">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.w3.org/ns/prov#hadMember"/>
+    <owl:someValuesFrom rdf:resource="http://purl.org/mp#Method"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b4">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.w3.org/ns/prov#hadMember"/>
+    <owl:someValuesFrom rdf:resource="http://example.org/whu#DataSet"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Method">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Method</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:comment xml:lang="en">Static protocol or standard defining experimental procedure.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+A named method, protocol or standard referenced in experiments.
+### Context
+Extract explicit method names/standards (EPA 3052, ICP-MS protocol, statistical test names).
+### Examples
+"following EPA Method 3052"; "analyzed by ICP-MS".
+### Links
+ResearchStep -declaredUsed→ Method; Method ∈ ScienceEvidence via prov:hadMember.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#Reagent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Reagent</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Chemical or biological reagent used in sample treatment or analysis.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Reagent including concentration/unit/role when stated.
+### Examples
+"HNO3"; "HgCl2 solution (~5 μg/g)".
+### Links
+ResearchStep -declaredUsed→ Reagent.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#Goal">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Goal</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:comment xml:lang="en">Formalized research objective of an experiment.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Explicit experimental objective (question/aim).
+### Examples
+"evaluate cadmium levels in rice"; "test soil arsenic concentration".
+### Links
+Experiment -hasGoal→ Goal; Goal -hasTarget→ TargetObject.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Statement">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Statement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Sentence"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:comment xml:lang="en">A proposition that can support or challenge a Claim.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+A scientific proposition or factual assertion (not necessarily the terminal Claim).
+### Context
+Extract complete propositions in Results/Discussion that mediate between evidence and Claim.
+### Examples
+"MeHg in grains decreased under biochar treatment".
+### Links
+Statement ∈ SupportGraph; Statement ← supports — ScienceEvidence.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#TargetAnalyte">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Target Analyte</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://example.org/whu#TargetObject"/>
+    <rdfs:comment xml:lang="en">Chemical analyte for biochemical experiments; align to ChEBI via skos:closeMatch.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Chemical analyte measured in BioChemicalExperiment (align ChEBI when possible).
+### Examples
+"Hg"; "MeHg"; "Cd"; "Pb".
+### Links
+Goal -hasTarget→ TargetAnalyte; ScalarMeasurementDatum -iao:is_about→ TargetAnalyte.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#ScalarMeasurementDatum">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Scalar Measurement Datum</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://example.org/whu#DataItem"/>
+    <rdfs:comment xml:lang="en">Single numeric measurement with optional unit and comparator.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Single numeric value (± unit ± comparator/range) inside a DataSet.
+### Context
+Create only for explicit numbers. Store value (iao:hasMeasurementValue), unit (iao:hasMeasurementUnit), comparator (whu:hasComparator).
+### Examples
+"Hg = 12 mg/kg"; "MeHg &lt; 0.2 ng/g"; "12–15 mg/kg".
+### Links
+DataSet -dct:hasPart→ ScalarMeasurementDatum;
+ScalarMeasurementDatum -iao:is_about→ TargetObject.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#hasTemperature">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ExecutionEnvironment"/>
+    <rdfs:range rdf:resource="http://qudt.org/schema/qudt/QuantityValue"/>
+    <rdfs:label xml:lang="en">has temperature</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#SpecimenCollection">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Specimen Collection</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:comment xml:lang="en">Plan governing specimen collection from environment. EBM: EnvironmentFeature → Specimen.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+A sampling/collection plan that produces Specimen from environmental context.
+### Context
+Extract when text describes field sampling, sample acquisition, collection sites/dates.
+### Links
+SpecimenCollection -hasContext→ EnvironmentFeature;
+ResearchStep -isStepOfPlan→ SpecimenCollection;
+ResearchStep -hasOutputVar→ Specimen.
+### Order
+SpecimenCollection precedes SpecimenPreprocessing (p-plan:isPrecededBy).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#Collection">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">PROV Collection</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#hasComparator">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ScalarMeasurementDatum"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment xml:lang="en">Optional comparator: &lt;, &gt;, &lt;=, &gt;=, between.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu/BAE_v2">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+    <rdfs:label xml:lang="en">BAE Ontology v2</rdfs:label>
+    <rdfs:comment xml:lang="en">Background–Activity–Evidence ontology for natural-science paper KG extraction and GraphRAG.</rdfs:comment>
+    <owl:versionInfo>2.0</owl:versionInfo>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#ProcessedSpecimen">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Processed Specimen</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Specimen after preprocessing; input to BioChemicalExperiment. Material IO, not argumentative evidence.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Material resulting from specimen preprocessing (digestion, filtration, homogenization).
+### Context
+Output of Preprocessing steps; input to biochemical experimental steps.
+### Examples
+"digested solution"; "filtered porewater"; "homogenized powder".
+### Links
+ResearchStep(Preprocessing) -hasOutputVar→ ProcessedSpecimen;
+ResearchStep(Bio) -hasInputVar→ ProcessedSpecimen;
+ProcessedSpecimen -wasDerivedFrom→ Specimen.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n4b4ed2ff73364a2b9457ab8ea3233694b1">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://purl.org/net/p-plan#isPrecededBy"/>
+    <owl:someValuesFrom rdf:resource="http://example.org/whu#SpecimenCollection"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#Plan">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Plan</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#DataSet">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">DataSet</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Data"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000100"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Structured scientific dataset; argumentative mp:Data + structured iao:DataSet.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Structured dataset (table, figure, file, measurement collection) generated or used in research.
+### Context
+Extract when text names datasets/tables/figures/results that support or challenge claims.
+Create ScalarMeasurementDatum for explicit numeric values and link via dct:hasPart.
+### Links
+ResearchStep -hasOutputVar|hasInputVar→ DataSet;
+DataSet -dct:hasPart→ ScalarMeasurementDatum;
+DataSet -iao:is_about→ TargetObject|Specimen;
+DataSet ∈ ScienceEvidence via prov:hadMember;
+DataSet -mp:supports|mp:challenges→ Statement|Claim.
+### Examples
+"Figure 4: MeHg accumulations…"; "Table 2 concentration results".</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#MPU">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Micropublication Argumentation Unit</rdfs:label>
+    <rdfs:comment xml:lang="en">Top-level semantic view grouping ScienceEvidence and SupportGraph toward Claim. NOT instantiable in operational KG.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#hasGoal">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#BioChemicalExperiment"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ComputationalExperiment"/>
+    <rdfs:range rdf:resource="http://example.org/whu#Goal"/>
+    <rdfs:label xml:lang="en">has goal</rdfs:label>
+    <whu:prompt xml:lang="en">Define: An experiment has an explicit scientific Goal.
+Look for "to quantify/assess/compare/evaluate …".
+Examples: "to compare metal levels across regions" → hasGoal(experiment, goal).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#hasOutputVar">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/whu#ResearchStep"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:label xml:lang="en">has output variable</rdfs:label>
+    <whu:prompt xml:lang="en">Define: ResearchStep produces Specimen, ProcessedSpecimen or DataSet as typed output.
+Examples: "ICP-MS generated concentration data" → hasOutputVar(step, DataSet).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#closeMatch">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000027">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">data item</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/2004/02/skos/core#exactMatch">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Representation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Representation</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/whu#ExecutionEnvironment">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Execution Environment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Experimental conditions: temperature, humidity, duration.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Define
+Controlled experimental conditions with numeric values/units.
+### Examples
+"180 °C for 30 min"; "incubated at 25 °C".
+### Links
+ResearchStep -hasExecutionEnvironment→ ExecutionEnvironment.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#Entity">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">PROV Entity</rdfs:label>
+  </rdf:Description>
+</rdf:RDF>
+]]></OntologyContent>
+  <Pitfalls></Pitfalls>
+  <OutputFormat>XML</OutputFormat>
+</OOPSRequest>

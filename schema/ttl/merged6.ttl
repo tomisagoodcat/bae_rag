@@ -1,0 +1,1545 @@
+@prefix bfo: <http://purl.obolibrary.org/obo/BFO_> .
+@prefix chebi: <http://purl.obolibrary.org/obo/CHEBI_> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix deo: <http://purl.org/spar/deo/> .
+@prefix envo: <http://purl.obolibrary.org/obo/ENVO_> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix iao: <http://purl.obolibrary.org/obo/IAO_> .
+@prefix mp: <http://purl.org/mp#> .
+@prefix ncbitaxon: <http://purl.obolibrary.org/obo/NCBITaxon_> .
+@prefix obi: <http://purl.obolibrary.org/obo/obi#> .
+@prefix omath: <http://ontomathpro.org/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix p-plan: <http://purl.org/net/p-plan#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ro: <http://purl.obolibrary.org/obo/RO_> .
+ 
+@prefix schema: <https://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix stato: <http://purl.obolibrary.org/obo/STATO_> .
+@prefix uo: <http://purl.obolibrary.org/obo/UO_> .
+@prefix whu: <http://example.org/whu#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+################################################### 
+### 基于deo，dc对文章的基本结构，元数据进行定义，提供初始的识别节点
+#########################################################
+ 
+##############################  
+# 定义evidence background，evidcence两个基本的模块，注意理论上两个应该是named graph但为了更好的管理，在此依然定义为类
+###############################
+
+
+##########################
+# Class: mp:Micropublication，这里其主要是一个节点单元的作用，关联claim，以及内部的evidence graph,注意这和statement等关联没有定义
+# 定义了MPU后再定义SEM，因为SEM是MPU的一部分
+#########################
+
+###  http://purl.org/mp/Micropublication
+
+mp:Micropublication rdf:type owl:Class ;
+                  rdfs:subClassOf         
+          [ a owl:Restriction ;
+          owl:onProperty mp:argues ;
+          owl:someValuesFrom mp:Claim ;
+          rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+          rdfs:comment "指明该证据图所支持的claim。"@zh ;
+          whu:prompt "Identify the claim supported by this evidence graph."@en
+          ] ,
+          [ a owl:Restriction ;
+          owl:onProperty mp:hasSupport ;
+          owl:someValuesFrom whu:ScientificEvidence ;
+          rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+          rdfs:comment "指明该证据图所支持的科学证据图元素。"@zh ;
+          whu:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en
+
+          ] ,
+          [ a owl:Restriction ;
+          owl:onProperty mp:hasSupport ;
+          owl:someValuesFrom mp:Statement ;
+          rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+          rdfs:comment "指明该证据图所支持的声明。"@zh ;
+          whu:prompt "Identify the statement supported by this evidence graph."@en
+
+          ] .
+ 
+         
+         
+
+#####################################################################
+# Class: whu:ScientificEvidence  注意其是MPU的一部分
+#  
+#####################################################################
+
+
+
+#####################################################################
+# Class: whu:EnvironmentFeature
+#####################################################################
+whu:EnvironmentFeature a owl:Class ;# 基本类，不可分解，实例通过skos与envo对应#
+    rdfs:label "Environment Feature"@en ;
+        #将之前neo4j grah 中schema定义结合，单并没有进行综合。
+    rdfs:comment "A spatial feature representing any real-world location, geographic entity, or phenomenon with associated geometry. In the context of a Neo4j Graph RAG system, this class is designed to model provinces, cities, sites, or other geographic regions as described in environmental research. It is primarily used to associate precise geometry or coordinates (e.g., latitude, longitude, polygons) to enable advanced geospatial queries, environmental analyses, and spatial data visualization. By integrating both environmental semantics from ENVO and geospatial properties from WGS84, this class supports robust spatial reasoning and facilitates cross-disciplinary research.Represents environmental context integrating geographic coordinates, administrative divisions, environmental conditions, and material constituents, including chemical pollutants."@en ;
+    rdfs:comment "代表环境上下文，集成地理坐标、行政区划、环境状态以及物质组成，包括化学污染物。"@zh ;
+ 
+    whu:prompt "A physical, ecological, or geographic context from which specimens are collected or where experiments are conducted. ENVIRONMENT entities describe natural or anthropogenic settings such as soil, water, atmosphere, or agricultural zones. They provide semantic provenance for SPECIMEN sources and support environmental variable alignment (e.g., ENVO classes). Examples include 'river delta', 'paddy soil', 'urban air', 'irrigated farmland'. Context: Serves as the environmental backdrop in scientific workflows, supporting specimen traceability, ecological factor modeling, and alignment with standard environment ontologies."@en ;
+  mp:statement xsd:string ;
+      # 明确继承于多重父类，体现其空间、环境、地理特征的集成角色，见subclass.ttl
+ 
+
+    # 地理坐标属性约束：纬度
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty geo:lat ;
+        owl:someValuesFrom xsd:float ;
+        rdfs:comment " have a latitude coordinate."@en ;
+        rdfs:comment "具备纬度坐标。"@zh;
+        whu:prompt " have a latitude coordinate."
+    ] ;
+
+    # 地理坐标属性约束：经度
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty geo:long ;
+        owl:someValuesFrom xsd:float ;
+        rdfs:comment "have a longitude coordinate."@en ;
+        rdfs:comment "具备经度坐标。"@zh;
+        whu:prompt " have a longitude coordinate."
+    ] ;
+
+    # 地理坐标属性约束：海拔
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty geo:alt ;
+        owl:someValuesFrom xsd:float ;
+        rdfs:comment "have an altitude value."@en ;
+        rdfs:comment "具备海拔高度数值。"@zh;
+        whu:prompt " have an altitude value."
+    ] ;
+
+    # 社会经济信息约束：人口数量
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty gn:population ;
+        owl:someValuesFrom xsd:integer ;
+        rdfs:comment " the population of the geographic area."@en ;
+        rdfs:comment "地理区域的人口数量。"@zh;
+        whu:prompt " the population of the geographic area."
+    ] ;
+
+    # 社会经济信息约束：上级行政区域
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty gn:parentFeature ;
+        owl:someValuesFrom gn:Feature ;
+        rdfs:comment "its higher-level geographic or administrative region."@en ;
+        rdfs:comment "其所属的更高层次地理或行政区域。"@zh;
+        whu:prompt "its higher-level geographic or administrative region."
+    ] ;
+
+    # 环境状态约束
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_quality ;
+        owl:someValuesFrom envo:01000254 ; # envo:EnvironmentalCondition
+        rdfs:comment "the environmental condition (e.g., tropical, polar)."@en ;
+        rdfs:comment "环境状态（如热带、极地等）。"@zh;
+        whu:prompt "the environmental condition (e.g., tropical, polar)."
+    ] ;
+
+    # 环境物质组成约束：ENVO物质
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_constituent ;
+        owl:someValuesFrom envo:00010483 ; # envo:Material
+        rdfs:comment "environmental material constituents (soil, water)."@en ;
+        rdfs:comment "包含环境物质组成（如土壤、水等）。"@zh;
+        whu:prompt "include environmental material constituents (soil, water)."
+    ] ;
+
+    # 环境物质组成约束：CHEBI化学污染物
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty ro:has_constituent ;
+        owl:someValuesFrom chebi:24431 ; # chebi:ChemicalEntity
+        rdfs:comment "include chemical pollutants (e.g., Hg, Cr)."@en ;
+        rdfs:comment "包含化学污染物（如汞、铬等）。"@zh;   
+        whu:prompt "include chemical pollutants (e.g., Hg, Cr)."
+    ] ;
+
+    # 与ENVO标准术语的语义对齐
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty skos:closeMatch ;
+        owl:someValuesFrom envo:00002297 ; # envo:EnvironmentFeature的子类
+        rdfs:comment "Semantically aligned with standard ENVO environmental classifications."@en ;
+        rdfs:comment "在语义上与ENVO环境分类术语标准化对齐。"@zh;
+        whu:prompt "Semantically aligned with standard ENVO environmental classifications."
+    ] .
+
+
+#################################################################
+# Class: whu:specimen// whu:processedSpecimen
+#################################################################
+#################################################################
+# Class: whu:Specimen
+#################################################################
+
+whu:Specimen a owl:Class ;
+    rdfs:label "Specimen"@en ;
+    rdfs:comment "A biological or environmental specimen material, collected from a defined context, used in experimentation, and taxonomically classified. Semantically aligned with OBI:specimen."@en ;
+    rdfs:comment "从环境中采集的生物或环境样本材料，参与后续处理与实验流程，并具备生物分类标识。语义上与OBI中的 specimen 类对齐。"@zh ;
+   
+    whu:promt: "Physical biological samples collected from an environment and used as core materials in scientific studies. Each specimen must have a taxonomic classification (e.g., NCBITaxon ID), quantity value (e.g., mass, volume), and be traceable to its environmental source. Examples include 'rice grains', 'fish tissue', 'soil cores', 'water samples from river delta'. Context: Function as evidence-bearing material entities in experimental workflows and provenance chains.";
+
+    mp:statement xsd:string ;
+ 
+
+        ##################################################
+        ### 可选地指明其来源环境上下文
+        ##################################################
+      rdfs:subClassOf 
+        [ a owl:Restriction ;
+        owl:onProperty prov:wasDerivedFrom ;
+        owl:someValuesFrom whu:EnvironmentFeature ;
+        rdfs:comment "Indicates that the specimen is derived from a specific environmental context, which may influence its characteristics."@en ;
+        rdfs:comment "表示该样本来源于特定的环境上下文，环境因素可能影响其性质。"@zh ;
+        whu:prompt "Extract or align environmental context from which the specimen is derived."@en
+        ] ,
+
+        ##################################################
+        ### 为样本采集计划的输出变量
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty p-plan:isOutputVarOf ;
+          owl:someValuesFrom whu:SpecimenCollection ;
+          rdfs:comment "This specimen is the output variable of a specimen collection plan, indicating its generation through structured sampling."@en ;
+          rdfs:comment "该标本是样本采集计划的输出变量，表示其通过结构化采样过程产生。"@zh ;
+          whu:prompt "Identify the specimen collection activity that produced this specimen."@en
+        ] ,
+
+        ##################################################
+        ### 为样本预处理计划的输入变量
+        ##################################################
+         [ a owl:Restriction ;
+          owl:onProperty p-plan:isInputVarOf ;
+          owl:someValuesFrom whu:SpecimenPreprocessing ;
+          rdfs:comment "This specimen is used as an input variable in a specimen preprocessing plan, such as filtering, centrifugation, or staining."@en ;
+          rdfs:comment "该标本是样本预处理计划的输入变量，例如过滤、离心、染色等实验处理流程的输入。"@zh ;
+          whu:prompt "Identify the specimen preprocessing activity that used this specimen as input."@en
+        ] ,
+
+        ##################################################
+        ### 与 NCBITaxon 本体对齐，表示所属物种分类
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty obi:has_taxonomic_identifier ;
+          owl:someValuesFrom ncbitaxon:0000000 ;  # 示例占位，请替换为具体 Taxon ID，如 ncbitaxon:9606（人类）
+          rdfs:comment "Specimen is taxonomically classified using the NCBI Taxonomy ontology (e.g., species, genus, family)."@en ;
+          rdfs:comment "标本通过 NCBI 分类本体进行生物分类标识，例如种、属、科等。"@zh ;
+          whu:prompt "Link the specimen to its biological classification using NCBI Taxon ID."@en
+        ] ,
+
+        ##################################################
+        ### 表达样本的数量、体积、质量等，用 QUDT 定义
+        ##################################################
+          [ a owl:Restriction ;
+          owl:onProperty iao:is_about ;
+          owl:someValuesFrom whu:DataSet ;
+          rdfs:comment "the dataSet about speciemen for example how many specimen has been collected."@en ;
+          rdfs:comment "与样本相关信息，比如样本的数量、体积、质量等。"@zh ;
+          whu:prompt "Extract or specify the quantity, volume, or mass of the specimen using QUDT units."@en
+        ] ,
+
+        ##################################################
+        ### 与 OBI 中的 specimen 语义对齐（模糊对齐）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty skos:closeMatch ;
+          owl:someValuesFrom obi:0001479 ;  # OBI:specimen
+          rdfs:comment "Semantically aligned with OBI's definition of specimen, representing a material entity collected for investigation."@en ;
+          rdfs:comment "在语义上与 OBI 中 specimen 概念对齐，表示为研究采集的物质实体。"@zh ;
+          whu:prompt "Align the specimen with the OBI-defined specimen concept for semantic integration."@en
+        ] .
+
+
+ 
+
+#################################################################
+# Class: whu:ProcessedSpecimen
+#################################################################
+
+whu:ProcessedSpecimen a owl:Class ;
+    rdfs:label "Processed Specimen"@en ;
+    rdfs:comment "A material specimen derived from a collected sample, having undergone preprocessing, and used in biochemical experiments. Semantically aligned with OBI's processed material."@en ;
+    rdfs:comment "从采集样本加工得到的处理标本，参与后续生化实验，语义上与 OBI 中的 processed material 对齐。"@zh ;
+    whu:prompt "Create a processed specimen from a collected sample."@en ;
+    mp:statement xsd:string ;
+ 
+
+        ##################################################
+        ### 来源于原始 specimen 样本
+        ##################################################
+        rdfs:subClassOf 
+        [ a owl:Restriction ;
+          owl:onProperty prov:wasDerivedFrom ;
+          owl:someValuesFrom whu:Specimen ;
+          rdfs:comment "The processed specimen is derived from a collected specimen sample."@en ;
+          rdfs:comment "该处理标本来源于采集得到的 specimen 原始样本。"@zh ;
+          whu:prompt "Indicate the original specimen this processed specimen was derived from."@en
+        ] ,
+
+        ##################################################
+        ### 是 specimen 预处理步骤的输出
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty p-plan:isOutputVarOf ;
+          owl:someValuesFrom whu:SpecimenPreprocessing ;
+          rdfs:comment "The processed specimen is the output of a specimen preprocessing step."@en ;
+          rdfs:comment "该标本是样本预处理流程的输出产物。"@zh ;
+          whu:prompt "Specify the specimen preprocessing plan that generated this processed specimen."@en
+        ] ,
+
+        ##################################################
+        ### 是生化实验的输入
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty p-plan:isInputVarOf ;
+          owl:someValuesFrom whu:bio_chemical_Experiment ;
+          rdfs:comment "This specimen is used as input in a biochemical experiment."@en ;
+          rdfs:comment "该标本作为输入用于生化实验中。"@zh ;
+          whu:prompt "Identify the biochemical experiment that used this processed specimen as input."@en
+        ] ,
+
+        ##################################################
+        ### 使用 QUDT 数量单位描述其量纲
+        ##################################################
+          [ a owl:Restriction ;
+          owl:onProperty iao:is_about ;
+          owl:someValuesFrom whu:DataSet ;
+          rdfs:comment "the dataSet about speciemen for example how many specimen has been collected."@en ;
+          rdfs:comment "与样本相关信息，比如样本的数量、体积、质量等。"@zh ;
+          whu:prompt "Extract or specify the quantity, volume, or mass of the specimen using QUDT units."@en
+        ] ,
+        ##################################################
+        ### 与 OBI 中的 processed material 对齐
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty skos:closeMatch ;
+          owl:someValuesFrom obi:0000643 ;  # OBI:processed material
+          rdfs:comment "Semantically aligned with OBI's processed material, indicating it results from a material processing step."@en ;
+          rdfs:comment "与 OBI 中的 processed material 概念语义对齐，表示其为处理流程的输出产物。"@zh ;
+          whu:prompt "Align this processed specimen with OBI's processed material concept."@en
+        ] .
+
+
+#################################################################
+# Class: whu:SpecimenCollection
+#################################################################
+whu:SpecimenCollection a owl:Class ;
+    rdfs:label "Specimen Collection"@en ;
+    rdfs:comment "A sampling plan that governs the collection of environmental specimens for subsequent experimental analysis."@en ;
+    rdfs:comment "一个采样计划，管理从环境中采集样本的流程，用于后续实验分析。"@zh ;
+ 
+    mp:statement xsd:string ;
+    # 关联活动步骤
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty prov:wasAssociatedWith ;
+        owl:someValuesFrom whu:BioChemicalActivityStep;
+        rdfs:comment "the activity steps involved in the specimen collection plan."@en ;
+        rdfs:comment "样本采集计划涉及的活动步骤。"@zh;
+        whu:prompt "the activity steps involved in the specimen collection plan."
+    ] ;
+    ##################################################
+    ### 明确该采样计划在语义上跟随某个预处理计划之后
+    ##################################################
+   rdfs:subClassOf [ a owl:Restriction ;
+      owl:onProperty p-plan:isPreceededBy ;
+      owl:someValuesFrom whu:SpecimenPreprocessing ;
+      rdfs:comment "This collection plan follows a specimen preprocessing plan in the experimental sequence."@en ;
+      rdfs:comment "该采集计划在实验顺序中位于预处理计划之后。"@zh ;
+      whu:prompt "Indicate the specimen preprocessing plan that precedes this collection plan."@en
+    ] ;
+    
+
+    # 语义对齐 OBI 中采样类
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty skos:closeMatch ;
+        owl:someValuesFrom obi:OBI_0000659;  # specimen_collection_process
+        rdfs:comment "在语义上与OBI中的采样类OBI_0000659（specimen_collection_process）对齐。"@zh;
+        whu:prompt "Semantically aligned with OBI's specimen_collection_process class."
+    ] .
+
+
+
+#################################################################
+# Class: whu:SpecimenPreprocessing,注意通过p-plan定义其首先将speciemen作为输入p-plan:hasInputVar，同时必须跟随至少一个whu:bio_chemical_Experiment
+#################################################################
+whu:SpecimenPreprocessing a owl:Class ;
+    rdfs:label "Specimen Preprocessing"@en ;
+    rdfs:comment "A plan describing the intermediate handling of specimens before they are analyzed."@en ;
+    rdfs:comment "样本在实验分析前的预处理计划，描述其存储、运输、或准备方式。"@zh ;
+ 
+mp:statement xsd:string ;
+    # 关联活动步骤
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty prov:wasAssociatedWith ;
+        owl:someValuesFrom whu:BioChemicalActivityStep;
+        rdfs:comment "the activity steps involved in the specimen preprocessing plan."@en ;
+        rdfs:comment "样本预处理计划涉及的活动步骤。"@zh;
+        whu:prompt "the activity steps involved in the specimen preprocessing plan."
+    ] ;
+
+    # 语义对齐 OBI 中 material_processing 子类
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty skos:closeMatch ;
+        owl:someValuesFrom obi:OBI_0200000 ; # material_processing
+        rdfs:comment "在语义上与OBI中的material_processing子类对齐。"@zh;
+        whu:prompt "Semantically aligned with OBI's material_processing class."
+    ] ;
+
+    # 定义其来对speceimen进行处理
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty p-plan:hasInputVar ;
+        owl:someValuesFrom whu:Specimen ; # material_processing
+        rdfs:comment "just like material_processing, but with a specific focus on specimen preprocessing."@zh;
+        whu:prompt "just like material_processing, but with a specific focus on specimen preprocessing."
+    ] ;
+
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty p-plan:ispreceededBy ;
+        owl:someValuesFrom  whu:bio_chemical_Experiment ; # material_processing
+        rdfs:comment "just like material_processing, but with a specific focus on specimen preprocessing."@zh;
+        whu:prompt "just like material_processing, but with a specific focus on specimen preprocessing."
+    ] ;
+
+
+    whu:prompt "Describe how specimens were preprocessed before experimentation (e.g., cooling, freezing, filtering)."@en ;
+    whu:prompt "描述实验前样本的预处理过程（如冷却、冷冻、过滤）。"@zh .
+
+
+# -- Existing TBox content remains unchanged --
+
+#################################################################
+# Class: whu:Device
+#################################################################
+whu:Device a owl:Class ;
+    rdfs:label "Device"@en ;
+    rdfs:comment "Scientific or analytical device used in specimen processing or experiment."@en ;
+    rdfs:comment "用于样本处理或实验的科学仪器。"@zh ;
+    whu:prompt "Identify devices or instruments mentioned in the study, including model, manufacturer, and purpose."@en ;
+    whu:prompt "识别研究中使用的设备或仪器，包括型号、制造商和用途。"@zh ;
+ rdfs:subClassOf 
+
+        [ a owl:Restriction ;
+          owl:onProperty prov:wasUsedBy ;
+          owl:someValuesFrom whu:ActivityStep ;
+          rdfs:comment "This device is used in one or more experimental steps."@en ;
+          rdfs:comment "该设备被用于一个或多个实验步骤。"@zh ;
+          whu:prompt "Identify which activity step used the device."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty schema:hasBrand ;
+          owl:someValuesFrom schema:Brand ;
+          rdfs:comment "The brand or label under which the device was sold."@en ;
+          rdfs:comment "设备销售的品牌信息。"@zh ;
+          whu:prompt "Extract the brand of the device."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty schema:hasManufacturer ;
+          owl:someValuesFrom schema:Organization ;
+          rdfs:comment "The organization that manufactured the device."@en ;
+          rdfs:comment "生产该设备的机构。"@zh ;
+          whu:prompt "Extract the manufacturer of the device."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty schema:hasModel ;
+          owl:someValuesFrom xsd:string ;
+          rdfs:comment "The model identifier for the device."@en ;
+          rdfs:comment "该设备的型号标识符。"@zh ;
+          whu:prompt "Extract the model name or ID of the device."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty schema:hasSerialNumber ;
+          owl:someValuesFrom xsd:string ;
+          rdfs:comment "The serial number uniquely identifying the device."@en ;
+          rdfs:comment "该设备的唯一序列号。"@zh ;
+          whu:prompt "Extract the serial number of the device."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty schema:hasPurchaseDate ;
+          owl:someValuesFrom xsd:date ;
+          rdfs:comment "The date the device was purchased."@en ;
+          rdfs:comment "设备购买的日期。"@zh ;
+          whu:prompt "Extract the purchase date of the device."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty skos:closeMatch ;
+          owl:someValuesFrom obi:device ;
+          rdfs:comment "Semantically close to OBI device class."@en ;
+          rdfs:comment "在语义上与 OBI 的设备类接近。"@zh ;
+          whu:prompt "Align with the appropriate device class in OBI."@en
+        ] ;
+
+    mp:statement xsd:string .
+
+
+
+#################################################################
+# Class: whu:Software
+#################################################################
+whu:Software a owl:Class ;
+    rdfs:label "Software"@en ;
+    rdfs:comment "Analytical or computational software used in data processing or simulation."@en ;
+    rdfs:comment "用于数据处理或仿真的分析或计算软件。"@zh ;
+
+    whu:prompt "Identify any software tools used for data analysis or simulation (e.g., SPSS, MATLAB, R)."@en ;
+    whu:prompt "识别用于数据分析或模拟的任何软件工具（如SPSS、MATLAB、R等）。"@zh;
+ 
+rdfs:subClassOf 
+        [ a owl:Restriction ;
+          owl:onProperty prov:wasUsedBy ;
+          owl:someValuesFrom whu:ComputationalActivityStep;
+          rdfs:comment "This software was used in one or more activity steps."@en ;
+          rdfs:comment "该软件在实验活动中被使用。"@zh ;
+          whu:prompt "Identify activity steps that used this software."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty schema:softwareVersion ;
+          owl:someValuesFrom xsd:string ;
+          rdfs:comment "The version number of the software tool."@en ;
+          rdfs:comment "该软件的版本号。"@zh ;
+          whu:prompt "Extract the version number of the software."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty skos:closeMatch ;
+          owl:someValuesFrom schema:SoftwareApplication ;
+          rdfs:comment "Semantically close to schema:SoftwareApplication."@en ;
+          rdfs:comment "在语义上与 schema.org 中的 SoftwareApplication 类对齐。"@zh ;
+          whu:prompt "Align with schema:SoftwareApplication class."@en
+        ] ;
+
+    mp:statement xsd:string  
+ .
+
+
+#################################################################
+# Class:whu:Reagent 
+#################################################################
+whu:Reagent a owl:Class ;
+    rdfs:label "Reagent"@en ;
+    rdfs:comment "Chemical or biological reagent used in sample treatment or analysis."@en ;
+    rdfs:comment "用于样本处理或分析的化学或生物试剂。"@zh ;
+
+ 
+    whu:prompt "Extract reagent information including concentration, unit, manufacturer, and role in the experiment."@en ;
+    whu:prompt "抽取试剂信息，包括浓度、单位、制造商及其在实验中的作用。"@zh ;
+rdfs:subClassOf 
+        [ a owl:Restriction ;
+          owl:onProperty prov:wasUsedBy ;
+          owl:someValuesFrom whu:ActivityStep ;
+          rdfs:comment "This reagent was used during an activity step."@en ;
+          rdfs:comment "该试剂在某个活动步骤中被使用。"@zh ;
+          whu:prompt "Identify which activity step used the reagent."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty mp:generates ;
+          owl:someValuesFrom mp:Data ;
+          rdfs:comment "This reagent produced experimental data."@en ;
+          rdfs:comment "该试剂在实验中产生了数据。"@zh ;
+          whu:prompt "Specify the data generated by this reagent."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty qudt:hasConcentration ;
+          owl:someValuesFrom qudt:QuantityValue ;
+          rdfs:comment "Specifies the concentration of the reagent."@en ;
+          rdfs:comment "指定试剂的浓度。"@zh ;
+          whu:prompt "Extract the concentration of the reagent."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty qudt:hasVolume ;
+          owl:someValuesFrom qudt:QuantityValue ;
+          rdfs:comment "Specifies the volume of the reagent used."@en ;
+          rdfs:comment "指定使用的试剂体积。"@zh ;
+          whu:prompt "Extract the volume of the reagent."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty uo:hasUnit ;
+          owl:someValuesFrom uo:micromolar ;
+          rdfs:comment "Unit for concentration: micromolar."@en ;
+          rdfs:comment "浓度单位：微摩尔。"@zh ;
+          whu:prompt "Specify concentration unit as micromolar."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty uo:hasUnit ;
+          owl:someValuesFrom uo:milliliter ;
+          rdfs:comment "Unit for volume: milliliter."@en ;
+          rdfs:comment "体积单位：毫升。"@zh ;
+          whu:prompt "Specify volume unit as milliliter."@en
+        ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty skos:closeMatch ;
+          owl:someValuesFrom obi:reagent ;
+          rdfs:comment "Semantically aligned with OBI reagent."@en ;
+          rdfs:comment "在语义上与 OBI reagent 类接近。"@zh ;
+          whu:prompt "Link to the closest OBI reagent class."@en
+        ] ;
+
+    mp:statement xsd:string .
+
+
+
+
+
+#################################################################
+# Class: whu:CollcectionSpecimen ActivityStep
+##############################################################   
+     
+
+
+
+
+
+#################################################################
+# Class: whu:BioChemicalActivityStep
+#################################################################
+
+whu:BioChemicalActivityStep a owl:Class ;
+    rdfs:label "Biochemical Activity Step"@en ;
+    rdfs:comment "A subclass_of ActivityStep involving biochemical procedures that use reagents, devices, specimens and produce data and processed specimens."@en ;
+ #########################################
+        ### 与whu:bio_chemical_Experiment 建立关联
+        ##################################################
+        rdfs:subClassOf 
+        [ a owl:Restriction ;
+          owl:onProperty p-plan:has_Plan ;
+          owl:someValuesFrom whu:bio_chemical_Experiment;
+          rdfs:comment "This step is part of a biochemical experiment."@en ;
+          rdfs:comment "该步骤属于生物化学实验。"@zh ;
+          whu:prompt "Specify the biochemical experiment."@en
+        ] ,
+
+ 
+        ##################################################
+        ### 使用设备（Device）参与该步骤
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty prov:used ;
+          owl:someValuesFrom whu:Device;
+          rdfs:comment "This step involves a device."@en ;
+          rdfs:comment "该步骤涉及设备。"@zh ;
+          whu:prompt "Identify the device involved in this step."@en
+        ] ,
+
+     
+        ##################################################
+        ### 使用试剂（Reagent）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty prov:used ;
+          owl:someValuesFrom whu:Reagent;
+          rdfs:comment "This step involves a reagent."@en ;
+          rdfs:comment "该步骤涉及试剂。"@zh ;
+          whu:prompt "Identify the reagent involved in this step."@en
+        ] ,
+
+        ##################################################
+        ### 使用原始样本（Specimen）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty prov:used ;
+          owl:someValuesFrom whu:ProcessedSpecimen;
+          rdfs:comment "This step involves a specimen."@en ;
+          rdfs:comment "该步骤涉及样本。"@zh ;
+          whu:prompt "Identify the specimen involved in this step."@en
+        ] ,
+
+        ##################################################
+        ### 生成处理后的样本（ProcessedSpecimen）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty prov:generated ;
+          owl:someValuesFrom whu:ProcessedSpecimen; 
+          rdfs:comment "This step produces a processed specimen."@en ;
+          rdfs:comment "该步骤生成处理后的样本。"@zh ;
+          whu:prompt "Identify the processed specimen generated by this step."@en
+        ] ,
+
+        ##################################################
+        ### 生成数据产物（Data）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty prov:generated ;
+          owl:someValuesFrom whu:DataSet;
+          rdfs:comment "This step produces DataSet."@en ;
+          rdfs:comment "该步骤生成数据集。"@zh 
+        ] ,
+            ##################################################
+    ### 可选地与一个设计步骤（p-plan:Step）对应
+    ### 若有关联，其对象必须为 p-plan:Step 类型
+    ##################################################
+    [ a owl:Restriction ;
+      owl:onProperty p-plan:correspondsToStep ;
+      owl:someValuesFrom p-plan:Step;
+      rdfs:comment "This step corresponds to a design step."@en ;
+      rdfs:comment "该步骤对应一个设计步骤。"@zh; 
+      whu:prompt "Specify the design step corresponding to this step."@en
+
+    ] ,
+
+        ##################################################
+        ### 声明所使用的方法（Method）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty whu:declareUsed ;
+          owl:someValuesFrom whu:Method;
+          rdfs:comment "This step uses a method."@en ;
+          rdfs:comment "该步骤使用方法。"@zh ;
+          whu:prompt "Specify the method used in this step."@en
+
+        ] ,
+
+        ##################################################
+        ### 声明实验环境（ExecutionEnvironment）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty whu:hasExecutionEnvironment ;
+          owl:someValuesFrom whu:ExecutionEnvironment;  
+          rdfs:comment "This step involves an execution environment."@en ;
+          rdfs:comment "该步骤涉及实验环境。"@zh ;
+          whu:prompt "Identify the execution environment involved in this step."@en
+        ] ,
+
+        ##################################################
+        ### 包含图形（fabio:Figure）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty fabio:hasFigure ;
+          owl:someValuesFrom fabio:Figure;
+          rdfs:comment "This step includes a figure."@en ;
+          rdfs:comment "该步骤包含图形。"@zh ;
+          whu:prompt "Identify the figure included in this step."@en
+        ] ,
+
+        ##################################################
+        ### 包含表格（fabio:Table）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty fabio:hasTable ;
+          owl:someValuesFrom fabio:Table; 
+          rdfs:comment "This step includes a table."@en ;
+          rdfs:comment "该步骤包含表格。"@zh ;
+          whu:prompt "Identify the table included in this step."@en
+        ]  .
+        
+        
+      
+#################################################################
+# Class: whu:ComputationalActivityStep
+#################################################################
+whu:ComputationalActivityStep a owl:Class ;
+    # OBI:data transformation
+    rdfs:label "Computational Activity Step"@en ;
+    rdfs:comment "Experimental steps involving computational data transformations."@en ;
+    rdfs:comment "涉及计算数据转换的实验步骤。"@zh ;
+    mp:statement xsd:string ;
+    whu:prompt "Identify computational activity steps involving software, input or output data, and analysis results."@en ;
+    whu:prompt "识别涉及软件、输入输出数据及分析结果的计算活动步骤。"@zh ;
+  ##################################################
+        ### 与whu:Computational_Experiment建立关联
+        ##################################################
+     rdfs:subClassOf   [ a owl:Restriction ;
+          owl:onProperty p-plan:has_Plan ;
+          owl:someValuesFrom whu:bio_chemical_Experiment;
+          rdfs:comment "This step is part of a computational experiment."@en ;
+          rdfs:comment "该步骤属于计算实验。"@zh ;
+          whu:prompt "Specify the computationalcomputational experiment."@en
+        ] ,
+
+ 
+        ##################################################
+        ### 使用设备（Device）参与该步骤
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty prov:used ;
+          owl:someValuesFrom whu:Device;
+          rdfs:comment "This step involves a device."@en ;
+          rdfs:comment "该步骤涉及设备。"@zh ;
+          whu:prompt "Identify the device involved in this step."@en
+        ] ,
+
+     
+        ##################################################
+        ### 使用试剂（Reagent）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty prov:used ;
+          owl:someValuesFrom whu:Software;
+          rdfs:comment "This step involves a Software."@en ;
+          rdfs:comment "该步骤涉及试剂。"@zh ;
+          whu:prompt "Identify the Software involved in this step."@en
+        ] ,
+
+        ##################################################
+        ### 使用原始样本（Specimen）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty prov:used ;
+          owl:someValuesFrom whu:DataSet;
+          rdfs:comment "This step involves a DataSet."@en ;
+          rdfs:comment "该步骤涉及数据集。"@zh ;
+          whu:prompt "Identify the DataSet involved in this step."@en
+        ] ,
+
+        ##################################################
+        ### 生成处理后的样本（ProcessedSpecimen）
+        ##################################################
+ 
+
+        ##################################################
+        ### 生成数据产物（Data）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty prov:generated ;
+          owl:someValuesFrom whu:DataSet;
+          rdfs:comment "This step produces data set"@en ;
+          rdfs:comment "该步骤生成数据。"@zh ;
+          whu:prompt "Identify the data set generated by this step."@en
+        ] ,
+            ##################################################
+    ### 可选地与一个设计步骤（p-plan:Step）对应
+    ### 若有关联，其对象必须为 p-plan:Step 类型
+    ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty p-plan:correspondsToStep ;
+          owl:someValuesFrom p-plan:Step;
+          rdfs:comment "This step corresponds to a design step."@en ;
+          rdfs:comment "该步骤对应一个设计步骤。"@zh; 
+          whu:prompt "Specify the design step corresponding to this step."@en
+
+        ] ,
+
+        ##################################################
+        ### 声明所使用的方法（Method）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty whu:declareUsed ;
+          owl:someValuesFrom whu:Method;
+          rdfs:comment "This step uses a method."@en ;
+          rdfs:comment "该步骤使用方法。"@zh ;
+          whu:prompt "Specify the method used in this step."@en
+
+        ] ,
+
+        ##################################################
+        ### 声明实验环境（ExecutionEnvironment）
+        ##################################################
+ 
+
+        ##################################################
+        ### 包含图形（fabio:Figure）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty fabio:hasFigure ;
+          owl:someValuesFrom fabio:Figure;
+          rdfs:comment "This step includes a figure."@en ;
+          rdfs:comment "该步骤包含图形。"@zh ;
+          whu:prompt "Identify the figure included in this step."@en
+        ] ,
+
+        ##################################################
+        ### 包含表格（fabio:Table）
+        ##################################################
+        [ a owl:Restriction ;
+          owl:onProperty fabio:hasTable ;
+          owl:someValuesFrom fabio:Table; 
+          rdfs:comment "This step includes a table."@en ;
+          rdfs:comment "该步骤包含表格。"@zh ;
+          whu:prompt "Identify the table included in this step."@en
+        ] .
+
+
+
+
+#################################################################
+# Class: whu:ExecutionEnvironment
+#################################################################
+whu:ExecutionEnvironment a owl:Class ;
+    rdfs:label "Execution Environment"@en ;
+    rdfs:comment "Experimental conditions including temperature, humidity, and duration."@en ;
+    rdfs:comment "包括温度、湿度、持续时间等实验条件。"@zh ;
+    mp:statement xsd:string ;
+    whu:prompt "Extract experimental environment details including temperature, humidity, and duration."@en ;
+    whu:prompt "抽取实验的环境细节，包括温度、湿度与持续时间。"@zh;
+    rdfs:subClassOf[ a owl:Restriction ;
+      owl:onProperty whu:hasTemperature;
+      owl:someValuesFrom qudt:QuantityValue;   
+      rdfs:comment "The temperature during experimental activity."@en ;
+      rdfs:comment "实验活动期间的温度。"@zh ;
+      whu:prompt "Specify the temperature during experimental activity."@en
+    ] ,
+    
+    [ a owl:Restriction ;
+      owl:onProperty whu:hasHumidity;
+      owl:someValuesFrom qudt:QuantityValue;  
+      rdfs:comment "The humidity during experimental activity."@en ;
+      rdfs:comment "实验活动期间的湿度。"@zh ;
+      whu:prompt "Specify the humidity during experimental activity."@en
+    ]
+      ,
+    
+    [ a owl:Restriction ;
+      owl:onProperty whu:hasDuration;
+      owl:someValuesFrom qudt:QuantityValue; 
+      rdfs:comment "The duration of the experimental activity."@en ;
+      rdfs:comment "实验活动持续时间。"@zh ;
+      whu:prompt "Specify the duration of the experimental activity."@en
+    ]
+     .
+
+#################################################################
+# Properties of ExecutionEnvironment
+#################################################################
+whu:hasTemperature a owl:ObjectProperty ;
+    rdfs:domain whu:ExecutionEnvironment ;
+    rdfs:range qudt:QuantityValue ;
+    rdfs:label "has temperature"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "Temperature during experimental activity."@en ;
+    rdfs:comment "实验活动期间的温度。"@zh .
+
+whu:hasHumidity a owl:ObjectProperty ;
+    rdfs:domain whu:ExecutionEnvironment ;
+    rdfs:range qudt:QuantityValue ;
+    rdfs:label "has humidity"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "Humidity during experimental activity."@en ;
+    rdfs:comment "实验活动期间的湿度。"@zh .
+
+whu:hasDuration a owl:ObjectProperty ;
+    rdfs:domain whu:ExecutionEnvironment ;
+    rdfs:range qudt:QuantityValue ;
+    rdfs:label "has duration"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "Duration of the experimental activity."@en ;
+    rdfs:comment "实验活动的持续时间。"@zh; 
+    whu:prompt "Identify the duration of the experimental activity."@en .
+
+#################################################################
+# Property: whu:declareUsed
+#################################################################
+whu:declareUsed a owl:ObjectProperty ;
+    rdfs:subPropertyOf prov:used ;
+    rdfs:domain whu:ActivityStep ;
+    rdfs:range whu:Method ;
+    rdfs:label "declared used"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "The method declared to be used by an activity step, pending verification."@en ;
+    rdfs:comment "活动步骤声明使用的方法（待确认）。"@zh ;
+    whu:prompt "Identify the method declared to be used by an activity step, pending verification."@en .
+
+
+#################################################################
+# Relationships to Claims and Statements，从转换neo4j schema角度考虑，这里的object property声明比较重要，可以对应neo4j 中relation/potential_schema 两个schema
+#################################################################
+whu:MethodsupportsData a owl:ObjectProperty ;
+    rdfs:subPropertyOf mp:methodSupports ;
+    rdfs:domain mp:Method ;
+    rdfs:range mp:Data;
+    rdfs:label "Methodsupports Data"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "A method supports a data."@en ;
+    rdfs:comment "方法支持数据。"@zh ;
+    whu:prompt "Identify the data supported by a method."@en .
+   
+whu:DataSetchallengeStatement a owl:ObjectProperty ;
+    rdfs:subPropertyOf mp:challenge  ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range mp:Statement ;
+    rdfs:label "challenge statement"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "Dataset challenge a scientific statement."@en ;
+    rdfs:comment "数据集对科学陈述提出质疑或反驳。"@zh ;    
+    whu:prompt "Identify the scientific statement challenged by the dataset."@en .
+whu:DataSetchallengeClaim a owl:ObjectProperty ;
+    rdfs:subPropertyOf mp:challenge  ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range mp:Claim ;
+    mp:statement xsd:string ;
+    rdfs:label "challenge Claim"@en ;
+    rdfs:comment "数据集对科学claim提出质疑或反驳。"@zh ;
+    whu:prompt "Identify the scientific claim challenged by the dataset."@en .
+
+ 
+
+
+whu:DataSetSupportClaim a owl:ObjectProperty ;
+    rdfs:subPropertyOf mp:dataSupports ; ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range mp:Claim ;
+    mp:statement xsd:string ;
+    rdfs:label "Data supports Claim"@en ;
+    rdfs:comment "Data supports a scientific claim."@en ;
+    rdfs:comment "数据支持科学主张。"@zh ;
+    whu:prompt "Identify the scientific claim supported by the data."@en .
+
+whu:DataSetSupportStatement a owl:ObjectProperty ;
+    rdfs:subPropertyOf mp:dataSupports ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range mp:Statement ;
+    mp:statement xsd:string ;
+    rdfs:label "Data supports Statement"@en ;
+    rdfs:comment "数据支持科学陈述。"@zh ;
+    whu:prompt "Identify the scientific statement supported by the data."@en .
+
+#################################################################
+# Class: whu:DataSet
+#################################################################
+whu:DataSet a owl:Class ;
+    rdfs:label "DataSet"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "A structured dataset used or generated in scientific activities, emphasizing data provenance, semantic targets, and hierarchical organization."@en ;
+    rdfs:comment "科学活动中生成或使用的结构化数据集，强调数据溯源、语义目标及层次化组织。"@zh ;
+    whu:prompt "A quantitative measurement or observation generated by experimental methods, representing a collection or dataset. Each data point supports or challenges a claim and is causally linked to a method or activity step. Examples include 'mercury concentration results', 'heavy metal analysis data', 'soil contamination measurements'. Context: Aggregate evidence units, generated by methods, used to support claims; composed of specific data items with values and units."@en ;
+ 
+
+    whu:DataSetSupportStatement mp:Statement ;
+    whu:DataSetSupportClaim mp:Claim ;
+    whu:DataSetchallengeStatement mp:Statement ;
+    whu:DataSetchallengeClaim mp:Claim ;
+
+ 
+    rdfs:subClassOf [
+        a owl:Class ;
+        owl:unionOf (
+            [ a owl:Restriction ;
+              owl:onProperty prov:generatedBy ;
+              owl:someValuesFrom whu:ActivityStep ]
+            [ a owl:Restriction ;
+              owl:onProperty prov:usedBy ;
+              owl:someValuesFrom whu:ActivityStep ]
+        )
+    ] ;
+    rdfs:subClassOf [
+        a owl:Class ;
+        owl:unionOf (
+            [ a owl:Restriction ;
+              owl:onProperty dct:isPartOf ;
+              owl:someValuesFrom whu:DataSet ]
+            [ a owl:Restriction ;
+              owl:onProperty dct:hasPart ;
+              owl:someValuesFrom whu:DataSet ]
+        )
+    ] ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty schema:about ;
+        owl:someValuesFrom whu:TargetObject
+    ] .
+  #  rdfs:subClassOf [
+  #      a owl:Restriction ;
+  #      owl:onProperty iao:has_member ;
+  #      owl:someValuesFrom iao:data_item
+  #  ] .
+
+#################################################################
+# Class: whu:DataSetService
+#################################################################
+whu:DataSetService a owl:Class ;
+    rdfs:label "DataService"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "A dynamic service providing datasets through an endpoint URL, used in scientific research."@en ;
+    rdfs:comment "通过端点URL提供数据集的动态服务，在科研中使用。"@zh ;
+    whu:prompt "Identify external dynamic data services, their served datasets, and endpoint URLs."@en ;
+    whu:prompt "识别外部动态数据服务，所提供的数据集及服务端点。"@zh ;
+    rdfs:subClassOf mp:Data ;
+    rdfs:subClassOf dcat:DataService ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty prov:usedBy ;
+        owl:someValuesFrom whu:ActivityStep
+    ] ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty dcat:servesDataset ;
+        owl:someValuesFrom whu:DataSet
+    ] ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty dcat:endpointURL ;
+        owl:someValuesFrom xsd:anyURI
+    ] .
+################experiment#######################
+#################################################################
+# Class Definitions expeirment goal
+#################################################################
+whu:Goal a owl:Class ;
+    
+    mp:statement xsd:string ;rdfs:subClassOf prov:Entity;
+    rdfs:label "Goal"@en ;
+    rdfs:comment "A scientific goal or objective."@en ;
+    rdfs:comment "科学目标或目标。"@zh ;
+    whu:prompt " A formalized research objective defining the intended outcome of an experiment. Typically formulated as a scientific question or aim, and semantically linked to the specific object of investigation (TargetObject). Examples include 'evaluate cadmium levels in rice', 'test soil arsenic concentration', 'analyze contamination pathways'. Context: Specifies what the experiment seeks to achieve, appearing as the intentional input of the experimental plan.".
+
+
+whu:Goal a owl:Class ;
+    
+    mp:statement xsd:string ;rdfs:subClassOf prov:Entity;
+    rdfs:label "Goal"@en ;
+    rdfs:comment "A scientific goal or objective."@en ;
+    rdfs:comment "科学目标或目标。"@zh ;
+    whu:prompt " A formalized research objective defining the intended outcome of an experiment. Typically formulated as a scientific question or aim, and semantically linked to the specific object of investigation (TargetObject). Examples include 'evaluate cadmium levels in rice', 'test soil arsenic concentration', 'analyze contamination pathways'. Context: Specifies what the experiment seeks to achieve, appearing as the intentional input of the experimental plan.".
+
+
+whu:Target_analyte a owl:Class ;
+    mp:statement xsd:string ;
+    rdfs:label "Target Analyte"@en ;
+    rdfs:comment "A chemical analyte of scientific interest or concern."@en ;
+    rdfs:comment "概念对应chebi:ChemicalEntity，明确为具体的物理分析对象。其通过iao:is_about关联到iao:measurement_datum，进而链接至whu:DataSet，形成了从目标实体到测量数值再到数据集的完整溯源链。"@zh ;
+    rdfs:subClassOf  
+          [ a owl:Restriction ;
+          owl:onProperty ro:is_target_of;  # ro:is_target_of
+          owl:someValuesFrom whu:Goal ] ,
+        [ a owl:Restriction ;
+          owl:onProperty iao:is_about;  # iao:is_about (inverse)
+          owl:someValuesFrom whu:Method ] ,
+        [ a owl:Restriction ;
+          owl:onProperty ro:denotes ;  # ro:denotes (inverse)
+          owl:someValuesFrom mp:Data ] .
+ 
+
+
+whu:Indicator a owl:Class ;
+    mp:statement xsd:string ;
+    rdfs:label "Indicator"@en ;
+    rdfs:comment "A measurable property or quantity of interest."@en ;
+    rdfs:comment "研究的可测量属性或数量。"@zh ;
+    whu:prompt "Identify the indicator of the experiment."@en ;
+
+    rdfs:subClassOf whu:Target_Variable ,
+        [ a owl:Restriction ;
+          owl:onProperty iao:is_denoted_by ;  # is_denoted_by
+          owl:someValuesFrom whu:Indicator_definition ] .
+
+whu:Indicator_definition a owl:Class ;
+    mp:statement xsd:string ;
+    rdfs:label "Indicator Definition"@en ;
+    rdfs:comment "A definition of an indicator."@en ;
+    rdfs:comment "指标定义。"@zh ;
+    whu:prompt "Identify the definition of the indicator."@en ;
+    rdfs:subClassOf  
+        [ a owl:Restriction ;
+          owl:onProperty iao:denotes ;  # denotes
+          owl:someValuesFrom omath:Formula ] ,
+
+        [ a owl:Restriction ;
+          owl:onProperty schema:rangeIncludes ;
+          owl:someValuesFrom schema:QuantitativeValue ],
+
+        [ a owl:Restriction ;
+          owl:onProperty qudt:unit ;
+          owl:someValuesFrom qudt:Unit ] .
+
+#################################################################
+# bio and computational experiment
+#################################################################
+ 
+
+whu:bio_chemical_Experiment a owl:Class ;
+   rdfs:subClassOf 
+        [ a owl:Restriction ;
+          owl:onProperty prov:wasAssociatedWith ;
+          owl:someValuesFrom whu:BioChemicalActivityStep ;
+          rdfs:comment "This experiment consists of biological or chemical steps."@en ;
+          rdfs:comment "这个实验由生物或化学步骤组成。"@zh ;
+          whu:prompt "This experiment consists of biological or chemical steps."@en
+        ] ,
+        [ a owl:Restriction ;
+          owl:onProperty ro:has_goal ;
+          owl:someValuesFrom whu:Goal ;
+          rdfs:comment "This experiment has a specific scientific goal or objective."@en ;
+          rdfs:comment "这个实验有具体的目标。"@zh ;
+          whu:prompt "This experiment has a specific scientific goal or objective."@en
+        ] ;
+    skos:closeMatch obi:OBI_0000070 ; # 与 OBI 中 assay 概念对齐
+    rdfs:label "Bio-Chemical Experiment"@en ;
+    rdfs:comment "A bio-chemical experiment is an experiment that involves the use of biological or chemical samples to measure properties of the samples or the environment."@en ;
+    whu:prompt "A bio-chemical experiment is an experiment that involves the use of biological or chemical samples to measure properties of the samples or the environment."@en .
+
+
+
+whu:Computational_Experiment a owl:Class ;
+    rdfs:subClassOf 
+        [ a owl:Restriction ;
+          owl:onProperty prov:wasAssociatedWith ;
+          owl:someValuesFrom whu:ComputationalActivityStep ;
+          rdfs:comment "This experiment is composed of computational activity steps."@en ;
+          rdfs:comment "这个实验由计算步骤组成。"@zh ;
+          whu:prompt "This experiment is composed of computational steps involving software and data."@en
+        ] ;
+    skos:closeMatch obi:OBI_0600046 ; # Data Transformation
+    rdfs:label "Computational Experiment"@en ;
+    rdfs:comment "A computational experiment involves the use of software and computational procedures to process or analyze data."@en ;
+    rdfs:comment "一个计算实验涉及使用软件和计算方法进行数据处理或分析。"@zh ;
+    whu:prompt "Identify computational experiments involving data transformation or analysis steps using software."@en .
+
+
+
+
+
+################################################
+# micropublication classes
+################################################
+#################################################################
+#
+#    Classes
+#
+#################################################################
+#################################################################
+# Class: whu:Method
+#################################################################
+whu:Method a owl:Class ;
+ 
+    rdfs:label "Method"@en ;
+    whu:MethodsupportsData mp:DataSet ;
+    mp:statement xsd:string ;
+    rdfs:comment "Static protocol or standard defining the steps of an experiment."@en ;
+    rdfs:comment "定义实验步骤的静态协议或标准。"@zh ;
+    whu:prompt "Identify methods or protocols explicitly referenced or used in experiments."@en ;
+    whu:prompt "识别实验中明确引用或使用的方法或协议。"@zh .
+
+
+###  http://purl.org/mp/ArticleText
+
+
+
+
+###  http://purl.org/mp/Attribution
+
+mp:Attribution a owl:Class ;
+             
+             rdfs:subClassOf mp:Representation .
+
+
+
+###  http://purl.org/mp/Claim
+
+#################################################################
+# 类定义：mp:Claim
+# 定义 Claim 是一种陈述（Statement），该陈述被某个微出版单元（Micropublication）所主张（argued by）
+# 等价于 “是 Statement 且被 arguedBy 某个 Micropublication”
+#################################################################
+
+mp:Claim a owl:Class ;  # 定义 mp:Claim 是一个 OWL 类
+    rdfs:label "Claim"@en ;
+        mp:statement xsd:string ;
+    rdfs:comment "A claim is a statement that is argued by a micropublication."@en ;
+    rdfs:comment "陈述是一种被微出版物主张的陈述。"@zh ;
+    whu:prompt "A scientific assertion derived from data and methods, representing the author's interpretive conclusion. Claims are the terminal nodes in an argumentation chain and should be semantically supported. Examples include 'mercury levels exceed safety thresholds', 'no significant contamination detected', 'lead concentration is acceptable'. Context: Epistemic conclusion supported by data/method triples; expresses the publication's main findings.";
+
+    # 该类的等价定义（equivalentClass）如下
+ 
+
+    # 再次显式声明 Claim 是 Statement 的子类
+    # 虽然等价类中已隐含这一点，但此处用于增强可读性和继承层次结构的明确性
+ .
+
+
+###  http://purl.org/mp/Data
+
+#################################################################
+# 类定义：mp:Data
+# 定义 Data 是一种 Representation，它支持（dataSupports）另一种 Representation（例如 Claim、Statement 等）
+# 等价于 “是 Representation 且存在至少一个 dataSupports 指向某个 Representation 的对象”
+#################################################################
+
+
+
+
+###  http://purl.org/mp/Micropublication
+
+
+
+
+###  http://purl.org/mp/Statement
+
+mp:Statement a owl:Class ;
+           
+           owl:equivalentClass [ a owl:Class ;
+                                 owl:intersectionOf ( mp:Sentence
+                                                      [ a owl:Restriction ;
+                                                        owl:onProperty mp:statement ;
+                                                        owl:someValuesFrom xsd:string
+                                                      ]
+                                                    )
+                               ] ;
+           
+           rdfs:subClassOf mp:Sentence .
+
+
+
+###  http://purl.org/mp/statement
+
+mp:statement a owl:DatatypeProperty ,
+                    owl:FunctionalProperty ;
+           
+           rdfs:domain mp:Representation ;
+           
+     
+           
+           rdfs:range xsd:string;
+           whu:prompt "通过llm抽取的元素对应的原始文档 "@en .
+
+
+#################p-plan 的定义，注意只定义llm识别三元组时需要的本体#############
+
+### ===============================================
+### 🧩 Plan 结构关系属性定义
+### ===============================================
+
+
+
+
+
+### ===============================================
+### 🧬 Step 与 Variable 的输入输出关系
+### ===============================================
+
+# 表示一个 Step 所需要的输入变量，可以是样本、数据文件、参数值等。
+# 在科研语境中，例如“样品处理步骤”的输入变量可以是采集好的样品。
+p-plan:hasInputVar a owl:ObjectProperty ;
+    rdfs:domain p-plan:Step ;
+    rdfs:range p-plan:Variable ;
+    rdfs:label "has input variable" ;
+    rdfs:comment "Associates a Step with the input Variable(s) it consumes or requires to be executed. Variables may represent material, data, or parameters." .
+
+# 表示一个 Step 的输出变量，可以是生成的数据、处理后的材料、结果文件等。
+# 该属性通常与 prov:Entity 的实例（如输出文件、图像等）结合使用。
+p-plan:hasOutputVar a owl:ObjectProperty ;
+    rdfs:domain p-plan:Step ;
+    rdfs:range p-plan:Variable ;
+    rdfs:label "has output variable" ;
+    rdfs:comment "Associates a Step with the Variable(s) it produces. This supports tracing how outputs are derived from previous inputs across Steps." .
+
+
+
+### ===============================================
+### 🔗 计划与执行的语义对齐属性
+### ===============================================
+
+# 将一个实际发生的 Activity（来自 prov:Activity）与其设计时所依据的 Plan 进行对应。
+# 可用于表达“该实验/分析流程是基于哪个设计模板进行的”。
+# 在数据可复现和 provenance 追踪中至关重要。
+#################################################################
+# Property: p-plan:correspondsTo
+#################################################################
+p-plan:correspondsTo a owl:ObjectProperty ;
+    rdfs:domain whu:Step ;
+    rdfs:range whu:ActivityStep ;
+    rdfs:label "corresponds to"@en ;
+    mp:statement xsd:string ;
+    rdfs:comment "Connects an Activity (in the PROV sense) to the Plan it realizes or is executed based upon. Useful for aligning design-time structure with runtime execution."@en ;
+    rdfs:comment "表示实际执行的活动步骤对应于静态步骤。"@zh;
+    whu:prompt "Identify the static plan step corresponding to an executed activity step."@en .
+
+  
+
+# 表示一个 Plan 是另一个更大 Plan 的子计划，用于支持嵌套层级结构。
+# 常见于大型实验、项目的子流程建模。
+p-plan:isSubPlanOf a owl:ObjectProperty ;
+    rdfs:domain p-plan:Plan ;
+    rdfs:range p-plan:Plan ;
+    rdfs:label "is sub-plan of" ;
+    rdfs:comment "Indicates that a Plan is part of a more complex parent Plan. Supports modular design of hierarchical workflows." .
+
+ 
+
+
+mp:directlySupports a owl:ObjectProperty ;
+    rdfs:label "directly supports"@en ;
+    rdfs:comment "Indicates that one representation directly supports another. Not transitive."@en ;
+    rdfs:comment "表示一种表示直接支持另一种表示。"@zh ;
+    whu:prompt "Identify the representation that directly supports the other representation."@en ;
+    
+    rdfs:subPropertyOf mp:supports .
+
+
+#################
+#补充类
+###############
+
+
+
+whu:computational_Experiment a owl:Class ;
+    rdfs:label "computational Experiment"@en ;
+    whu:prompt "Extract information about 'computational Experiment' from the scientific text."@en ;
+    rdfs:comment "computational_Experiment is an ontology class placeholder requiring proper definition."@en .
+
+omath:Formula a owl:Class ;
+    rdfs:label "http://ontomathpro.org/ontology/Formula"@en ;
+    whu:prompt "Extract information about 'http://ontomathpro.org/ontology/Formula' from the scientific text."@en ;
+    rdfs:comment "http://ontomathpro.org/ontology/Formula is an ontology class placeholder requiring proper definition."@en .
+
+chebi:24431 a owl:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/CHEBI 24431"@en ;
+    whu:prompt "Extract information about 'http://purl.obolibrary.org/obo/CHEBI 24431' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/CHEBI_24431 is an ontology class placeholder requiring proper definition."@en .
+
+envo:00002297 a owl:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/ENVO 00002297"@en ;
+    whu:prompt "Extract information about 'http://purl.obolibrary.org/obo/ENVO 00002297' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/ENVO_00002297 is an ontology class placeholder requiring proper definition."@en .
+
+envo:00010483 a owl:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/ENVO 00010483"@en ;
+    whu:prompt "Extract information about 'http://purl.obolibrary.org/obo/ENVO 00010483' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/ENVO_00010483 is an ontology class placeholder requiring proper definition."@en .
+
+envo:01000254 a owl:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/ENVO 01000254"@en ;
+    whu:prompt "Extract information about 'http://purl.obolibrary.org/obo/ENVO 01000254' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/ENVO_01000254 is an ontology class placeholder requiring proper definition."@en .
+
+iao:data_item a owl:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/IAO data item"@en ;
+    whu:prompt "Extract information about 'http://purl.obolibrary.org/obo/IAO data item' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/IAO_data_item is an ontology class placeholder requiring proper definition."@en .
+
+ncbitaxon:0000000 a owl:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/NCBITaxon 0000000"@en ;
+    whu:prompt "Extract information about 'http://purl.obolibrary.org/obo/NCBITaxon 0000000' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/NCBITaxon_0000000 is an ontology class placeholder requiring proper definition."@en .
+
+uo:micromolar a owl:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/UO micromolar"@en ;
+    whu:prompt "Extract information about 'http://purl.obolibrary.org/obo/UO micromolar' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/UO_micromolar is an ontology class placeholder requiring proper definition."@en .
+
+uo:milliliter a owl:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/UO milliliter"@en ;
+    whu:prompt "Extract information about 'http://purl.obolibrary.org/obo/UO milliliter' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/UO_milliliter is an ontology class placeholder requiring proper definition."@en .
+
+obi:0000643 a owl:Class ;
+    rdfs:label "0000643"@en ;
+    whu:prompt "Extract information about '0000643' from the scientific text."@en ;
+    rdfs:comment "0000643 is an ontology class placeholder requiring proper definition."@en .
+
+obi:0001479 a owl:Class ;
+    rdfs:label "0001479"@en ;
+    whu:prompt "Extract information about '0001479' from the scientific text."@en ;
+    rdfs:comment "0001479 is an ontology class placeholder requiring proper definition."@en .
+
+obi:OBI_0000659 a owl:Class ;
+    rdfs:label "OBI 0000659"@en ;
+    whu:prompt "Extract information about 'OBI 0000659' from the scientific text."@en ;
+    rdfs:comment "OBI_0000659 is an ontology class placeholder requiring proper definition."@en .
+
+obi:OBI_0200000 a owl:Class ;
+    rdfs:label "OBI 0200000"@en ;
+    whu:prompt "Extract information about 'OBI 0200000' from the scientific text."@en ;
+    rdfs:comment "OBI_0200000 is an ontology class placeholder requiring proper definition."@en .
+
+obi:device a owl:Class ;
+    rdfs:label "device"@en ;
+    whu:prompt "Extract information about 'device' from the scientific text."@en ;
+    rdfs:comment "device is an ontology class placeholder requiring proper definition."@en .
+
+obi:reagent a owl:Class ;
+    rdfs:label "reagent"@en ;
+    whu:prompt "Extract information about 'reagent' from the scientific text."@en ;
+    rdfs:comment "reagent is an ontology class placeholder requiring proper definition."@en .
+
+mp:Representation a owl:Class ;
+    rdfs:label "Representation"@en ;
+    whu:prompt "Extract information about 'Representation' from the scientific text."@en ;
+    rdfs:comment "Representation is an ontology class placeholder requiring proper definition."@en .
+
+p-plan:Step a owl:Class ;
+    rdfs:label "Step"@en ;
+    whu:prompt "Extract information about 'Step' from the scientific text."@en ;
+    rdfs:comment "Step is an ontology class placeholder requiring proper definition."@en .
+
+deo:Section a owl:Class ;
+    rdfs:label "http://purl.org/spar/deo/Section"@en ;
+    whu:prompt "Extract information about 'http://purl.org/spar/deo/Section' from the scientific text."@en ;
+    rdfs:comment "http://purl.org/spar/deo/Section is an ontology class placeholder requiring proper definition."@en .
+
+fabio:Figure a owl:Class ;
+    rdfs:label "http://purl.org/spar/fabio/Figure"@en ;
+    whu:prompt "Extract information about 'http://purl.org/spar/fabio/Figure' from the scientific text."@en ;
+    rdfs:comment "http://purl.org/spar/fabio/Figure is an ontology class placeholder requiring proper definition."@en .
+
+fabio:Table a owl:Class ;
+    rdfs:label "http://purl.org/spar/fabio/Table"@en ;
+    whu:prompt "Extract information about 'http://purl.org/spar/fabio/Table' from the scientific text."@en ;
+    rdfs:comment "http://purl.org/spar/fabio/Table is an ontology class placeholder requiring proper definition."@en .
+
+qudt:QuantityValue a owl:Class ;
+    rdfs:label "http://qudt.org/schema/qudt/QuantityValue"@en ;
+    whu:prompt "Extract information about 'http://qudt.org/schema/qudt/QuantityValue' from the scientific text."@en ;
+    rdfs:comment "http://qudt.org/schema/qudt/QuantityValue is an ontology class placeholder requiring proper definition."@en .
+
+qudt:Unit a owl:Class ;
+    rdfs:label "http://qudt.org/schema/qudt/Unit"@en ;
+    whu:prompt "Extract information about 'http://qudt.org/schema/qudt/Unit' from the scientific text."@en ;
+    rdfs:comment "http://qudt.org/schema/qudt/Unit is an ontology class placeholder requiring proper definition."@en .
+
+ 
+
+foaf:Agent a owl:Class ;
+    rdfs:label "http://xmlns.com/foaf/0.1/Agent"@en ;
+    whu:prompt "Extract information about 'http://xmlns.com/foaf/0.1/Agent' from the scientific text."@en ;
+    rdfs:comment "http://xmlns.com/foaf/0.1/Agent is an ontology class placeholder requiring proper definition."@en .
+
+foaf:Organization a owl:Class ;
+    rdfs:label "http://xmlns.com/foaf/0.1/Organization"@en ;
+    whu:prompt "Extract information about 'http://xmlns.com/foaf/0.1/Organization' from the scientific text."@en ;
+    rdfs:comment "http://xmlns.com/foaf/0.1/Organization is an ontology class placeholder requiring proper definition."@en .
+
+schema:Brand a owl:Class ;
+    rdfs:label "https://schema.org/Brand"@en ;
+    whu:prompt "Extract information about 'https://schema.org/Brand' from the scientific text."@en ;
+    rdfs:comment "https://schema.org/Brand is an ontology class placeholder requiring proper definition."@en .
+
+schema:Organization a owl:Class ;
+    rdfs:label "https://schema.org/Organization"@en ;
+    whu:prompt "Extract information about 'https://schema.org/Organization' from the scientific text."@en ;
+    rdfs:comment "https://schema.org/Organization is an ontology class placeholder requiring proper definition."@en .
+
+schema:QuantitativeValue a owl:Class ;
+    rdfs:label "https://schema.org/QuantitativeValue"@en ;
+    whu:prompt "Extract information about 'https://schema.org/QuantitativeValue' from the scientific text."@en ;
+    rdfs:comment "https://schema.org/QuantitativeValue is an ontology class placeholder requiring proper definition."@en .
+
+schema:SoftwareApplication a owl:Class ;
+    rdfs:label "https://schema.org/SoftwareApplication"@en ;
+    whu:prompt "Extract information about 'https://schema.org/SoftwareApplication' from the scientific text."@en ;
+    rdfs:comment "https://schema.org/SoftwareApplication is an ontology class placeholder requiring proper definition."@en .

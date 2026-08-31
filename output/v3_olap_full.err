@@ -1,0 +1,14 @@
+C:\Users\tom\.conda\envs\tomluck2\Lib\site-packages\langgraph\_internal\_runnable.py:400: UserWarning: G_sub 为空: κ=drill_down, l=low — 流程继续，Rerank 时全部 mp_id 的 s_olap=0.3
+  ret = self.func(*args, **kwargs)
+C:\Users\tom\.conda\envs\tomluck2\Lib\site-packages\langgraph\_internal\_runnable.py:400: UserWarning: G_sub 为空: κ=drill_down, l=low — 流程继续，Rerank 时全部 mp_id 的 s_olap=0.3
+  ret = self.func(*args, **kwargs)
+C:\Users\tom\.conda\envs\tomluck2\Lib\site-packages\langgraph\_internal\_runnable.py:400: UserWarning: G_sub 为空: κ=sibling_nav, l=mid — 流程继续，Rerank 时全部 mp_id 的 s_olap=0.3
+  ret = self.func(*args, **kwargs)
+C:\Users\tom\.conda\envs\tomluck2\Lib\site-packages\langgraph\_internal\_runnable.py:400: UserWarning: G_sub 为空: κ=sibling_nav, l=mid — 流程继续，Rerank 时全部 mp_id 的 s_olap=0.3
+  ret = self.func(*args, **kwargs)
+C:\Users\tom\.conda\envs\tomluck2\Lib\site-packages\langgraph\_internal\_runnable.py:400: UserWarning: G_sub 为空: κ=drill_down, l=low — 流程继续，Rerank 时全部 mp_id 的 s_olap=0.3
+  ret = self.func(*args, **kwargs)
+C:\Users\tom\.conda\envs\tomluck2\Lib\site-packages\langgraph\_internal\_runnable.py:400: UserWarning: G_sub 为空: κ=sibling_nav, l=mid — 流程继续，Rerank 时全部 mp_id 的 s_olap=0.3
+  ret = self.func(*args, **kwargs)
+C:\Users\tom\.conda\envs\tomluck2\Lib\site-packages\langgraph\_internal\_runnable.py:400: UserWarning: G_sub 为空: κ=roll_up, l=mid — 流程继续，Rerank 时全部 mp_id 的 s_olap=0.3
+  ret = self.func(*args, **kwargs)

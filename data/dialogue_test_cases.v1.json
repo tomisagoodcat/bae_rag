@@ -1,0 +1,226 @@
+{
+  "version": "1.0",
+  "description": "Multi-turn dialogue scenarios derived from data/questions.csv (10 source questions). Turn1=original; Turn2=drill_down prompt; Turn3=roll_up prompt. Used for full vs no_hierarchy ablation.",
+  "scenarios": [
+    {
+      "name": "q01_mercury_methylation_factors",
+      "source_no": 1,
+      "expected_modules_turn1": ["MPU", "EEM"],
+      "turns": [
+        {
+          "query": "What are the key influencing factors of mercury methylation",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Show the detailed experimental evidence and step-level mechanisms behind those influencing factors",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Go back to a high-level overview of mercury methylation factors",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    },
+    {
+      "name": "q02_measurement_qc",
+      "source_no": 2,
+      "expected_modules_turn1": ["EEM"],
+      "turns": [
+        {
+          "query": "Measurement methods and quality control of mercury concentration",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Expand with detailed instrument settings, detection limits, and QC procedures",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Summarize the measurement and QC approach at overview level",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    },
+    {
+      "name": "q03_hazard_exposure",
+      "source_no": 3,
+      "expected_modules_turn1": ["MPU", "EEM"],
+      "turns": [
+        {
+          "query": "Hazard mechanisms and exposure pathways of mercury pollution",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Drill down into specific exposure routes, biomarkers, and supporting experimental data",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Return to a high-level summary of hazard mechanisms and exposure",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    },
+    {
+      "name": "q04_experimental_design_eem",
+      "source_no": 4,
+      "expected_modules_turn1": ["EEM"],
+      "turns": [
+        {
+          "query": "How was the experimental design established, and how were the experimental groups and control groups set up?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Show detailed experimental steps, group assignments, and procedure-level setup",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Go back to a high-level overview of the experimental design",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    },
+    {
+      "name": "q05_detection_methods_eem_ebm",
+      "source_no": 5,
+      "expected_modules_turn1": ["EEM", "EBM"],
+      "turns": [
+        {
+          "query": "What mercury detection methods and quality control methods were adopted in the article?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Expand with detailed analytical protocols and sample handling steps",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Summarize detection and QC methods at overview level",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    },
+    {
+      "name": "q06_agricultural_management",
+      "source_no": 6,
+      "expected_modules_turn1": ["EEM", "MPU"],
+      "turns": [
+        {
+          "query": "If mentioned, the regulatory effects of different agricultural management measures and tillage practices on mercury migration and transformation",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Show detailed field trial procedures and step-level management treatment data",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Return to a high-level overview of agricultural management effects on mercury",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    },
+    {
+      "name": "q07_control_measures_ebm",
+      "source_no": 7,
+      "expected_modules_turn1": ["EBM"],
+      "turns": [
+        {
+          "query": "Proposed control measures for mercury pollution",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Expand with specific remediation steps, materials used, and implementation details",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Go back to a high-level summary of control measures",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    },
+    {
+      "name": "q08_sample_concentrations",
+      "source_no": 8,
+      "expected_modules_turn1": ["EBM"],
+      "turns": [
+        {
+          "query": "Which samples were determined (e.g., soil, plant roots, stems, leaves, grains)? What are the respective concentrations of total mercury and methylmercury in each sample?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Show detailed sample collection sites, specimen processing steps, and concentration tables",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Return to an overview of sample types and mercury levels",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    },
+    {
+      "name": "q09_study_area_background",
+      "source_no": 9,
+      "expected_modules_turn1": ["MPU", "EBM"],
+      "turns": [
+        {
+          "query": "What is the historical background of the study area? Does it have a history of mercury contamination or other heavy metal pollution?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Expand with detailed environmental sampling context and site-specific contamination records",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Go back to a high-level overview of the study area background",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    },
+    {
+      "name": "q10_experimental_design_eem_ebm",
+      "source_no": 10,
+      "expected_modules_turn1": ["EEM", "EBM"],
+      "turns": [
+        {
+          "query": "How was the experimental design established, and how were the experimental groups and control groups set up?",
+          "expected_kappa": "first_turn",
+          "expected_l": "mid"
+        },
+        {
+          "query": "Show detailed experimental and control group procedures with sample-level setup",
+          "expected_kappa": "drill_down",
+          "expected_l": "low"
+        },
+        {
+          "query": "Summarize experimental design at overview level",
+          "expected_kappa": "roll_up",
+          "expected_l": "mid"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "entities": [
+    {
+      "label": "mp_Representation",
+      "description": "Definition: A Representation is any publishable/argumentative entity in the Micropublications model (e.g., Claim, Statement, Data, Method, Attribution, References).\nContext: Use this class only when typing elements that participate in evidence relations (support/challenge) or composition within a Micropublication.\nExamples:\n- Positive: 'Statement S2 supports Claim C1.' -> both S2 and C1 are mp:Representation.\n- Positive: 'Dataset S1 supports Claim C3.' -> both S1 and C3 are mp:Representation.\n- Negative: 'General background text' (no argumentative role) -> skip."
+    },
+    {
+      "label": "mp_Micropublication",
+      "description": "Definition: A Micropublication is a structured evidence graph containing a central Claim/Statement and supporting elements (DataSet, Method, Attribution, References).\nContext: Extract when the text presents an explicit scientific assertion plus its evidence components. Link the MPU to its Claim/Statement and to supporting Data/Method/Attribution/References.\nExamples:\n- Positive: 'The study claims cadmium exceeds limits, supported by Dataset S1 (ICP-MS) and Method M1 (digestion), attributed to Dr. Li.'\n- Positive: 'Claim: Nitrate levels are rising; supported by monitoring data and sampling protocol; attributed to the Environmental Science Lab.'\n- Negative: 'Cadmium is discussed' (no structured evidence) -> skip."
+    },
+    {
+      "label": "n3203277a4fe2422ba5f42200d914bfa9b7",
+      "description": ""
+    },
+    {
+      "label": "mp_Statement",
+      "description": "Definition: A Statement is an assertion with a truth value (true/false), typically supported by evidence.\nContext: Extract when the text presents a complete proposition (claim, observation, factual assertion). Model as a subclass of mp:Sentence if available in your schema.\nExamples:\n- Positive: 'Cadmium levels exceeded 0.2 mg/kg.' -> mp:Statement\n- Positive: 'Arsenic contamination is above safety limits.' -> mp:Statement\n- Negative: 'Heavy metals are discussed.' (no evaluable proposition) -> skip."
+    },
+    {
+      "label": "mp_Claim",
+      "description": "Definition: A Claim is the central assertion argued by a Micropublication.\nContext: Extract when the text explicitly advances a principal scientific assertion to be supported or challenged by evidence.\nExamples:\n- Positive: 'We conclude cadmium exceeds the permissible limit.' -> mp:Claim\n- Negative: 'We measured cadmium.' (methodological fact, not a central assertion) -> consider mp:Statement instead."
+    },
+    {
+      "label": "mp_Attribution",
+      "description": "Definition: Attribution specifies the agents responsible for creating, asserting, or being accountable for a Representation.\nContext: Extract when authorship/responsibility/source agency is explicitly assigned (persons, institutions, projects). Avoid inference without explicit statements.\nExamples:\n- Positive: 'This claim was asserted by Dr. Smith.' -> mp:Attribution linked to the claim and agent\n- Positive: 'Data provided by the EPA.' -> mp:Attribution linked to the dataset and EPA\n- Negative: 'Researchers often believe...' (no specific agent) -> skip."
+    },
+    {
+      "label": "n3203277a4fe2422ba5f42200d914bfa9b15",
+      "description": ""
+    },
+    {
+      "label": "mp_References",
+      "description": "Definition: References encodes bibliographic citations or source links tied to a Representation and may support or contextualize it.\nContext: Extract when explicit citations (e.g., 'Smith 2020', DOI/URL, numbered references) are tied to a specific Representation.\nExamples:\n- Positive: 'According to Smith (2020), ...' -> mp:References linked to the cited work and to the Statement/Claim\n- Positive: 'Dataset S1 from DOI:10.1234/abcd was used.' -> mp:References linked to the DataSet\n- Negative: 'Previous studies have shown...' (no specific source) -> skip."
+    },
+   
+    {
+      "label": "whu_DataSet",
+      "description": "Definition: A structured dataset used or generated in scientific activities, emphasizing data provenance, semantic targets, and hierarchical organization.\nContext: Use this class only when the text explicitly indicates an instance of this concept. Avoid speculative inference; rely on explicit mentions, definitions, or unambiguous descriptions. It is modeled as a subclass of <http://purl.obolibrary.org/obo/IAO_IAO_0000100>, mp:Data, dcat:Dataset, prov:Entity.\nExamples:\n- Positive: \"The sample is a DataSet collected during the field campaign.\" -> create node of type whu:DataSet.\n- Negative: \"The study mentions DataSet as a background topic\" (no instance stated) -> skip."
+    },
+    {
+      "label": "whu_ScalarMeasurementDatum",
+      "description": "Definition: A scalar numerical measurement datum with one numeric value, an optional unit (string label), and an optional comparator (e.g., '<', '<=', 'between').\nContext: Use whu:ScalarMeasurementDatum when the text provides an explicit numeric measurement (possibly with unit and comparator). Ideal for values like '0.2 mg/kg', 'Hg < 0.2 mg/kg', or ranges '12–15 mg/kg'.\nExamples:\n- Positive: 'Cadmium concentration was 0.15 mg/kg.' -> value=0.15, unit='mg/kg'\n- Positive: 'Hg < 0.2 mg/kg.' -> value=0.2, unit='mg/kg', comparator='<'\n- Positive: 'Temperature 25 °C.' -> value=25, unit='°C'\n- Negative: 'High cadmium level' (no explicit number) -> skip.",
+      "properties": [
+        {
+          "name": "iao_hasMeasurementValue",
+          "type": "FLOAT",
+          "description": "Definition: The datum must have a single numeric value.\nContext: Extract only when an explicit number is given (integer/decimal, possibly in scientific notation).\nExamples:\n- Positive: '0.15 mg/kg' -> value = 0.15\n- Negative: 'high cadmium level' (no number) -> skip."
+        },
+        {
+          "name": "iao_hasMeasurementUnit",
+          "type": "STRING",
+          "description": "Definition: The datum may have a measurement unit label.\nContext: Extract the unit when it is explicitly present next to the value.\nExamples:\n- Positive: '0.15 mg/kg' -> unit = 'mg/kg'\n- Negative: '0.15' (no unit stated) -> leave unit empty."
+        },
+        {
+          "name": "whu_hascomparator",
+          "type": "STRING",
+          "description": "Definition: The datum may include a comparator indicating relation to the value (e.g., '<', '<=', 'between').\nContext: Extract only when an explicit comparator appears with the value (or a range is stated).\nExamples:\n- Positive: 'Hg < 0.2 mg/kg' -> comparator = '<'\n- Positive: '12–15 mg/kg' -> comparator = 'between'\n- Negative: 'Hg levels were measured' -> skip comparator."
+        }
+      ]
+    },
+    {
+      "label": "whu_EnvironmentFeature",
+      "description": "A physical, ecological, or geographic context from which specimens are collected or where experiments are conducted. ENVIRONMENT entities describe natural or anthropogenic settings such as soil, water, atmosphere, or agricultural zones. They provide semantic provenance for SPECIMEN sources and support environmental variable alignment (e.g., ENVO classes). Examples include 'river delta', 'paddy soil', 'urban air', 'irrigated farmland'. Context: Serves as the environmental backdrop in scientific workflows, supporting specimen traceability, ecological factor modeling, and alignment with standard environment ontologies.",
+      "properties": [
+        {
+          "name": "geo_lat",
+          "type": "FLOAT",
+          "description": " have a latitude coordinate."
+        },
+        {
+          "name": "geo_long",
+          "type": "FLOAT",
+          "description": " have a longitude coordinate."
+        },
+        {
+          "name": "geo_alt",
+          "type": "FLOAT",
+          "description": " have an altitude value."
+        },
+        {
+          "name": "gn_population",
+          "type": "INTEGER",
+          "description": " the population of the geographic area."
+        }
+      ]
+    },
+    {
+      "label": "whu_Specimen",
+      "description": "Physical biological samples collected from an environment and used as core materials in scientific studies. Each specimen must have a taxonomic classification (e.g., NCBITaxon ID), quantity value (e.g., mass, volume), and be traceable to its environmental source. Examples include 'rice grains', 'fish tissue', 'soil cores', 'water samples from river delta'. Context: Function as evidence-bearing material entities in experimental workflows and provenance chains."
+    },
+    {
+      "label": "whu_ProcessedSpecimen",
+      "description": "Create a processed specimen from a collected sample."
+    },
+    {
+      "label": "whu_SpecimenCollection",
+      "description": "A sampling plan that governs the collection of environmental specimens for subsequent experimental analysis."
+    },
+    {
+      "label": "whu_SpecimenPreprocessing",
+      "description": "Describe how specimens were preprocessed before experimentation (e.g., cooling, freezing, filtering)."
+    },
+    {
+      "label": "whu_Bio_chemical_Experiment",
+      "description": "A bio-chemical experiment is an experiment that involves the use of biological or chemical samples to measure properties of the samples or the environment."
+    },
+    {
+      "label": "whu_Computational_Experiment",
+      "description": "Identify computational experiments involving data transformation or analysis steps using software."
+    },
+    {
+      "label": "whu_BioChemicalActivityStep",
+      "description": "A subclass_of ActivityStep involving biochemical procedures that use reagents, devices, specimens and produce data and processed specimens."
+    },
+    {
+      "label": "whu_ComputationalActivityStep",
+      "description": "Identify computational activity steps involving software, input or output data, and analysis results."
+    },
+    {
+      "label": "whu_Software",
+      "description": "Identify any software tools used for data analysis or simulation (e.g., SPSS, MATLAB, R).",
+      "properties": [
+        {
+          "name": "schema_softwareVersion",
+          "type": "STRING",
+          "description": "Extract the version number of the software."
+        }
+      ]
+    },
+    {
+      "label": "whu_Device",
+      "description": "Identify devices or instruments mentioned in the study, including model, manufacturer, and purpose.",
+      "properties": [
+        {
+          "name": "schema_hasModel",
+          "type": "STRING",
+          "description": "Extract the model name or ID of the device."
+        },
+        {
+          "name": "schema_hasSerialNumber",
+          "type": "STRING",
+          "description": "Extract the serial number of the device."
+        },
+        {
+          "name": "schema_hasPurchaseDate",
+          "type": "DATE",
+          "description": "Extract the purchase date of the device."
+        }
+      ]
+    },
+    {
+      "label": "whu_Goal",
+      "description": "Definition: A scientific goal or objective.\nContext: Use this class only when the text explicitly indicates an instance of this concept. Avoid speculative inference; rely on explicit mentions, definitions, or unambiguous descriptions. It is modeled as a subclass of prov:Entity.\nExamples:\n- Positive: \"The sample is a Goal collected during the field campaign.\" -> create node of type whu:Goal.\n- Negative: \"The study mentions Goal as a background topic\" (no instance stated) -> skip."
+    },
+    {
+      "label": "whu_Method",
+      "description": "Definition: Static protocol or standard defining the steps of an experiment.\nContext: Use this class only when the text explicitly indicates an instance of this concept. Avoid speculative inference; rely on explicit mentions, definitions, or unambiguous descriptions.\nExamples:\n- Positive: \"The sample is a Method collected during the field campaign.\" -> create node of type whu:Method.\n- Negative: \"The study mentions Method as a background topic\" (no instance stated) -> skip."
+    },
+    {
+      "label": "whu_Target_analyte",
+      "description": "Definition: A chemical analyte of scientific interest or concern.\nContext: Use this class only when the text explicitly indicates an instance of this concept. Avoid speculative inference; rely on explicit mentions, definitions, or unambiguous descriptions. It is modeled as a subclass of whu:TargetObject, <http://purl.obolibrary.org/obo/BFO_0000040>, <http://purl.obolibrary.org/obo/CHEBI_ChemicalEntity>.\nExamples:\n- Positive: \"The sample is a Target Analyte collected during the field campaign.\" -> create node of type whu:Target_analyte.\n- Negative: \"The study mentions Target Analyte as a background topic\" (no instance stated) -> skip."
+    },
+    {
+      "label": "whu_Reagent",
+      "description": "Definition: Chemical or biological reagent used in sample treatment or analysis.\nContext: Use this class only when the text explicitly indicates an instance of this concept. Avoid speculative inference; rely on explicit mentions, definitions, or unambiguous descriptions. It is modeled as a subclass of mp:Material, prov:Entity, schema:Product.\nExamples:\n- Positive: \"The sample is a Reagent collected during the field campaign.\" -> create node of type whu:Reagent.\n- Negative: \"The study mentions Reagent as a background topic\" (no instance stated) -> skip."
+    }
+  ]
+}

@@ -1,0 +1,1559 @@
+@prefix ns1: <http://example.org/whu#> .
+@prefix ns2: <http://www.w3.org/2002/07/owl#> .
+@prefix ns3: <http://purl.org/mp#> .
+@prefix ns4: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ns1:Computational_Experiment a ns2:Class ;
+    rdfs:label "Computational Experiment"@en ;
+    ns1:prompt "Identify computational experiments involving data transformation or analysis steps using software."@en ;
+    rdfs:comment "A computational experiment involves the use of software and computational procedures to process or analyze data."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "This experiment is composed of computational steps involving software and data."@en ;
+            rdfs:comment "This experiment is composed of computational activity steps."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#wasAssociatedWith> ;
+            ns2:someValuesFrom ns1:ComputationalActivityStep ] ;
+    ns4:closeMatch <http://purl.obolibrary.org/obo/obi#OBI_0600046> .
+
+ns1:DataSetService a ns2:Class ;
+    rdfs:label "DataService"@en ;
+    ns1:prompt "Identify external dynamic data services, their served datasets, and endpoint URLs."@en,
+        "识别外部动态数据服务，所提供的数据集及服务端点。"@zh ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A dynamic service providing datasets through an endpoint URL, used in scientific research."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns2:onProperty <http://www.w3.org/ns/prov#usedBy> ;
+            ns2:someValuesFrom ns1:ActivityStep ],
+        [ a ns2:Restriction ;
+            ns2:onProperty <http://www.w3.org/ns/dcat#servesDataset> ;
+            ns2:someValuesFrom ns1:DataSet ],
+        [ a ns2:Restriction ;
+            ns2:onProperty <http://www.w3.org/ns/dcat#endpointURL> ;
+            ns2:someValuesFrom xsd:anyURI ],
+        ns3:Data,
+        <http://www.w3.org/ns/dcat#DataService> .
+
+ns1:DataSetSupportClaim a ns2:ObjectProperty ;
+    rdfs:label "Data supports Claim"@en ;
+    ns1:prompt "Identify the scientific claim supported by the data."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Data supports a scientific claim."@en ;
+    rdfs:domain ns1:DataSet ;
+    rdfs:range ns3:Claim ;
+    rdfs:subPropertyOf ns3:dataSupports .
+
+ns1:DataSetSupportStatement a ns2:ObjectProperty ;
+    rdfs:label "Data supports Statement"@en ;
+    ns1:prompt "Identify the scientific statement supported by the data."@en ;
+    ns3:statement xsd:string ;
+    rdfs:domain ns3:DataSet ;
+    rdfs:range ns3:Statement ;
+    rdfs:subPropertyOf ns3:dataSupports .
+
+ns1:DataSetchallengeClaim a ns2:ObjectProperty ;
+    rdfs:label "challenge Claim"@en ;
+    ns1:prompt "Identify the scientific claim challenged by the dataset."@en ;
+    ns3:statement xsd:string ;
+    rdfs:domain ns1:DataSet ;
+    rdfs:range ns3:Claim ;
+    rdfs:subPropertyOf ns3:challenge .
+
+ns1:DataSetchallengeStatement a ns2:ObjectProperty ;
+    rdfs:label "challenge statement"@en ;
+    ns1:prompt "Identify the scientific statement challenged by the dataset."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Dataset challenge a scientific statement."@en ;
+    rdfs:domain ns1:DataSet ;
+    rdfs:range ns3:Statement ;
+    rdfs:subPropertyOf ns3:challenge .
+
+ns1:Indicator a ns2:Class ;
+    rdfs:label "Indicator"@en ;
+    ns1:prompt "Identify the indicator of the experiment."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A measurable property or quantity of interest."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/IAO_is_denoted_by> ;
+            ns2:someValuesFrom ns1:Indicator_definition ],
+        ns1:Target_Variable .
+
+ns1:MethodsupportsData a ns2:ObjectProperty ;
+    rdfs:label "Methodsupports Data"@en ;
+    ns1:prompt "Identify the data supported by a method."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A method supports a data."@en ;
+    rdfs:domain ns3:Method ;
+    rdfs:range ns3:Data ;
+    rdfs:subPropertyOf ns3:methodSupports .
+
+ns1:computational_Experiment a ns2:Class ;
+    rdfs:label "computational Experiment"@en ;
+    ns1:prompt "Extract information about 'computational Experiment' from the scientific text."@en ;
+    rdfs:comment "computational_Experiment is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/IAO_data_item> a ns2:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/IAO data item"@en ;
+    ns1:prompt "Extract information about 'http://purl.obolibrary.org/obo/IAO data item' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/IAO_data_item is an ontology class placeholder requiring proper definition."@en .
+
+ns3:Attribution a ns2:Class ;
+    rdfs:subClassOf ns3:Representation .
+
+ns3:Micropublication a ns2:Class ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the claim supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the claim supported by the evidence graph."@en ;
+            ns2:onProperty ns3:argues ;
+            ns2:someValuesFrom ns3:Claim ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the scientific evidence graph elements supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the scientific evidence graph elements supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns1:ScientificEvidence ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the statement supported by this evidence graph."@en ;
+            rdfs:comment "Specifies the statement supported by the evidence graph."@en ;
+            ns2:onProperty ns3:hasSupport ;
+            ns2:someValuesFrom ns3:Statement ] .
+
+ns3:directlySupports a ns2:ObjectProperty ;
+    rdfs:label "directly supports"@en ;
+    ns1:prompt "Identify the representation that directly supports the other representation."@en ;
+    rdfs:comment "Indicates that one representation directly supports another. Not transitive."@en ;
+    rdfs:subPropertyOf ns3:supports .
+
+<http://purl.org/net/p-plan#correspondsTo> a ns2:ObjectProperty ;
+    rdfs:label "corresponds to"@en ;
+    ns1:prompt "Identify the static plan step corresponding to an executed activity step."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Connects an Activity (in the PROV sense) to the Plan it realizes or is executed based upon. Useful for aligning design-time structure with runtime execution."@en ;
+    rdfs:domain ns1:Step ;
+    rdfs:range ns1:ActivityStep .
+
+<http://purl.org/net/p-plan#hasOutputVar> a ns2:ObjectProperty ;
+    rdfs:label "has output variable" ;
+    rdfs:comment "Associates a Step with the Variable(s) it produces. This supports tracing how outputs are derived from previous inputs across Steps." ;
+    rdfs:domain <http://purl.org/net/p-plan#Step> ;
+    rdfs:range <http://purl.org/net/p-plan#Variable> .
+
+<http://purl.org/net/p-plan#isSubPlanOf> a ns2:ObjectProperty ;
+    rdfs:label "is sub-plan of" ;
+    rdfs:comment "Indicates that a Plan is part of a more complex parent Plan. Supports modular design of hierarchical workflows." ;
+    rdfs:domain <http://purl.org/net/p-plan#Plan> ;
+    rdfs:range <http://purl.org/net/p-plan#Plan> .
+
+<http://purl.org/spar/deo/Section> a ns2:Class ;
+    rdfs:label "http://purl.org/spar/deo/Section"@en ;
+    ns1:prompt "Extract information about 'http://purl.org/spar/deo/Section' from the scientific text."@en ;
+    rdfs:comment "http://purl.org/spar/deo/Section is an ontology class placeholder requiring proper definition."@en .
+
+<http://xmlns.com/foaf/0.1/Agent> a ns2:Class ;
+    rdfs:label "http://xmlns.com/foaf/0.1/Agent"@en ;
+    ns1:prompt "Extract information about 'http://xmlns.com/foaf/0.1/Agent' from the scientific text."@en ;
+    rdfs:comment "http://xmlns.com/foaf/0.1/Agent is an ontology class placeholder requiring proper definition."@en .
+
+<http://xmlns.com/foaf/0.1/Organization> a ns2:Class ;
+    rdfs:label "http://xmlns.com/foaf/0.1/Organization"@en ;
+    ns1:prompt "Extract information about 'http://xmlns.com/foaf/0.1/Organization' from the scientific text."@en ;
+    rdfs:comment "http://xmlns.com/foaf/0.1/Organization is an ontology class placeholder requiring proper definition."@en .
+
+ns1:EnvironmentFeature a ns2:Class ;
+    rdfs:label "Environment Feature"@en ;
+    ns1:prompt "A physical, ecological, or geographic context from which specimens are collected or where experiments are conducted. ENVIRONMENT entities describe natural or anthropogenic settings such as soil, water, atmosphere, or agricultural zones. They provide semantic provenance for SPECIMEN sources and support environmental variable alignment (e.g., ENVO classes). Examples include 'river delta', 'paddy soil', 'urban air', 'irrigated farmland'. Context: Serves as the environmental backdrop in scientific workflows, supporting specimen traceability, ecological factor modeling, and alignment with standard environment ontologies."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A spatial feature representing any real-world location, geographic entity, or phenomenon with associated geometry. In the context of a Neo4j Graph RAG system, this class is designed to model provinces, cities, sites, or other geographic regions as described in environmental research. It is primarily used to associate precise geometry or coordinates (e.g., latitude, longitude, polygons) to enable advanced geospatial queries, environmental analyses, and spatial data visualization. By integrating both environmental semantics from ENVO and geospatial properties from WGS84, this class supports robust spatial reasoning and facilitates cross-disciplinary research.Represents environmental context integrating geographic coordinates, administrative divisions, environmental conditions, and material constituents, including chemical pollutants."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "include environmental material constituents (soil, water)." ;
+            rdfs:comment "environmental material constituents (soil, water)."@en ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/RO_has_constituent> ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/ENVO_00010483> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "include chemical pollutants (e.g., Hg, Cr)." ;
+            rdfs:comment "include chemical pollutants (e.g., Hg, Cr)."@en ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/RO_has_constituent> ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/CHEBI_24431> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Semantically aligned with standard ENVO environmental classifications." ;
+            rdfs:comment "Semantically aligned with standard ENVO environmental classifications."@en ;
+            ns2:onProperty ns4:closeMatch ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/ENVO_00002297> ],
+        [ a ns2:Restriction ;
+            ns1:prompt " have a latitude coordinate." ;
+            rdfs:comment " have a latitude coordinate."@en ;
+            ns2:onProperty <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ;
+            ns2:someValuesFrom xsd:float ],
+        [ a ns2:Restriction ;
+            ns1:prompt " have a longitude coordinate." ;
+            rdfs:comment "have a longitude coordinate."@en ;
+            ns2:onProperty <http://www.w3.org/2003/01/geo/wgs84_pos#long> ;
+            ns2:someValuesFrom xsd:float ],
+        [ a ns2:Restriction ;
+            ns1:prompt " have an altitude value." ;
+            rdfs:comment "have an altitude value."@en ;
+            ns2:onProperty <http://www.w3.org/2003/01/geo/wgs84_pos#alt> ;
+            ns2:someValuesFrom xsd:float ],
+        [ a ns2:Restriction ;
+            ns1:prompt " the population of the geographic area." ;
+            rdfs:comment " the population of the geographic area."@en ;
+            ns2:onProperty <http://www.geonames.org/ontology#population> ;
+            ns2:someValuesFrom xsd:integer ],
+        [ a ns2:Restriction ;
+            ns1:prompt "its higher-level geographic or administrative region." ;
+            rdfs:comment "its higher-level geographic or administrative region."@en ;
+            ns2:onProperty <http://www.geonames.org/ontology#parentFeature> ;
+            ns2:someValuesFrom <http://www.geonames.org/ontology#Feature> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "the environmental condition (e.g., tropical, polar)." ;
+            rdfs:comment "the environmental condition (e.g., tropical, polar)."@en ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/RO_has_quality> ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/ENVO_01000254> ] .
+
+ns1:Goal a ns2:Class ;
+    rdfs:label "Goal"@en ;
+    ns1:prompt " A formalized research objective defining the intended outcome of an experiment. Typically formulated as a scientific question or aim, and semantically linked to the specific object of investigation (TargetObject). Examples include 'evaluate cadmium levels in rice', 'test soil arsenic concentration', 'analyze contamination pathways'. Context: Specifies what the experiment seeks to achieve, appearing as the intentional input of the experimental plan." ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A scientific goal or objective."@en ;
+    rdfs:subClassOf <http://www.w3.org/ns/prov#Entity> .
+
+ns1:Indicator_definition a ns2:Class ;
+    rdfs:label "Indicator Definition"@en ;
+    ns1:prompt "Identify the definition of the indicator."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A definition of an indicator."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/IAO_denotes> ;
+            ns2:someValuesFrom <http://ontomathpro.org/ontology/Formula> ],
+        [ a ns2:Restriction ;
+            ns2:onProperty <https://schema.org/rangeIncludes> ;
+            ns2:someValuesFrom <https://schema.org/QuantitativeValue> ],
+        [ a ns2:Restriction ;
+            ns2:onProperty <http://qudt.org/schema/qudt/unit> ;
+            ns2:someValuesFrom <http://qudt.org/schema/qudt/Unit> ] .
+
+ns1:Reagent a ns2:Class ;
+    rdfs:label "Reagent"@en ;
+    ns1:prompt "Extract reagent information including concentration, unit, manufacturer, and role in the experiment."@en,
+        "抽取试剂信息，包括浓度、单位、制造商及其在实验中的作用。"@zh ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Chemical or biological reagent used in sample treatment or analysis."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "Link to the closest OBI reagent class."@en ;
+            rdfs:comment "Semantically aligned with OBI reagent."@en ;
+            ns2:onProperty ns4:closeMatch ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/obi#reagent> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify which activity step used the reagent."@en ;
+            rdfs:comment "This reagent was used during an activity step."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#wasUsedBy> ;
+            ns2:someValuesFrom ns1:ActivityStep ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify the data generated by this reagent."@en ;
+            rdfs:comment "This reagent produced experimental data."@en ;
+            ns2:onProperty ns3:generates ;
+            ns2:someValuesFrom ns3:Data ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract the concentration of the reagent."@en ;
+            rdfs:comment "Specifies the concentration of the reagent."@en ;
+            ns2:onProperty <http://qudt.org/schema/qudt/hasConcentration> ;
+            ns2:someValuesFrom <http://qudt.org/schema/qudt/QuantityValue> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract the volume of the reagent."@en ;
+            rdfs:comment "Specifies the volume of the reagent used."@en ;
+            ns2:onProperty <http://qudt.org/schema/qudt/hasVolume> ;
+            ns2:someValuesFrom <http://qudt.org/schema/qudt/QuantityValue> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify concentration unit as micromolar."@en ;
+            rdfs:comment "Unit for concentration: micromolar."@en ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/UO_hasUnit> ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/UO_micromolar> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify volume unit as milliliter."@en ;
+            rdfs:comment "Unit for volume: milliliter."@en ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/UO_hasUnit> ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/UO_milliliter> ] .
+
+ns1:Software a ns2:Class ;
+    rdfs:label "Software"@en ;
+    ns1:prompt "Identify any software tools used for data analysis or simulation (e.g., SPSS, MATLAB, R)."@en,
+        "识别用于数据分析或模拟的任何软件工具（如SPSS、MATLAB、R等）。"@zh ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Analytical or computational software used in data processing or simulation."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "Identify activity steps that used this software."@en ;
+            rdfs:comment "This software was used in one or more activity steps."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#wasUsedBy> ;
+            ns2:someValuesFrom ns1:ComputationalActivityStep ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract the version number of the software."@en ;
+            rdfs:comment "The version number of the software tool."@en ;
+            ns2:onProperty <https://schema.org/softwareVersion> ;
+            ns2:someValuesFrom xsd:string ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Align with schema:SoftwareApplication class."@en ;
+            rdfs:comment "Semantically close to schema:SoftwareApplication."@en ;
+            ns2:onProperty ns4:closeMatch ;
+            ns2:someValuesFrom <https://schema.org/SoftwareApplication> ] .
+
+ns1:SpecimenCollection a ns2:Class ;
+    rdfs:label "Specimen Collection"@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A sampling plan that governs the collection of environmental specimens for subsequent experimental analysis."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "the activity steps involved in the specimen collection plan." ;
+            rdfs:comment "the activity steps involved in the specimen collection plan."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#wasAssociatedWith> ;
+            ns2:someValuesFrom ns1:BioChemicalActivityStep ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Indicate the specimen preprocessing plan that precedes this collection plan."@en ;
+            rdfs:comment "This collection plan follows a specimen preprocessing plan in the experimental sequence."@en ;
+            ns2:onProperty <http://purl.org/net/p-plan#isPreceededBy> ;
+            ns2:someValuesFrom ns1:SpecimenPreprocessing ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Semantically aligned with OBI's specimen_collection_process class." ;
+            ns2:onProperty ns4:closeMatch ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/obi#OBI_0000659> ] .
+
+ns1:hasDuration a ns2:ObjectProperty ;
+    rdfs:label "has duration"@en ;
+    ns1:prompt "Identify the duration of the experimental activity."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Duration of the experimental activity."@en ;
+    rdfs:domain ns1:ExecutionEnvironment ;
+    rdfs:range <http://qudt.org/schema/qudt/QuantityValue> .
+
+ns1:hasHumidity a ns2:ObjectProperty ;
+    rdfs:label "has humidity"@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Humidity during experimental activity."@en,
+        "实验活动期间的湿度。"@zh ;
+    rdfs:domain ns1:ExecutionEnvironment ;
+    rdfs:range <http://qudt.org/schema/qudt/QuantityValue> .
+
+ns1:hasTemperature a ns2:ObjectProperty ;
+    rdfs:label "has temperature"@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Temperature during experimental activity."@en,
+        "实验活动期间的温度。"@zh ;
+    rdfs:domain ns1:ExecutionEnvironment ;
+    rdfs:range <http://qudt.org/schema/qudt/QuantityValue> .
+
+<http://ontomathpro.org/ontology/Formula> a ns2:Class ;
+    rdfs:label "http://ontomathpro.org/ontology/Formula"@en ;
+    ns1:prompt "Extract information about 'http://ontomathpro.org/ontology/Formula' from the scientific text."@en ;
+    rdfs:comment "http://ontomathpro.org/ontology/Formula is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/CHEBI_24431> a ns2:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/CHEBI 24431"@en ;
+    ns1:prompt "Extract information about 'http://purl.obolibrary.org/obo/CHEBI 24431' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/CHEBI_24431 is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/ENVO_00002297> a ns2:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/ENVO 00002297"@en ;
+    ns1:prompt "Extract information about 'http://purl.obolibrary.org/obo/ENVO 00002297' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/ENVO_00002297 is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/ENVO_00010483> a ns2:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/ENVO 00010483"@en ;
+    ns1:prompt "Extract information about 'http://purl.obolibrary.org/obo/ENVO 00010483' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/ENVO_00010483 is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/ENVO_01000254> a ns2:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/ENVO 01000254"@en ;
+    ns1:prompt "Extract information about 'http://purl.obolibrary.org/obo/ENVO 01000254' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/ENVO_01000254 is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/NCBITaxon_0000000> a ns2:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/NCBITaxon 0000000"@en ;
+    ns1:prompt "Extract information about 'http://purl.obolibrary.org/obo/NCBITaxon 0000000' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/NCBITaxon_0000000 is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/UO_micromolar> a ns2:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/UO micromolar"@en ;
+    ns1:prompt "Extract information about 'http://purl.obolibrary.org/obo/UO micromolar' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/UO_micromolar is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/UO_milliliter> a ns2:Class ;
+    rdfs:label "http://purl.obolibrary.org/obo/UO milliliter"@en ;
+    ns1:prompt "Extract information about 'http://purl.obolibrary.org/obo/UO milliliter' from the scientific text."@en ;
+    rdfs:comment "http://purl.obolibrary.org/obo/UO_milliliter is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/obi#0000643> a ns2:Class ;
+    rdfs:label "0000643"@en ;
+    ns1:prompt "Extract information about '0000643' from the scientific text."@en ;
+    rdfs:comment "0000643 is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/obi#0001479> a ns2:Class ;
+    rdfs:label "0001479"@en ;
+    ns1:prompt "Extract information about '0001479' from the scientific text."@en ;
+    rdfs:comment "0001479 is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/obi#OBI_0000659> a ns2:Class ;
+    rdfs:label "OBI 0000659"@en ;
+    ns1:prompt "Extract information about 'OBI 0000659' from the scientific text."@en ;
+    rdfs:comment "OBI_0000659 is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/obi#OBI_0200000> a ns2:Class ;
+    rdfs:label "OBI 0200000"@en ;
+    ns1:prompt "Extract information about 'OBI 0200000' from the scientific text."@en ;
+    rdfs:comment "OBI_0200000 is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/obi#device> a ns2:Class ;
+    rdfs:label "device"@en ;
+    ns1:prompt "Extract information about 'device' from the scientific text."@en ;
+    rdfs:comment "device is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.obolibrary.org/obo/obi#reagent> a ns2:Class ;
+    rdfs:label "reagent"@en ;
+    ns1:prompt "Extract information about 'reagent' from the scientific text."@en ;
+    rdfs:comment "reagent is an ontology class placeholder requiring proper definition."@en .
+
+ns3:statement a ns2:DatatypeProperty,
+        ns2:FunctionalProperty ;
+    ns1:prompt "通过llm抽取的元素对应的原始文档 "@en ;
+    rdfs:domain ns3:Representation ;
+    rdfs:range xsd:string .
+
+<http://purl.org/net/p-plan#hasInputVar> a ns2:ObjectProperty ;
+    rdfs:label "has input variable" ;
+    rdfs:comment "Associates a Step with the input Variable(s) it consumes or requires to be executed. Variables may represent material, data, or parameters." ;
+    rdfs:domain <http://purl.org/net/p-plan#Step> ;
+    rdfs:range <http://purl.org/net/p-plan#Variable> .
+
+<http://qudt.org/schema/qudt/Unit> a ns2:Class ;
+    rdfs:label "http://qudt.org/schema/qudt/Unit"@en ;
+    ns1:prompt "Extract information about 'http://qudt.org/schema/qudt/Unit' from the scientific text."@en ;
+    rdfs:comment "http://qudt.org/schema/qudt/Unit is an ontology class placeholder requiring proper definition."@en .
+
+<https://schema.org/Brand> a ns2:Class ;
+    rdfs:label "https://schema.org/Brand"@en ;
+    ns1:prompt "Extract information about 'https://schema.org/Brand' from the scientific text."@en ;
+    rdfs:comment "https://schema.org/Brand is an ontology class placeholder requiring proper definition."@en .
+
+<https://schema.org/Organization> a ns2:Class ;
+    rdfs:label "https://schema.org/Organization"@en ;
+    ns1:prompt "Extract information about 'https://schema.org/Organization' from the scientific text."@en ;
+    rdfs:comment "https://schema.org/Organization is an ontology class placeholder requiring proper definition."@en .
+
+<https://schema.org/QuantitativeValue> a ns2:Class ;
+    rdfs:label "https://schema.org/QuantitativeValue"@en ;
+    ns1:prompt "Extract information about 'https://schema.org/QuantitativeValue' from the scientific text."@en ;
+    rdfs:comment "https://schema.org/QuantitativeValue is an ontology class placeholder requiring proper definition."@en .
+
+<https://schema.org/SoftwareApplication> a ns2:Class ;
+    rdfs:label "https://schema.org/SoftwareApplication"@en ;
+    ns1:prompt "Extract information about 'https://schema.org/SoftwareApplication' from the scientific text."@en ;
+    rdfs:comment "https://schema.org/SoftwareApplication is an ontology class placeholder requiring proper definition."@en .
+
+ns1:ComputationalActivityStep a ns2:Class ;
+    rdfs:label "Computational Activity Step"@en ;
+    ns1:prompt "Identify computational activity steps involving software, input or output data, and analysis results."@en,
+        "识别涉及软件、输入输出数据及分析结果的计算活动步骤。"@zh ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Experimental steps involving computational data transformations."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "Specify the method used in this step."@en ;
+            rdfs:comment "This step uses a method."@en ;
+            ns2:onProperty ns1:declareUsed ;
+            ns2:someValuesFrom ns1:Method ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the figure included in this step."@en ;
+            rdfs:comment "This step includes a figure."@en ;
+            ns2:onProperty <http://purl.org/spar/fabio/hasFigure> ;
+            ns2:someValuesFrom <http://purl.org/spar/fabio/Figure> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the table included in this step."@en ;
+            rdfs:comment "This step includes a table."@en ;
+            ns2:onProperty <http://purl.org/spar/fabio/hasTable> ;
+            ns2:someValuesFrom <http://purl.org/spar/fabio/Table> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify the computationalcomputational experiment."@en ;
+            rdfs:comment "This step is part of a computational experiment."@en ;
+            ns2:onProperty <http://purl.org/net/p-plan#has_Plan> ;
+            ns2:someValuesFrom ns1:bio_chemical_Experiment ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the device involved in this step."@en ;
+            rdfs:comment "This step involves a device."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#used> ;
+            ns2:someValuesFrom ns1:Device ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the Software involved in this step."@en ;
+            rdfs:comment "This step involves a Software."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#used> ;
+            ns2:someValuesFrom ns1:Software ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the DataSet involved in this step."@en ;
+            rdfs:comment "This step involves a DataSet."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#used> ;
+            ns2:someValuesFrom ns1:DataSet ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the data set generated by this step."@en ;
+            rdfs:comment "This step produces data set"@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#generated> ;
+            ns2:someValuesFrom ns1:DataSet ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify the design step corresponding to this step."@en ;
+            rdfs:comment "This step corresponds to a design step."@en ;
+            ns2:onProperty <http://purl.org/net/p-plan#correspondsToStep> ;
+            ns2:someValuesFrom <http://purl.org/net/p-plan#Step> ] .
+
+ns1:Device a ns2:Class ;
+    rdfs:label "Device"@en ;
+    ns1:prompt "Identify devices or instruments mentioned in the study, including model, manufacturer, and purpose."@en,
+        "识别研究中使用的设备或仪器，包括型号、制造商和用途。"@zh ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Scientific or analytical device used in specimen processing or experiment."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "Align with the appropriate device class in OBI."@en ;
+            rdfs:comment "Semantically close to OBI device class."@en ;
+            ns2:onProperty ns4:closeMatch ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/obi#device> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify which activity step used the device."@en ;
+            rdfs:comment "This device is used in one or more experimental steps."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#wasUsedBy> ;
+            ns2:someValuesFrom ns1:ActivityStep ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract the brand of the device."@en ;
+            rdfs:comment "The brand or label under which the device was sold."@en ;
+            ns2:onProperty <https://schema.org/hasBrand> ;
+            ns2:someValuesFrom <https://schema.org/Brand> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract the manufacturer of the device."@en ;
+            rdfs:comment "The organization that manufactured the device."@en ;
+            ns2:onProperty <https://schema.org/hasManufacturer> ;
+            ns2:someValuesFrom <https://schema.org/Organization> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract the model name or ID of the device."@en ;
+            rdfs:comment "The model identifier for the device."@en ;
+            ns2:onProperty <https://schema.org/hasModel> ;
+            ns2:someValuesFrom xsd:string ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract the serial number of the device."@en ;
+            rdfs:comment "The serial number uniquely identifying the device."@en ;
+            ns2:onProperty <https://schema.org/hasSerialNumber> ;
+            ns2:someValuesFrom xsd:string ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract the purchase date of the device."@en ;
+            rdfs:comment "The date the device was purchased."@en ;
+            ns2:onProperty <https://schema.org/hasPurchaseDate> ;
+            ns2:someValuesFrom xsd:date ] .
+
+ns1:ProcessedSpecimen a ns2:Class ;
+    rdfs:label "Processed Specimen"@en ;
+    ns1:prompt "Create a processed specimen from a collected sample."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A material specimen derived from a collected sample, having undergone preprocessing, and used in biochemical experiments. Semantically aligned with OBI's processed material."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "Indicate the original specimen this processed specimen was derived from."@en ;
+            rdfs:comment "The processed specimen is derived from a collected specimen sample."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#wasDerivedFrom> ;
+            ns2:someValuesFrom ns1:Specimen ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify the specimen preprocessing plan that generated this processed specimen."@en ;
+            rdfs:comment "The processed specimen is the output of a specimen preprocessing step."@en ;
+            ns2:onProperty <http://purl.org/net/p-plan#isOutputVarOf> ;
+            ns2:someValuesFrom ns1:SpecimenPreprocessing ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the biochemical experiment that used this processed specimen as input."@en ;
+            rdfs:comment "This specimen is used as input in a biochemical experiment."@en ;
+            ns2:onProperty <http://purl.org/net/p-plan#isInputVarOf> ;
+            ns2:someValuesFrom ns1:bio_chemical_Experiment ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract or specify the quantity, volume, or mass of the specimen using QUDT units."@en ;
+            rdfs:comment "the dataSet about speciemen for example how many specimen has been collected."@en ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/IAO_is_about> ;
+            ns2:someValuesFrom ns1:DataSet ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Align this processed specimen with OBI's processed material concept."@en ;
+            rdfs:comment "Semantically aligned with OBI's processed material, indicating it results from a material processing step."@en ;
+            ns2:onProperty ns4:closeMatch ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/obi#0000643> ] .
+
+ns1:Specimen a ns2:Class ;
+    rdfs:label "Specimen"@en ;
+    <http://example.org/whu#promt:> "Physical biological samples collected from an environment and used as core materials in scientific studies. Each specimen must have a taxonomic classification (e.g., NCBITaxon ID), quantity value (e.g., mass, volume), and be traceable to its environmental source. Examples include 'rice grains', 'fish tissue', 'soil cores', 'water samples from river delta'. Context: Function as evidence-bearing material entities in experimental workflows and provenance chains." ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A biological or environmental specimen material, collected from a defined context, used in experimentation, and taxonomically classified. Semantically aligned with OBI:specimen."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "Extract or align environmental context from which the specimen is derived."@en ;
+            rdfs:comment "Indicates that the specimen is derived from a specific environmental context, which may influence its characteristics."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#wasDerivedFrom> ;
+            ns2:someValuesFrom ns1:EnvironmentFeature ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the specimen collection activity that produced this specimen."@en ;
+            rdfs:comment "This specimen is the output variable of a specimen collection plan, indicating its generation through structured sampling."@en ;
+            ns2:onProperty <http://purl.org/net/p-plan#isOutputVarOf> ;
+            ns2:someValuesFrom ns1:SpecimenCollection ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the specimen preprocessing activity that used this specimen as input."@en ;
+            rdfs:comment "This specimen is used as an input variable in a specimen preprocessing plan, such as filtering, centrifugation, or staining."@en ;
+            ns2:onProperty <http://purl.org/net/p-plan#isInputVarOf> ;
+            ns2:someValuesFrom ns1:SpecimenPreprocessing ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Link the specimen to its biological classification using NCBI Taxon ID."@en ;
+            rdfs:comment "Specimen is taxonomically classified using the NCBI Taxonomy ontology (e.g., species, genus, family)."@en ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/obi#has_taxonomic_identifier> ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/NCBITaxon_0000000> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Extract or specify the quantity, volume, or mass of the specimen using QUDT units."@en ;
+            rdfs:comment "the dataSet about speciemen for example how many specimen has been collected."@en ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/IAO_is_about> ;
+            ns2:someValuesFrom ns1:DataSet ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Align the specimen with the OBI-defined specimen concept for semantic integration."@en ;
+            rdfs:comment "Semantically aligned with OBI's definition of specimen, representing a material entity collected for investigation."@en ;
+            ns2:onProperty ns4:closeMatch ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/obi#0001479> ] .
+
+ns1:declareUsed a ns2:ObjectProperty ;
+    rdfs:label "declared used"@en ;
+    ns1:prompt "Identify the method declared to be used by an activity step, pending verification."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "The method declared to be used by an activity step, pending verification."@en ;
+    rdfs:domain ns1:ActivityStep ;
+    rdfs:range ns1:Method ;
+    rdfs:subPropertyOf <http://www.w3.org/ns/prov#used> .
+
+ns3:Representation a ns2:Class ;
+    rdfs:label "Representation"@en ;
+    ns1:prompt "Extract information about 'Representation' from the scientific text."@en ;
+    rdfs:comment "Representation is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.org/spar/fabio/Figure> a ns2:Class ;
+    rdfs:label "http://purl.org/spar/fabio/Figure"@en ;
+    ns1:prompt "Extract information about 'http://purl.org/spar/fabio/Figure' from the scientific text."@en ;
+    rdfs:comment "http://purl.org/spar/fabio/Figure is an ontology class placeholder requiring proper definition."@en .
+
+<http://purl.org/spar/fabio/Table> a ns2:Class ;
+    rdfs:label "http://purl.org/spar/fabio/Table"@en ;
+    ns1:prompt "Extract information about 'http://purl.org/spar/fabio/Table' from the scientific text."@en ;
+    rdfs:comment "http://purl.org/spar/fabio/Table is an ontology class placeholder requiring proper definition."@en .
+
+ns1:BioChemicalActivityStep a ns2:Class ;
+    rdfs:label "Biochemical Activity Step"@en ;
+    rdfs:comment "A subclass_of ActivityStep involving biochemical procedures that use reagents, devices, specimens and produce data and processed specimens."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "Specify the design step corresponding to this step."@en ;
+            rdfs:comment "This step corresponds to a design step."@en ;
+            ns2:onProperty <http://purl.org/net/p-plan#correspondsToStep> ;
+            ns2:someValuesFrom <http://purl.org/net/p-plan#Step> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify the method used in this step."@en ;
+            rdfs:comment "This step uses a method."@en ;
+            ns2:onProperty ns1:declareUsed ;
+            ns2:someValuesFrom ns1:Method ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the execution environment involved in this step."@en ;
+            rdfs:comment "This step involves an execution environment."@en ;
+            ns2:onProperty ns1:hasExecutionEnvironment ;
+            ns2:someValuesFrom ns1:ExecutionEnvironment ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the figure included in this step."@en ;
+            rdfs:comment "This step includes a figure."@en ;
+            ns2:onProperty <http://purl.org/spar/fabio/hasFigure> ;
+            ns2:someValuesFrom <http://purl.org/spar/fabio/Figure> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the table included in this step."@en ;
+            rdfs:comment "This step includes a table."@en ;
+            ns2:onProperty <http://purl.org/spar/fabio/hasTable> ;
+            ns2:someValuesFrom <http://purl.org/spar/fabio/Table> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify the biochemical experiment."@en ;
+            rdfs:comment "This step is part of a biochemical experiment."@en ;
+            ns2:onProperty <http://purl.org/net/p-plan#has_Plan> ;
+            ns2:someValuesFrom ns1:bio_chemical_Experiment ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the device involved in this step."@en ;
+            rdfs:comment "This step involves a device."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#used> ;
+            ns2:someValuesFrom ns1:Device ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the reagent involved in this step."@en ;
+            rdfs:comment "This step involves a reagent."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#used> ;
+            ns2:someValuesFrom ns1:Reagent ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the specimen involved in this step."@en ;
+            rdfs:comment "This step involves a specimen."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#used> ;
+            ns2:someValuesFrom ns1:ProcessedSpecimen ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Identify the processed specimen generated by this step."@en ;
+            rdfs:comment "This step produces a processed specimen."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#generated> ;
+            ns2:someValuesFrom ns1:ProcessedSpecimen ],
+        [ a ns2:Restriction ;
+            rdfs:comment "This step produces DataSet."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#generated> ;
+            ns2:someValuesFrom ns1:DataSet ] .
+
+ns1:Method a ns2:Class ;
+    rdfs:label "Method"@en ;
+    ns1:MethodsupportsData ns3:DataSet ;
+    ns1:prompt "Identify methods or protocols explicitly referenced or used in experiments."@en,
+        "识别实验中明确引用或使用的方法或协议。"@zh ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Static protocol or standard defining the steps of an experiment."@en .
+
+ns1:SpecimenPreprocessing a ns2:Class ;
+    rdfs:label "Specimen Preprocessing"@en ;
+    ns1:prompt "Describe how specimens were preprocessed before experimentation (e.g., cooling, freezing, filtering)."@en,
+        "描述实验前样本的预处理过程（如冷却、冷冻、过滤）。"@zh ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A plan describing the intermediate handling of specimens before they are analyzed."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "the activity steps involved in the specimen preprocessing plan." ;
+            rdfs:comment "the activity steps involved in the specimen preprocessing plan."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#wasAssociatedWith> ;
+            ns2:someValuesFrom ns1:BioChemicalActivityStep ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Semantically aligned with OBI's material_processing class." ;
+            ns2:onProperty ns4:closeMatch ;
+            ns2:someValuesFrom <http://purl.obolibrary.org/obo/obi#OBI_0200000> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "just like material_processing, but with a specific focus on specimen preprocessing." ;
+            ns2:onProperty <http://purl.org/net/p-plan#hasInputVar> ;
+            ns2:someValuesFrom ns1:Specimen ],
+        [ a ns2:Restriction ;
+            ns1:prompt "just like material_processing, but with a specific focus on specimen preprocessing." ;
+            ns2:onProperty <http://purl.org/net/p-plan#ispreceededBy> ;
+            ns2:someValuesFrom ns1:bio_chemical_Experiment ] .
+
+ns1:ExecutionEnvironment a ns2:Class ;
+    rdfs:label "Execution Environment"@en ;
+    ns1:prompt "Extract experimental environment details including temperature, humidity, and duration."@en,
+        "抽取实验的环境细节，包括温度、湿度与持续时间。"@zh ;
+    ns3:statement xsd:string ;
+    rdfs:comment "Experimental conditions including temperature, humidity, and duration."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "Specify the temperature during experimental activity."@en ;
+            rdfs:comment "The temperature during experimental activity."@en ;
+            ns2:onProperty ns1:hasTemperature ;
+            ns2:someValuesFrom <http://qudt.org/schema/qudt/QuantityValue> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify the humidity during experimental activity."@en ;
+            rdfs:comment "The humidity during experimental activity."@en ;
+            ns2:onProperty ns1:hasHumidity ;
+            ns2:someValuesFrom <http://qudt.org/schema/qudt/QuantityValue> ],
+        [ a ns2:Restriction ;
+            ns1:prompt "Specify the duration of the experimental activity."@en ;
+            rdfs:comment "The duration of the experimental activity."@en ;
+            ns2:onProperty ns1:hasDuration ;
+            ns2:someValuesFrom <http://qudt.org/schema/qudt/QuantityValue> ] .
+
+ns1:bio_chemical_Experiment a ns2:Class ;
+    rdfs:label "Bio-Chemical Experiment"@en ;
+    ns1:prompt "A bio-chemical experiment is an experiment that involves the use of biological or chemical samples to measure properties of the samples or the environment."@en ;
+    rdfs:comment "A bio-chemical experiment is an experiment that involves the use of biological or chemical samples to measure properties of the samples or the environment."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns1:prompt "This experiment consists of biological or chemical steps."@en ;
+            rdfs:comment "This experiment consists of biological or chemical steps."@en ;
+            ns2:onProperty <http://www.w3.org/ns/prov#wasAssociatedWith> ;
+            ns2:someValuesFrom ns1:BioChemicalActivityStep ],
+        [ a ns2:Restriction ;
+            ns1:prompt "This experiment has a specific scientific goal or objective."@en ;
+            rdfs:comment "This experiment has a specific scientific goal or objective."@en ;
+            ns2:onProperty <http://purl.obolibrary.org/obo/RO_has_goal> ;
+            ns2:someValuesFrom ns1:Goal ] ;
+    ns4:closeMatch <http://purl.obolibrary.org/obo/obi#OBI_0000070> .
+
+<http://purl.org/net/p-plan#Step> a ns2:Class ;
+    rdfs:label "Step"@en ;
+    ns1:prompt "Extract information about 'Step' from the scientific text."@en ;
+    rdfs:comment "Step is an ontology class placeholder requiring proper definition."@en .
+
+<http://qudt.org/schema/qudt/QuantityValue> a ns2:Class ;
+    rdfs:label "http://qudt.org/schema/qudt/QuantityValue"@en ;
+    ns1:prompt "Extract information about 'http://qudt.org/schema/qudt/QuantityValue' from the scientific text."@en ;
+    rdfs:comment "http://qudt.org/schema/qudt/QuantityValue is an ontology class placeholder requiring proper definition."@en .
+
+ns1:DataSet a ns2:Class ;
+    rdfs:label "DataSet"@en ;
+    ns1:DataSetSupportClaim ns3:Claim ;
+    ns1:DataSetSupportStatement ns3:Statement ;
+    ns1:DataSetchallengeClaim ns3:Claim ;
+    ns1:DataSetchallengeStatement ns3:Statement ;
+    ns1:prompt "A quantitative measurement or observation generated by experimental methods, representing a collection or dataset. Each data point supports or challenges a claim and is causally linked to a method or activity step. Examples include 'mercury concentration results', 'heavy metal analysis data', 'soil contamination measurements'. Context: Aggregate evidence units, generated by methods, used to support claims; composed of specific data items with values and units."@en ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A structured dataset used or generated in scientific activities, emphasizing data provenance, semantic targets, and hierarchical organization."@en ;
+    rdfs:subClassOf [ a ns2:Restriction ;
+            ns2:onProperty <https://schema.org/about> ;
+            ns2:someValuesFrom ns1:TargetObject ],
+        [ a ns2:Class ;
+            ns2:unionOf ( [ a ns2:Restriction ;
+                        ns2:onProperty <http://www.w3.org/ns/prov#generatedBy> ;
+                        ns2:someValuesFrom ns1:ActivityStep ] [ a ns2:Restriction ;
+                        ns2:onProperty <http://www.w3.org/ns/prov#usedBy> ;
+                        ns2:someValuesFrom ns1:ActivityStep ] ) ],
+        [ a ns2:Class ;
+            ns2:unionOf ( [ a ns2:Restriction ;
+                        ns2:onProperty <http://purl.org/dc/terms/isPartOf> ;
+                        ns2:someValuesFrom ns1:DataSet ] [ a ns2:Restriction ;
+                        ns2:onProperty <http://purl.org/dc/terms/hasPart> ;
+                        ns2:someValuesFrom ns1:DataSet ] ) ] .
+
+ns3:Claim a ns2:Class ;
+    rdfs:label "Claim"@en ;
+    ns1:prompt "A scientific assertion derived from data and methods, representing the author's interpretive conclusion. Claims are the terminal nodes in an argumentation chain and should be semantically supported. Examples include 'mercury levels exceed safety thresholds', 'no significant contamination detected', 'lead concentration is acceptable'. Context: Epistemic conclusion supported by data/method triples; expresses the publication's main findings." ;
+    ns3:statement xsd:string ;
+    rdfs:comment "A claim is a statement that is argued by a micropublication."@en .
+
+ns3:Statement a ns2:Class ;
+    rdfs:subClassOf ns3:Sentence ;
+    ns2:equivalentClass [ a ns2:Class ;
+            ns2:intersectionOf ( ns3:Sentence [ a ns2:Restriction ;
+                        ns2:onProperty ns3:statement ;
+                        ns2:someValuesFrom xsd:string ] ) ] .
+

@@ -1,0 +1,1428 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+   xmlns:owl="http://www.w3.org/2002/07/owl#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+   xmlns:whu="https://bdi.whu.edu.cn/"
+>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#correspondsToStep">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">corresponds to step</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.w3.org/ns/prov#Activity"/>
+    <rdfs:range rdf:resource="https://bdi.whu.edu.cn/ResearchStep"/>
+    <rdfs:comment xml:lang="en">Optional execution-provenance relation; ordinary Methods prose does not require prov:Activity.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+Corresponds to P-PLAN `correspondsToStep`: links an explicitly executed provenance activity to the plan-level/textual `whu_ResearchStep` it realizes.
+
+### Extraction policy
+This relation is reserved for an external provenance/execution stage that supplies a `prov:Activity` (e.g. run log, execution timestamp, instrument-run identifier). It is not emitted from ordinary Methods prose when only the described ResearchStep is available.
+
+### Direction
+prov:Activity -&gt; `p_plan_correspondsToStep` -&gt; whu:ResearchStep.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000051">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has part</rdfs:label>
+    <rdfs:domain rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb62"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb67"/>
+    <whu:prompt xml:lang="en">### Definition
+BFO mereological relation used when one material/environmental entity physically contains another as a part.
+
+### Allowed schema patterns
+- EnvironmentFeature -&gt; EnvironmentMaterial
+- Specimen -&gt; ChemicalEntity
+- organism -&gt; ChemicalEntity
+- EnvironmentMaterial -&gt; ChemicalEntity
+
+### Extract when
+Emit only when the passage supports a part/constituent relation. Do not use `bfo_has_part` for mere location, provenance, or analytical aboutness.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/hasComparator">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">has comparator</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <whu:prompt xml:lang="en">Extract only an explicit comparison operator or qualifier attached to the scalar value, e.g. '&lt;', '&lt;=', '&gt;', '&gt;=', '=', 'approximately'. Return null/omit when no comparator is stated.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/Reagent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Reagent</rdfs:label>
+    <rdfs:subClassOf rdf:resource="https://bdi.whu.edu.cn/SupportMaterial"/>
+    <rdfs:comment xml:lang="en">Physical/chemical reagent used in a research step.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_Reagent` is a chemical or biological reagent, standard, solution, reference material, buffer, or other consumable explicitly used in a recorded research step.
+
+### Extract when
+Create a Reagent when the passage names the reagent or gives identifying details such as concentration, grade, supplier, or formulation.
+
+### Relations
+Link it from the using `whu_ResearchStep` via `whu_declaredUsed`.
+
+### Example
+“Samples were digested with 65% suprapure HNO3.” -&gt; Reagent[65% suprapure HNO3].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/declaredUsed">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">declared used</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/ResearchStep"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb1"/>
+    <rdfs:comment xml:lang="en">BAE static paper-declared usage relation; it is not declared as a subproperty of prov:used.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+Links a `whu_ResearchStep` to a Method, Device, Reagent, or Software explicitly stated as used in that step.
+
+### Direction
+ResearchStep -&gt; `whu_declaredUsed` -&gt; Method/Device/Reagent/Software.
+
+### Extract when
+Emit only when the text assigns the resource to the specific step. Do not attach a resource to an Experiment-level node when the using ResearchStep can be identified.
+
+### Example
+“Hg was measured by CVAFS using an F-732 analyzer.” -&gt; ResearchStep declaredUsed Method[CVAFS] and Device[F-732].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/ChemicalEntity">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Chemical Entity</rdfs:label>
+    <rdfs:subClassOf rdf:resource="https://bdi.whu.edu.cn/ResearchMaterial"/>
+    <rdfs:comment xml:lang="en">Physical chemical substance; normalization to ChEBI may be performed downstream.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_ChemicalEntity` is a specific chemical element, compound, ion, or chemically identifiable substance explicitly named in the paper, with normalization to ChEBI where appropriate.
+
+### Extract when
+Create a ChemicalEntity when the text names the underlying substance itself (e.g., Hg, MeHg, Pb, Cd), not merely a measured variable such as “Hg concentration”.
+
+### Relations
+Specimen, organism, or EnvironmentMaterial may `bfo_has_part` a ChemicalEntity when the text supports physical presence. TargetVariable -&gt; `iao_is_about` -&gt; ChemicalEntity links a measured/analyzed quantity to its underlying substance.
+
+### Example
+“Total mercury and methylmercury concentrations were measured.” -&gt; ChemicalEntity[Hg], ChemicalEntity[MeHg]; separate TargetVariables represent their concentrations.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/ComputationalExperiment">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Computational Experiment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Mid-level plan for statistical, computational or modeling analysis.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_Computational_Experiment` is a mid-level planned analytical module for statistical, computational, modeling, or transformation procedures applied primarily to data. It is represented as a Plan/organized semantic unit, not as a single atomic step.
+
+### Extract when
+Create one when the passage describes a coherent computational analysis such as regression, PCA, ANOVA, machine learning, simulation, or statistical modeling that contains one or more `whu_ResearchStep` instances.
+
+### Relations
+ResearchStep instances belong to it via `p_plan_isStepOfPlan`, use Method/Software via `whu_declaredUsed`, and consume/produce DataSet entities via `whu_declaredInput`/`whu_declaredOutput`. `whu_fellow(X,Y)` means Y is the immediate upstream predecessor/provider of X.
+
+### Example
+“PCA and Kruskal–Wallis tests were conducted in R 4.2.2.” -&gt; Computational_Experiment with Computational ResearchStep(s), declaredUsed Software[R 4.2.2].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Claim">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Statement"/>
+    <whu:prompt xml:lang="en">### Definition
+An `mp_Claim` is a principal scientific assertion that functions as a focal proposition in the argumentation structure. It is more central and argumentative than a general `mp_Statement`.
+
+### Extract when
+Create a Claim when the passage explicitly presents a principal conclusion, hypothesis, interpretation, or scientific assertion that is supported or challenged by evidence or other propositions.
+
+### Do not extract when
+Use `mp_Statement` for ordinary factual observations, contextual assertions, or propositions that are not functioning as a focal argumentative claim.
+
+### Relations
+Claims may receive `mp_supports`/`mp_challenges` from DataSet, Statement, Reference, ScienceEvidence, or other allowed Representations according to the potential schema.
+
+### Example
+“Modified biochar significantly reduced MeHg production in paddy soil.” -&gt; Claim[modified biochar reduces MeHg production].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb29">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb30"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000109">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">measurement datum</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#supports">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">supports</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:range rdf:resource="http://purl.org/mp#Representation"/>
+    <whu:prompt xml:lang="en">### Definition
+`mp_supports` is the positive argumentative relation corresponding to `mp:supports`. It links a supporting Representation to the Representation whose proposition, evidential role, or argument graph it affirmatively supports.
+
+### Direction
+supporting Representation -&gt; `mp_supports` -&gt; supported Representation.
+
+### Extract when
+Emit only when the passage explicitly or unambiguously expresses positive evidential/argumentative backing (e.g. supports, demonstrates, confirms, provides evidence for, is consistent with, indicates/suggests in an argumentative context). Mere co-occurrence, citation, method use, or data production does not by itself imply `mp_supports`.
+
+### Allowed schema patterns
+Use only source-target type combinations present in `potential_schema`. In this BAE schema these include Attribution -&gt; Representation; Reference -&gt; Claim/Statement when the cited source is used as backing; DataSet -&gt; Claim/Statement; Statement -&gt; Claim; Claim -&gt; Claim; and ScienceEvidence -&gt; Claim/Statement/SupportGraph.
+
+### Example
+“The measured decrease in grain MeHg supports the conclusion that modified biochar reduces Hg bioavailability.” -&gt; DataSet/ScienceEvidence `mp_supports` Claim.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb13">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/DataSet"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Statement">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <whu:prompt xml:lang="en">### Definition
+An `mp_Statement` is a complete proposition with evaluable semantic content, such as an observation, factual assertion, interpretation, or intermediate conclusion. A Claim is a specialized focal Statement.
+
+### Extract when
+Create a Statement when the passage expresses a complete proposition that may participate in support/challenge relations but is not best treated as the central Claim.
+
+### Do not extract when
+Do not create a Statement for topic fragments, headings, isolated noun phrases, or vague mentions without propositional content.
+
+### Example
+“Cadmium concentrations were higher in roots than in grains.” -&gt; Statement[cadmium concentrations were higher in roots than grains].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/EEM">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Experiment Evidence Module</rdfs:label>
+    <rdfs:comment xml:lang="en">Top-level semantic grouping for biochemical/computational experiments and data generation. It is not materialized as an operational KG instance.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb10">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb11"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb32">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/DataSet"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb33"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#Plan">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Plan"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/spar/cito/isCitedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">is cited by</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/mp#Reference"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb29"/>
+    <whu:prompt xml:lang="en">### Definition
+`cito_isCitedBy` corresponds to CiTO `cito:isCitedBy`, the inverse of `cito:cites`. In this schema, the subject is the cited `mp_References` source and the object is the Representation that cites that source.
+
+### Direction
+Reference (cited source) -&gt; `cito_isCitedBy` -&gt; Claim/Statement/DataSet/Method (citing Representation).
+
+### Extract when
+Emit when the text explicitly ties the Representation to an identifiable citation. Do not infer `mp_supports` from citation alone; add support only when the citation is used as evidential backing.
+
+### Example
+“Biochar reduces Hg bioavailability (Smith et al., 2020).” -&gt; Reference[Smith et al., 2020] isCitedBy Statement/Claim.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/DataSet">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">DataSet</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Data"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000100"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Structured scientific dataset and evidential data representation.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_DataSet` is a scientific data collection generated by or used in one or more ResearchSteps. In BAE it carries both dataset semantics and an evidential/argumentative role.
+
+### Extract when
+Create a DataSet when the passage explicitly reports a coherent data artifact such as a table, figure, measurement set, spectrum set, modeled result set, or analysis output.
+
+### Relations
+ResearchStep -&gt; `whu_declaredInput`/`whu_declaredOutput` -&gt; DataSet. At the plan-level shortcut view, a DataSet may `p_plan_isOutputVarOf` a Computational_Experiment where the text directly presents the experiment-level output. DataSet -&gt; `dcterms_hasPart` -&gt; DataItem.
+
+`iao_is_about` may be used at two complementary levels:
+- DataSet -&gt; Reagent / Specimen / ProcessedSpecimen, when the dataset concerns those research resources;
+- DataSet -&gt; TargetVariable, when the dataset concerns a measured/analyzed target variable.
+DataItem/ScalarMeasurementDatum may also `iao_is_about` TargetVariable at finer granularity.
+
+ScienceEvidence -&gt; `prov_hadMember` -&gt; DataSet. A DataSet may directly `mp_supports`/`mp_challenges` a Claim or Statement only when the text explicitly establishes that argumentative relation.
+
+### Example
+“Figure 4 reports MeHg concentrations in rice tissues after biochar treatment.” -&gt; DataSet[Figure 4 MeHg concentrations], which may be about the relevant Specimen and TargetVariable when those links are textually supported.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/declaredOutput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">declared output</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/ResearchStep"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb10"/>
+    <whu:prompt xml:lang="en">### Definition
+BAE-defined relation linking a ResearchStep directly to an actual domain entity explicitly generated or produced by that step.
+
+### Direction
+ResearchStep -&gt; `whu_declaredOutput` -&gt; Specimen/ProcessedSpecimen/DataSet.
+
+### Extract when
+Emit only when the passage supports an output/product relation for the specific step.
+
+### Example
+“Hg was measured by CVAFS.” -&gt; ResearchStep[Hg measurement] declaredOutput DataSet[Hg measurements].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb57">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Reagent"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb58"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/prompt">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
+    <rdfs:label xml:lang="en">LLM extraction prompt</rdfs:label>
+    <rdfs:comment xml:lang="en">Extraction guidance copied or normalized from the current schema JSON descriptions. It is annotation metadata on domain classes/properties, not a separate extraction meta-ontology.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/measurementUnitText">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">measurement unit text</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment xml:lang="en">Runtime string representation of the stated measurement unit.</rdfs:comment>
+    <whu:prompt xml:lang="en">Extract the measurement unit exactly as written in the source text (e.g. ng/g, mg/L, %, °C). Do not convert or normalize units during extraction.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/hasTarget">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has target</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/Goal"/>
+    <rdfs:range rdf:resource="https://bdi.whu.edu.cn/TargetVariable"/>
+    <whu:prompt xml:lang="en">### Definition
+Links a research Goal to the specific TargetVariable toward which the goal is directed.
+
+### Direction
+Goal -&gt; `whu_hasTarget` -&gt; TargetVariable.
+
+### Extract when
+The target quantity is explicitly named or unambiguously recoverable from the stated objective.
+
+### Example
+“The experiment aimed to quantify Hg concentration.” -&gt; Goal hasTarget TargetVariable[Hg concentration].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/softwareBrand">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">software brand/vendor</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/Software"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <whu:prompt xml:lang="en">Extract the software vendor, provider, or product brand only when explicitly stated. Do not infer a vendor from the software name.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/hasContext">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has context</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/SpecimenCollection"/>
+    <rdfs:range rdf:resource="https://bdi.whu.edu.cn/EnvironmentFeature"/>
+    <rdfs:comment xml:lang="en">SpecimenCollection-to-EnvironmentFeature uses hasContext, not fellow.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+BAE-defined relation linking a SpecimenCollection Plan to the environmental feature that provides its explicit sampling/research context.
+
+### Direction
+SpecimenCollection -&gt; `whu_hasContext` -&gt; EnvironmentFeature.
+
+### Extract when
+Emit when the collection procedure is explicitly tied to a bounded environmental setting/site. Use `prov_atLocation` for the location of a particular ResearchStep or organism.
+
+### Example
+“Topsoil samples were collected from the SWU paddy field.” -&gt; SpecimenCollection hasContext EnvironmentFeature[SWU paddy field].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/researchType">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">research type</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/ResearchStep"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <whu:prompt xml:lang="en">Assign exactly one controlled value based on the step's semantic role: 'SpecimenCollection', 'SpecimenProcessing', 'BioChemical', or 'Computational'. Choose the value from the described operation, not from section title alone.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#wasDerivedFrom">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">was derived from</rdfs:label>
+    <rdfs:domain rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb48"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb51"/>
+    <whu:prompt xml:lang="en">### Definition
+`prov_wasDerivedFrom` records material/provenance derivation between a resulting entity and its source entity.
+
+### Allowed schema patterns
+- Specimen -&gt; EnvironmentFeature
+- Specimen -&gt; envo_EnvironmentMaterial
+- Specimen -&gt; obi_organism
+- ProcessedSpecimen -&gt; Specimen
+
+### Extraction rule
+Use the most specific source explicitly supported by the passage. A Specimen may derive from the environmental feature/site as a whole, from a specific environmental material within it, or from a living organism. Do not invent a more specific source than the text provides.
+
+### Examples
+“Soil samples were collected from the paddy field.” -&gt; Specimen wasDerivedFrom EnvironmentFeature[paddy field] when only the site is explicit.
+“Soil samples were taken from surface soil.” -&gt; Specimen wasDerivedFrom EnvironmentMaterial[surface soil].
+“Rice grain was sampled from rice plants.” -&gt; Specimen wasDerivedFrom organism[rice plant].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000100">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">data set</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb43">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/DataSet"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb37">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb38"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/2003/01/geo/wgs84_pos#long">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">longitude</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/EnvironmentFeature"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <whu:prompt xml:lang="en">Extract explicit longitude as a decimal numeric value when present in the text.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000030">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">information content entity</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000031"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://schema.org/brand">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">device brand</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/Device"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <whu:prompt xml:lang="en">Extract the explicit device brand or manufacturer name. Do not infer it from a model code.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb14">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb15"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/ENVO_00010483">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">environmental material</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <whu:prompt xml:lang="en">### Definition
+`envo_EnvironmentMaterial` is the Neo4j schema label used here for an ENVO-aligned environmental material: a material matrix or medium such as soil, sediment, water, air, or particulate matter.
+
+### Extract when
+Create an EnvironmentMaterial when the text explicitly names the environmental substance or matrix from which specimens are collected or with which they interact.
+
+### Distinguish from
+Do not use this class for a bounded site or environmental setting; use `whu_EnvironmentFeature`. Do not use it for the collected sample itself; use `whu_Specimen`.
+
+### Relations
+`whu_EnvironmentFeature -&gt; bfo_has_part -&gt; envo_EnvironmentMaterial`; a Specimen may `prov_wasDerivedFrom` the material; the material may `bfo_has_part` a `whu_ChemicalEntity`.
+
+### Example
+“Surface soil was collected from the paddy field.” -&gt; EnvironmentFeature[paddy field] has_part EnvironmentMaterial[surface soil].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb48">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb49"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#hadMember">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">had member</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.w3.org/ns/prov#Collection"/>
+    <rdfs:range rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <whu:prompt xml:lang="en">### Definition
+PROV-O collection-membership relation used to aggregate components into BAE evidence and argumentation collections.
+
+### Allowed schema patterns
+- ScienceEvidence -&gt; DataSet
+- ScienceEvidence -&gt; Method
+- SupportGraph -&gt; Claim
+- SupportGraph -&gt; Statement
+- SupportGraph -&gt; Attribution
+- SupportGraph -&gt; Reference
+- SupportGraph -&gt; ScienceEvidence
+
+### Semantics
+This relation encodes membership only. It does not encode positive/negative argumentative polarity; use `mp_supports` or `mp_challenges` for polarity.
+
+### Example
+ScienceEvidence hadMember DataSet; ScienceEvidence hadMember Method.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/MPU">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Micropublication Argumentation Unit</rdfs:label>
+    <rdfs:comment xml:lang="en">Top-level semantic grouping for scientific evidence and argumentation. It is not materialized as an operational KG instance.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/Goal">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Goal</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Explicit scientific objective represented as information content.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_Goal` is an explicitly stated scientific objective of a BioChemical or Computational Experiment.
+
+### Extract when
+Create a Goal only when an objective is linguistically supported, e.g., “to quantify”, “to assess”, “to compare”, “to determine”, or “to predict”.
+
+### Do not extract when
+Do not convert broad background motivation or an inferred purpose into a Goal.
+
+### Relations
+Experiment -&gt; `whu_hasGoal` -&gt; Goal; Goal -&gt; `whu_hasTarget` -&gt; TargetVariable.
+
+### Example
+“To quantify Hg concentration in rice grain.” -&gt; Goal[quantify Hg concentration in rice grain].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000032">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">scalar measurement datum</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000109"/>
+    <whu:prompt xml:lang="en">### Definition
+An `iao_ScalarMeasurementDatum` is a scalar measurement datum represented by a single numeric magnitude together with its measurement unit; it is treated as a subtype of `iao_DataItem`.
+
+### Extract when
+Use this class when the passage reports a specific scalar value such as “28.4 ng/g”, optionally with an explicit comparator. If the record is categorical, composite, or not reducible to one scalar value plus unit, use `iao_DataItem`.
+
+### Relations
+Link to the measured/analyzed `whu_TargetVariable` via `iao_is_about`. A DataSet contains DataItem-level records via `dcterms_hasPart`.
+
+### Example
+“Mean THg concentration was 28.4 ng/g.” -&gt; ScalarMeasurementDatum[value=28.4, unit=ng/g] is_about TargetVariable[THg concentration].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/declaredInput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">declared input</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/ResearchStep"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb6"/>
+    <whu:prompt xml:lang="en">### Definition
+BAE-defined relation linking a ResearchStep directly to an actual domain entity explicitly functioning as that step's input.
+
+### Direction
+ResearchStep -&gt; `whu_declaredInput` -&gt; Specimen/ProcessedSpecimen/DataSet.
+
+### Extraction policy
+BAE reuses P-PLAN for Plan/Step organization and ordering; domain-specific input/output entities are connected through `whu_declaredInput`/`whu_declaredOutput`. Emit only when the input role is textually supported.
+
+### Example
+“Air-dried soil was sieved before digestion.” -&gt; ResearchStep[sieving] declaredInput Specimen[air-dried soil].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb28">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ResearchStep"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.geonames.org/ontology#population">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">population</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/EnvironmentFeature"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <whu:prompt xml:lang="en">Extract an explicitly stated population count associated with the named geographic/environmental feature. Do not infer or look up population externally.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb46">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/SpecimenPreprocessing"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb47"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Reference">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <whu:prompt xml:lang="en">### Definition
+`mp_References` is the Neo4j-compatible technical label used in this schema for the canonical Micropublication class `mp:Reference`. A Reference represents an explicitly cited external bibliographic source, dataset citation, DOI, URL, or other identifiable source record.
+
+### Extract when
+Create one Reference per explicitly identifiable cited source, including author–year citations, numbered citations, DOI/URL references, or a bibliographic entry linked to the current passage.
+
+### Do not extract when
+Do not create a Reference for vague phrases such as “previous studies” unless an identifiable source is provided. Do not merge multiple cited works into one Reference node.
+
+### Relations
+Use `cito_isCitedBy` from the Reference to the Representation that cites it. Use `mp_supports` to a Claim or Statement only when the cited source is explicitly invoked as backing for that proposition; a neutral citation alone does not imply support.
+
+### Example
+“Biochar can reduce Hg bioavailability (Smith et al., 2020).” -&gt; Reference[Smith et al., 2020]; Reference `cito_isCitedBy` Statement/Claim; add `mp_supports` only if the text uses the source as evidential backing.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/BAE_v3_clean">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+    <rdfs:label xml:lang="en">BAE Ontology v3 clean</rdfs:label>
+    <rdfs:comment xml:lang="en">Core BAE ontology aligned with the manuscript Chapter 3 and the current Neo4j/GraphRAG extraction schema.</rdfs:comment>
+    <owl:versionInfo>3.0-clean</owl:versionInfo>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/Software">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Software</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Software is treated as information content rather than physical ResearchMaterial.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_Software` entity represents named software, a software package, computational environment, or analysis application explicitly used in a computational research step.
+
+### Extract when
+Create Software when a software name is explicit; capture vendor/brand and version only when stated.
+
+### Relations
+Link from the using `whu_ResearchStep` via `whu_declaredUsed`.
+
+### Example
+“Statistical analyses were performed in R version 4.2.2.” -&gt; Software[R], version=4.2.2.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000023">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">role</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/hasName">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">has name</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <whu:prompt xml:lang="en">Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb41">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Specimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb42"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#challenges">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">challenges</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:range rdf:resource="http://purl.org/mp#Representation"/>
+    <whu:prompt xml:lang="en">### Definition
+`mp_challenges` is the negative argumentative relation corresponding to `mp:challenges`. It links a challenging Representation to the Representation whose proposition or argument graph it contradicts, refutes, weakens, or undermines.
+
+### Direction
+challenging Representation -&gt; `mp_challenges` -&gt; challenged Representation.
+
+### Extract when
+Emit only when contradiction/challenge is explicit or unambiguous (e.g. contradicts, refutes, does not support, inconsistent with, fails to confirm, undermines). Absence of support is not automatically a challenge.
+
+### Allowed schema patterns
+Use only source-target combinations present in `potential_schema`, including DataSet -&gt; Claim/Statement, Statement -&gt; Claim, Claim -&gt; Claim, and ScienceEvidence -&gt; Claim/Statement/SupportGraph.
+
+### Example
+“The observed lack of treatment effect contradicts the proposed mechanism.” -&gt; DataSet/ScienceEvidence challenges Claim/Statement.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb22">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/SpecimenCollection"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb23"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000004">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">has measurement value</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <whu:prompt xml:lang="en">Extract only the numeric magnitude as a FLOAT, excluding the unit and comparator. Preserve the reported numerical value; do not perform unit conversion.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb36">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ProcessedSpecimen"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb33">
+    <rdf:first rdf:resource="http://purl.org/mp#Method"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0100026">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">organism</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <whu:prompt xml:lang="en">### Definition
+`obi_organism` is the current technical schema label for a living biological source explicitly mentioned in the paper, such as a plant, animal, or microorganism from which a specimen is obtained or whose environmental location is relevant.
+
+### Extract when
+Create an organism node when a living source is explicitly identified, rather than only a collected tissue/sample or an environmental material.
+
+### Relations
+Specimen -&gt; `prov_wasDerivedFrom` -&gt; organism; organism -&gt; `prov_atLocation` -&gt; EnvironmentFeature; organism -&gt; `bfo_has_part` -&gt; ChemicalEntity when the text explicitly describes a constituent present in the organism.
+
+### Example
+“Rice plants grown in the paddy field were sampled for grain and root tissue.” -&gt; organism[rice plant]; Specimen[grain/root] wasDerivedFrom organism.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/ScienceEvidence">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Science Evidence</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Collection"/>
+    <rdfs:subClassOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb70"/>
+    <rdfs:subClassOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb71"/>
+    <rdfs:comment xml:lang="en">Reusable composite evidence unit aggregating DataSet and Method.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_ScienceEvidence` is a reusable composite evidence unit that binds at least one DataSet with the Method used to produce or analyze it in an explicit argumentative context. It bridges EEM experimental-process representation and MPU argumentation.
+
+### Extract when
+Create ScienceEvidence only when the passage contains (1) identifiable data/results, (2) the relevant method or analytical basis, and (3) an explicit or unambiguous argumentative role supporting or challenging a Claim/Statement. Raw data alone are a DataSet, not ScienceEvidence.
+
+### Relations
+ScienceEvidence -&gt; `prov_hadMember` -&gt; DataSet/Method. It may `mp_supports`/`mp_challenges` an explicit Claim or Statement. In this BAE schema it may also `mp_supports`/`mp_challenges` a SupportGraph to encode the evidence polarity within that graph; membership in the SupportGraph is separately represented by `prov_hadMember`.
+
+### Extraction boundary
+`WHU_HASORIGINALTEXT` should be the smallest contiguous span containing the evidential content and the argumentative connector. Do not infer ScienceEvidence solely from co-occurrence of a Method and DataSet.
+
+### Example
+“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar-remediation hypothesis.” -&gt; ScienceEvidence[CVAFS evidence of reduced grain MeHg].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/TargetVariable">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Target Variable</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Measured, analyzed or predicted variable used to connect Goal, Data and ChemicalEntity.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_TargetVariable` is the specific measurable, analyzable, or predictable quantity toward which a research Goal is directed, such as Hg concentration, MeHg content, methylation rate, or a model response variable.
+
+### Extract when
+Create a TargetVariable when the passage names a quantity or variable being measured, analyzed, compared, or predicted. Keep it distinct from the underlying substance itself.
+
+### Relations
+`whu_Goal -&gt; whu_hasTarget -&gt; whu_TargetVariable`; `whu_TargetVariable -&gt; iao_is_about -&gt; whu_ChemicalEntity`; DataSet/DataItem/ScalarMeasurementDatum may `iao_is_about` the TargetVariable at the granularity supported by the text.
+
+### Example
+“Hg concentration in rice grain was quantified.” -&gt; TargetVariable[Hg concentration] is_about ChemicalEntity[Hg].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#isOutputVarOf">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">is output var of</rdfs:label>
+    <rdfs:domain rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb40"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb44"/>
+    <rdfs:comment xml:lang="en">Retained as the current plan-level shortcut/projection used by the GraphRAG schema; detailed step-level output remains whu:declaredOutput.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+Plan-level shortcut relation corresponding to P-PLAN `isOutputVarOf`, used in this extraction schema to connect a concrete output entity directly to the Plan/Experiment that produces it.
+
+### Purpose
+This is a plan-level projection that skips the intermediate ResearchStep for concise retrieval and MetaPath construction. The detailed step-level output relation remains `ResearchStep -&gt; whu_declaredOutput -&gt; domain entity`.
+
+### Direction
+output entity -&gt; `p_plan_isOutputVarOf` -&gt; Plan/Experiment.
+
+### Allowed schema patterns
+- Specimen -&gt; SpecimenCollection
+- ProcessedSpecimen -&gt; SpecimenPreprocessing
+- DataSet -&gt; Computational_Experiment
+
+### Extract when
+Emit only when the text directly supports that the entity is an output of the corresponding plan/experiment module.
+
+### Example
+“The preprocessing produced a filtered digest.” -&gt; ProcessedSpecimen `p_plan_isOutputVarOf` SpecimenPreprocessing.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000136">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">is about</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb56"/>
+    <whu:prompt xml:lang="en">### Definition
+`iao_is_about` expresses aboutness between an information-content entity and the entity or variable it describes.
+
+### Allowed schema patterns
+Resource-oriented aboutness:
+- DataSet -&gt; Reagent
+- DataSet -&gt; Specimen
+- DataSet -&gt; ProcessedSpecimen
+
+Target-variable aboutness:
+- TargetVariable -&gt; ChemicalEntity
+- DataSet -&gt; TargetVariable
+- DataItem -&gt; TargetVariable
+- ScalarMeasurementDatum -&gt; TargetVariable
+
+### Granularity rule
+Choose the pairing that matches the text's actual semantic granularity. Do not force extraction to TargetVariable when the passage only states that a dataset concerns a reagent or specimen, and do not replace a specific TargetVariable link with a broader resource link when the measured variable is explicit. Multiple aboutness links may coexist when independently supported.
+
+### Examples
+“The dataset reports responses of rice grain samples to selenium treatment.” -&gt; DataSet is_about Specimen[rice grain] and, when explicitly represented, Reagent[selenium treatment].
+“The dataset reflects Hg content.” -&gt; DataSet is_about TargetVariable[Hg content].
+“Mean Hg content was 28.4 ng/g.” -&gt; ScalarMeasurementDatum[28.4 ng/g] is_about TargetVariable[Hg content].
+“Hg content” -&gt; TargetVariable[Hg content] is_about ChemicalEntity[Hg].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/EnvironmentFeature">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Environment Feature</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ENVO_00002297"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Location"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Concrete bounded environmental setting/site; distinct from environmental material.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_EnvironmentFeature` is a bounded, locatable environmental setting or site described in the paper, such as a specific paddy field, wetland, river reach, sampling station, or experimental field. It is aligned conceptually with ENVO environmental feature and is distinct from the material present at the site.
+
+### Extract when
+Create one when the passage identifies a concrete environmental setting/site that frames sampling, organism location, or a recorded field ResearchStep. Coordinates may be captured as properties when explicit.
+
+### Relations
+EnvironmentFeature -&gt; `bfo_has_part` -&gt; EnvironmentMaterial; SpecimenCollection -&gt; `whu_hasContext` -&gt; EnvironmentFeature; organism/ResearchStep may -&gt; `prov_atLocation` -&gt; EnvironmentFeature. A Specimen may also `prov_wasDerivedFrom` an EnvironmentFeature when the passage identifies the site/environmental feature itself as the provenance source and does not support a more specific material or organism source.
+
+### Example
+“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” -&gt; EnvironmentFeature[SWU paddy field].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/hasGoal">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has goal</rdfs:label>
+    <rdfs:domain rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb14"/>
+    <rdfs:range rdf:resource="https://bdi.whu.edu.cn/Goal"/>
+    <whu:prompt xml:lang="en">### Definition
+Links a BioChemical or Computational Experiment to an explicitly stated scientific Goal.
+
+### Direction
+BioChemical_Experiment/Computational_Experiment -&gt; `whu_hasGoal` -&gt; Goal.
+
+### Extract when
+Use explicit objective language such as “to quantify”, “to assess”, “to compare”, “to determine”, or “to predict”. Do not infer a Goal from general background motivation.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb55">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Specimen"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Attribution">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <whu:prompt xml:lang="en">### Definition
+`mp_Attribution` is the technical schema label used for an MP Attribution: a provenance/qualifier Representation that records who is responsible for, asserted, created, curated, or otherwise accounts for another Representation. The Attribution is not itself the responsible person or organization.
+
+### Extract when
+Create an Attribution only when the text explicitly identifies an accountable person, author group, institution, laboratory, project, or authority in relation to a Claim, Statement, DataSet, Method, or Reference.
+
+### Do not extract when
+Do not create an Attribution for vague agency such as “researchers believe” or “it is known” when no accountable source is identifiable. Do not infer authorship from document metadata unless the extraction passage explicitly supports that attribution.
+
+### Relations
+In this schema, an Attribution may `mp_supports` the Representation whose provenance/responsibility it qualifies, reflecting the Micropublication minimal-support interpretation of attribution.
+
+### Example
+“According to the NOM-Lab at Southwest University, DOM fluorescence was measured using EEM spectroscopy.” -&gt; Attribution[NOM-Lab], supporting the relevant Method/DataSet/Statement representation.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb71">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.w3.org/ns/prov#hadMember"/>
+    <owl:someValuesFrom rdf:resource="http://purl.org/mp#Method"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/Device">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Device</rdfs:label>
+    <rdfs:subClassOf rdf:resource="https://bdi.whu.edu.cn/SupportMaterial"/>
+    <rdfs:comment xml:lang="en">Physical scientific instrument or apparatus.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_Device` is a scientific instrument, measurement device, processing apparatus, or laboratory tool explicitly used in a ResearchStep.
+
+### Extract when
+Create a Device when a concrete instrument/tool is named. Capture brand/manufacturer, model, and serial number only if explicitly stated.
+
+### Relations
+Link from the using `whu_ResearchStep` via `whu_declaredUsed`.
+
+### Example
+“Samples were analyzed using an Agilent 7700 ICP-MS.” -&gt; Device[Agilent 7700 ICP-MS].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/BioChemicalExperiment">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Bio-Chemical Experiment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Mid-level biochemical/analytical experiment plan.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_BioChemical_Experiment` is a mid-level planned experimental module in which physical/biological specimens are measured, assayed, chemically treated, or otherwise analyzed to generate scientific data.
+
+### Extract when
+Create one for a coherent laboratory/biochemical/analytical experimental unit containing one or more `whu_ResearchStep` instances.
+
+### Relations
+ResearchSteps belong via `p_plan_isStepOfPlan`; the Experiment may have a `whu_Goal`; its steps use Method/Device/Reagent through `whu_declaredUsed`, consume Specimen/ProcessedSpecimen through `whu_declaredInput`, and generate DataSet/ProcessedSpecimen through `whu_declaredOutput`. `whu_fellow(X,Y)` means Y is the immediate upstream predecessor/provider of X.
+
+### Example
+“THg and MeHg were quantified by CVAFS after acid digestion.” -&gt; BioChemical_Experiment containing digestion/measurement ResearchSteps.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/ResearchMaterial">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:label xml:lang="en">Research Material</rdfs:label>
+    <rdfs:comment xml:lang="en">Abstract BAE category for physical entities collected, processed, analyzed or used in research.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb2">
+    <rdf:first rdf:resource="http://purl.org/mp#Method"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb3"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://schema.org/model">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">device model</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/Device"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <whu:prompt xml:lang="en">Extract the explicit device model designation, preserving letters, hyphens, and numbers.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb72">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.w3.org/ns/prov#hadMember"/>
+    <owl:someValuesFrom rdf:resource="http://purl.org/mp#Claim"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/dc/terms/hasPart">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has part</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/DataSet"/>
+    <rdfs:range rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
+    <whu:prompt xml:lang="en">### Definition
+Uses `dcterms:hasPart` to represent a DataSet containing one or more `iao_DataItem` records.
+
+### Direction
+DataSet -&gt; `dcterms_hasPart` -&gt; DataItem.
+
+### Extraction note
+`iao_ScalarMeasurementDatum` is a subtype of DataItem. If the extraction runtime types a member specifically as ScalarMeasurementDatum, do not create an additional duplicate generic DataItem node solely to satisfy this relation.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb61">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ChemicalEntity"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/SpecimenPreprocessing">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Specimen Preprocessing</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Mid-level plan for specimen preparation.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_SpecimenPreprocessing` is a mid-level preparation Plan composed of one or more preprocessing-type ResearchSteps that transform a raw `whu_Specimen` into a `whu_ProcessedSpecimen`.
+
+### Extract when
+Create one for coherent preparation procedures such as drying, grinding, sieving, filtration, preservation, digestion, or extraction before downstream analysis.
+
+### Relations
+ResearchSteps belong via `p_plan_isStepOfPlan`; they use `whu_declaredInput` for the raw Specimen and `whu_declaredOutput` for the ProcessedSpecimen. `whu_fellow(X,Y)` means the upstream SpecimenCollection is Y when preprocessing X follows collection.
+
+### Example
+“Soils were air-dried, ground, and passed through a 2-mm sieve.” -&gt; SpecimenPreprocessing with corresponding ResearchStep(s).</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb65">
+    <rdf:first rdf:resource="http://purl.obolibrary.org/obo/OBI_0100026"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb66"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb5">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Software"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb18">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/SpecimenPreprocessing"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb19"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb45">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/SpecimenCollection"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb46"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#isInputVarOf">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">is input var of</rdfs:label>
+    <rdfs:domain rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb34"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb37"/>
+    <rdfs:comment xml:lang="en">Retained as the current plan-level shortcut/projection used by the GraphRAG schema; detailed step-level input remains whu:declaredInput.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+Plan-level shortcut relation corresponding to P-PLAN `isInputVarOf`, used in this extraction schema to connect a concrete Specimen or ProcessedSpecimen directly to the Plan/Experiment for which it serves as input.
+
+### Purpose
+This is a plan-level projection that skips the intermediate ResearchStep for concise retrieval and MetaPath construction. The detailed step-level input relation remains `ResearchStep -&gt; whu_declaredInput -&gt; domain entity`.
+
+### Direction
+input entity -&gt; `p_plan_isInputVarOf` -&gt; Plan/Experiment.
+
+### Allowed schema patterns
+- Specimen -&gt; SpecimenPreprocessing
+- ProcessedSpecimen -&gt; BioChemical_Experiment
+
+### Extract when
+Emit only when the passage directly supports that the entity is used as input to the named preprocessing/experiment module.
+
+### Example
+“Processed powder was used for ICP-MS analysis.” -&gt; ProcessedSpecimen `p_plan_isInputVarOf` BioChemical_Experiment.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb70">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.w3.org/ns/prov#hadMember"/>
+    <owl:someValuesFrom rdf:resource="https://bdi.whu.edu.cn/DataSet"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/SpecimenCollection">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Specimen Collection</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Mid-level collection plan.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_SpecimenCollection` is a mid-level sampling Plan composed of one or more collection-type `whu_ResearchStep` instances and representing acquisition of a physical specimen from an environmental or biological source.
+
+### Extract when
+Create one when the passage describes a coherent sampling/collection procedure, including site, depth, timing, design, or sampling method.
+
+### Relations
+Collection ResearchSteps belong via `p_plan_isStepOfPlan` and produce `whu_Specimen` via `whu_declaredOutput`. The collection Plan links to its environmental context via `whu_hasContext`. At the plan-level shortcut view, an extracted Specimen may link back to the collection Plan through `p_plan_isOutputVarOf`.
+
+### Example
+“Topsoil (0–20 cm) was collected from paddy fields using a stainless-steel auger.” -&gt; SpecimenCollection; SpecimenCollection hasContext EnvironmentFeature[paddy field]; ResearchStep[collection] declaredOutput Specimen[topsoil].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb67">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb68"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://schema.org/softwareVersion">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">software version</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/Software"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <whu:prompt xml:lang="en">Extract the software version/release exactly as stated (e.g. 4.2.2, 26, R2021b). Omit when no version is provided.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/ResearchStep">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Research Step</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/net/p-plan#Step"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <rdfs:comment xml:lang="en">Paper-recorded research-step representation; not an executed prov:Activity.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_ResearchStep` is the unified minimal semantic unit for an atomic research step recorded in the paper. It is modeled as both `p-plan:Step` and an information-content representation of the described step.
+
+### Extract when
+Create one for an explicit atomic operation belonging to one of four categories: SpecimenCollection, SpecimenProcessing, BioChemical, or Computational.
+
+### Relations
+ResearchStep -&gt; `whu_declaredUsed` -&gt; Method/Device/Reagent/Software; -&gt; `whu_declaredInput`/`whu_declaredOutput` -&gt; Specimen/ProcessedSpecimen/DataSet; -&gt; `p_plan_isStepOfPlan` -&gt; the corresponding mid-level Plan/Experiment; -&gt; `p_plan_isPrecededBy` -&gt; its immediate/explicit predecessor; and, when location is explicit, -&gt; `prov_atLocation` -&gt; EnvironmentFeature.
+
+BAE reuses P-PLAN for Plan/Step organization and ordering. Domain-specific input/output links are represented directly by `whu_declaredInput` and `whu_declaredOutput`; P-PLAN `hasInputVar/hasOutputVar` are not used in this extraction schema.
+
+`p_plan_correspondsToStep` is reserved for cases where an external provenance stage provides an explicit executed `prov:Activity`.
+
+### Example
+“After sieving, soil was digested with HNO3 and Hg was measured by CVAFS.” -&gt; separate ResearchSteps for sieving, digestion, and measurement, linked by `p_plan_isPrecededBy`.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/SupportGraph">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Support Graph</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Collection"/>
+    <rdfs:subClassOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb72"/>
+    <rdfs:comment xml:lang="en">Claim-centered argumentative collection.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_SupportGraph` is a mid-level argumentative aggregate organized around one focal `mp_Claim`. It is modeled as a Representation, information-content entity, and `prov:Collection`.
+
+### Extract/construct when
+Create one for a focal Claim that has explicit supporting or challenging argumentative material. The SupportGraph organizes the Claim together with relevant Statements, Attributions, References, and ScienceEvidence.
+
+### Relations
+SupportGraph -&gt; `prov_hadMember` -&gt; Claim/Statement/Attribution/Reference/ScienceEvidence. ScienceEvidence may `mp_supports`/`mp_challenges` the SupportGraph to encode its polarity with respect to the graph’s focal Claim. `prov_hadMember` records membership only; it does not itself encode argumentative polarity.
+
+### Example
+A Claim about biochar reducing MeHg may be represented by one SupportGraph containing the Claim, supporting ScienceEvidence, cited References, and explanatory Statements.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#isPrecededBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">is preceded by</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/ResearchStep"/>
+    <rdfs:range rdf:resource="https://bdi.whu.edu.cn/ResearchStep"/>
+    <rdfs:comment xml:lang="en">Used for ResearchStep-level logical/temporal ordering.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+Standard P-PLAN ordering relation used between `whu_ResearchStep` instances.
+
+### Direction
+later/downstream ResearchStep -&gt; `p_plan_isPrecededBy` -&gt; earlier/upstream ResearchStep.
+
+### Extract when
+Emit for explicit temporal/logical ordering cues (after, following, then, subsequently, before) or an unambiguous immediate dependency between recorded steps.
+
+### Example
+“After sieving, samples were digested.” -&gt; ResearchStep[digestion] isPrecededBy ResearchStep[sieving].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/isAboutDimension">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">is-about measurement dimension</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment xml:lang="en">GraphRAG edge attribute for iao:is_about; when exported to RDF-star/reification it annotates the specific aboutness assertion.</rdfs:comment>
+    <whu:prompt xml:lang="en">Optional controlled measurement-dimension tag for the aboutness relation. Choose only from an implementation-controlled vocabulary such as mass, volume, count, concentration, mass_concentration, molar_concentration, absorbance, intensity, ratio, rate, pH, conductivity, or turbidity. Assign only when the dimension is explicit or unambiguous from the reported unit/measure; otherwise omit.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb4">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Reagent"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb5"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/EnvironmentContext">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:label xml:lang="en">Environment Context</rdfs:label>
+    <rdfs:comment xml:lang="en">Conceptual mid-level representation organizing one or more concrete EnvironmentFeature descriptions; current extraction uses EnvironmentFeature rather than directly materializing EnvironmentContext.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb25">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ComputationalExperiment"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/fellow">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">fellow</rdfs:label>
+    <rdfs:domain rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb17"/>
+    <rdfs:range rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb21"/>
+    <rdfs:comment xml:lang="en">Direction: downstream/later X -&gt; upstream/earlier Y.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+`whu_fellow(X,Y)` is the BAE mid-level adjacency/dependency relation: Y is the immediate upstream predecessor or provider for X.
+
+### Direction
+downstream/later X -&gt; `whu_fellow` -&gt; upstream/earlier Y.
+
+### Allowed signatures
+1. SpecimenPreprocessing -&gt; SpecimenCollection
+2. BioChemical_Experiment -&gt; SpecimenPreprocessing
+3. Computational_Experiment -&gt; BioChemical_Experiment
+4. BioChemical_Experiment -&gt; BioChemical_Experiment
+5. Computational_Experiment -&gt; Computational_Experiment
+
+### Extract when
+Use explicit temporal/dependency evidence or a clear shared-output/input transition. Do not use `whu_fellow` to connect SpecimenCollection with EnvironmentFeature; that contextual link is represented by `whu_hasContext`.
+
+### Direction rule
+“X follows/depends on Y” is always X -&gt; `whu_fellow` -&gt; Y.
+
+### Example
+“After sample preprocessing, Hg was determined by CVAFS.” -&gt; BioChemical_Experiment fellow SpecimenPreprocessing.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/EBM">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Environment &amp; Evidence Background Module</rdfs:label>
+    <rdfs:comment xml:lang="en">Top-level semantic grouping for environment, specimen collection and preprocessing. It is not materialized as an operational KG instance.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/ENVO_00002297">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">environmental feature</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb53">
+    <rdf:first rdf:resource="http://purl.obolibrary.org/obo/ENVO_00010483"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb54"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/ProcessedSpecimen">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Processed Specimen</rdfs:label>
+    <rdfs:subClassOf rdf:resource="https://bdi.whu.edu.cn/ResearchMaterial"/>
+    <rdfs:comment xml:lang="en">Physical specimen after preprocessing.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_ProcessedSpecimen` is a physical specimen after preprocessing and before or during downstream experimental analysis.
+
+### Extract when
+Create one when the text explicitly identifies a materially transformed/prepared sample such as dried soil, sieved powder, digest, extract, filtrate, or homogenized tissue.
+
+### Relations
+ProcessedSpecimen -&gt; `prov_wasDerivedFrom` -&gt; Specimen. It is linked to ResearchSteps through `whu_declaredOutput` (produced by preprocessing) and `whu_declaredInput` (consumed by downstream analysis). At the plan-level shortcut view, ProcessedSpecimen may `p_plan_isOutputVarOf` SpecimenPreprocessing and `p_plan_isInputVarOf` BioChemical_Experiment.
+
+### Example
+“Dried and sieved soil powder was used for Hg determination.” -&gt; ProcessedSpecimen[dried and sieved soil powder].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb21">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb22"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb12">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ProcessedSpecimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb13"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb1">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb2"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb8">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ProcessedSpecimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb9"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb6">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb7"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb26">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb27"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb3">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Device"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb4"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb51">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb52"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb15">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/BioChemicalExperiment"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb16"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://schema.org/serialNumber">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">device serial number</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/Device"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <whu:prompt xml:lang="en">Extract a serial number or unique instrument identifier only when explicitly stated.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/Specimen">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Specimen</rdfs:label>
+    <rdfs:subClassOf rdf:resource="https://bdi.whu.edu.cn/ResearchMaterial"/>
+    <rdfs:comment xml:lang="en">Collected physical biological/environmental sample.</rdfs:comment>
+    <whu:prompt xml:lang="en">### Definition
+A `whu_Specimen` is a physical biological or environmental sample that has been collected for research and may be passed to downstream preparation or experiments.
+
+### Extract when
+Create a Specimen for an actually collected sample such as rice grain, fish tissue, surface soil sample, or river-water sample.
+
+### Provenance
+A Specimen may `prov_wasDerivedFrom` the source most specifically supported by the passage:
+- `whu_EnvironmentFeature` when the site/environmental feature itself is stated as the source;
+- `envo_EnvironmentMaterial` when the source matrix/substance is explicit;
+- `obi_organism` when a living biological source is explicit.
+Do not invent a more specific source than the text supports.
+
+### Relations
+ResearchSteps connect through `whu_declaredOutput` (collection) and `whu_declaredInput` (preprocessing/analysis). At the plan-level shortcut view, Specimen may `p_plan_isOutputVarOf` SpecimenCollection and `p_plan_isInputVarOf` SpecimenPreprocessing. A Specimen may also `bfo_has_part` a ChemicalEntity when physical presence is explicit.
+
+### Example
+“Soil samples were collected from the paddy field.” -&gt; Specimen[soil samples] wasDerivedFrom EnvironmentFeature[paddy field] when no more specific source matrix is stated.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb66">
+    <rdf:first rdf:resource="http://purl.obolibrary.org/obo/ENVO_00010483"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/SupportMaterial">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="https://bdi.whu.edu.cn/ResearchMaterial"/>
+    <rdfs:label xml:lang="en">Support Material</rdfs:label>
+    <rdfs:comment xml:lang="en">Abstract category for physical supporting resources such as devices and reagents.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000027">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">data item</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <whu:prompt xml:lang="en">### Definition
+An `iao_DataItem` is an individually reportable information-content item contained within a DataSet, including categorical records, counts, concentrations, statistical summaries, or other data records. `iao_ScalarMeasurementDatum` is used for the more specific single-value-plus-unit case.
+
+### Extract when
+Create a DataItem when a distinct reportable record is present but cannot or should not be represented as a single scalar measurement datum.
+
+### Relations
+DataSet -&gt; `dcterms_hasPart` -&gt; DataItem; DataItem may -&gt; `iao_is_about` -&gt; TargetVariable.
+
+### Example
+“Soil pH was classified as acidic, neutral, or alkaline across sites.” -&gt; DataItem[pH classification].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb19">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/BioChemicalExperiment"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb20"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb40">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb41"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/2003/01/geo/wgs84_pos#lat">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">latitude</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/EnvironmentFeature"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <whu:prompt xml:lang="en">Extract explicit latitude as a decimal numeric value when present in the text.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000031">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">generically dependent continuant</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb7">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Specimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb8"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb30">
+    <rdf:first rdf:resource="http://purl.org/mp#Claim"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb31"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#Activity">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb35">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Specimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb36"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb44">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb45"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb11">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Specimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb12"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/2003/01/geo/wgs84_pos#alt">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">altitude</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/EnvironmentFeature"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <whu:prompt xml:lang="en">Extract explicit altitude/elevation as a numeric value. Use the value as stated; do not infer from coordinates.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb16">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ComputationalExperiment"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb60">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/TargetVariable"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb61"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb52">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/EnvironmentFeature"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb53"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb31">
+    <rdf:first rdf:resource="http://purl.org/mp#Statement"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb32"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb47">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ComputationalExperiment"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb27">
+    <rdf:first rdf:resource="http://purl.obolibrary.org/obo/OBI_0100026"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb28"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb54">
+    <rdf:first rdf:resource="http://purl.obolibrary.org/obo/OBI_0100026"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb55"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb49">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Specimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb50"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://bdi.whu.edu.cn/hasOriginalText">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">has original text</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <whu:prompt xml:lang="en">Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb42">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ProcessedSpecimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb43"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#isStepOfPlan">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">is step of plan</rdfs:label>
+    <rdfs:domain rdf:resource="https://bdi.whu.edu.cn/ResearchStep"/>
+    <rdfs:range rdf:resource="http://purl.org/net/p-plan#Plan"/>
+    <whu:prompt xml:lang="en">### Definition
+Standard P-PLAN membership relation associating a `whu_ResearchStep` with the mid-level Plan/Experiment that organizes it.
+
+### Allowed targets
+SpecimenCollection, SpecimenPreprocessing, BioChemical_Experiment, or Computational_Experiment.
+
+### Direction
+ResearchStep -&gt; `p_plan_isStepOfPlan` -&gt; Plan/Experiment.
+
+### Constraint
+The target must be consistent with `WHU_RESEARCHTYPE`.</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#Collection">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb20">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ComputationalExperiment"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb68">
+    <rdf:first rdf:resource="http://purl.obolibrary.org/obo/ENVO_00010483"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb69"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">material entity</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#atLocation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">at location</rdfs:label>
+    <rdfs:domain rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb26"/>
+    <rdfs:range rdf:resource="https://bdi.whu.edu.cn/EnvironmentFeature"/>
+    <whu:prompt xml:lang="en">### Definition
+`prov_atLocation` associates an explicitly locatable entity or recorded research step with the environmental/site feature at which it is located or occurs.
+
+### Allowed schema patterns
+- `obi_organism -&gt; prov_atLocation -&gt; whu_EnvironmentFeature`
+- `whu_ResearchStep -&gt; prov_atLocation -&gt; whu_EnvironmentFeature`
+
+### Extract when
+Emit only when the passage explicitly identifies the relevant site/environment for the organism or ResearchStep. Prefer `whu_hasContext` for linking a SpecimenCollection Plan to its broader environmental context.
+
+### Example
+“Topsoil was sampled from the SWU paddy field.” -&gt; ResearchStep[sampling] atLocation EnvironmentFeature[SWU paddy field].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb56">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb57"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Representation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#Location">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Method">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+    <whu:prompt xml:lang="en">### Definition
+An `mp_Method` is a named or describable scientific method, protocol, analytical technique, statistical procedure, or standard represented as information content rather than as a physical device.
+
+### Extract when
+Create a Method for methods such as ICP-MS analysis, EPA 3052 digestion protocol, PCA, regression, or a named standard/procedure.
+
+### Distinguish from
+Use `whu_Device` for the physical instrument and `whu_Software` for the software implementation.
+
+### Relations
+Link from the using ResearchStep via `whu_declaredUsed`. A Method may be aggregated with a DataSet in `whu_ScienceEvidence` via `prov_hadMember`.
+
+### Example
+“Digestion followed EPA 3052.” -&gt; Method[EPA 3052].</whu:prompt>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000015">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">process</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb50">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ProcessedSpecimen"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb23">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/SpecimenPreprocessing"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb24"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/net/p-plan#Step">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb38">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/SpecimenPreprocessing"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb39"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb63">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/EnvironmentFeature"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb64"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb59">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ProcessedSpecimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb60"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#Plan">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb17">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb18"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb69">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/ChemicalEntity"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb24">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/BioChemicalExperiment"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb25"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/mp#Data">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:subClassOf rdf:resource="http://purl.org/mp#Representation"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb64">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Specimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb65"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb39">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/BioChemicalExperiment"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb34">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb35"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb58">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/Specimen"/>
+    <rdf:rest rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb59"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb9">
+    <rdf:first rdf:resource="https://bdi.whu.edu.cn/DataSet"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb62">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="n2a429361de9f48ada3ef7835acb4033cb63"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.w3.org/ns/prov#Entity">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+</rdf:RDF>

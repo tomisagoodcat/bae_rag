@@ -1,0 +1,485 @@
+{
+  "entities": [
+    {
+      "label": "mp_Attribution",
+      "description": "### Tier\nLow-level (foundational). Argumentation node: extract within the WHU_HASORIGINALTEXT of a parent mid-level SupportGraph / ScienceEvidence during low-level expansion—not as a mid-level co-created container.\n\n### Definition\n`mp_Attribution` records who is responsible for, asserted, created, or curated another Representation. It is not the person or organization itself.\n\n### Extract when\nCreate only when the text explicitly identifies an accountable source in an attribution or argumentation chain, or when that Attribution will be a `prov_hadMember` of a SupportGraph.\n\n### Do not extract when\nDo not create for vague agency (“researchers believe”) or inferred authorship from document metadata alone.\n\n### WHU_HASORIGINALTEXT\nMust be the verbatim attribution fragment (e.g. “According to NOM-Lab…”).\n\n### Relations\nMay mp_supports the qualified Representation; may be SupportGraph member.\n\n### Example\n“According to the NOM-Lab at Southwest University, …” -> Attribution[NOM-Lab].",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "mp_References",
+      "description": "### Tier\nLow-level (foundational). Argumentation node: extract within the WHU_HASORIGINALTEXT of a parent mid-level SupportGraph / ScienceEvidence during low-level expansion—not as a mid-level co-created container.\n\n### Definition\n`mp_References` is an explicitly cited bibliographic or external source record (author–year, numbered citation, DOI, URL).\n\n### Extract when\nCreate one identifiable Reference per cited source when it participates in citation or SupportGraph structure.\n\n### Do not extract when\nDo not create for “previous studies” without an identifiable source. Do not merge multiple works into one Reference.\n\n### WHU_HASORIGINALTEXT\nMust be the verbatim citation string from the text.\n\n### Relations\nReference -> `cito_isCitedBy` citing Representation; mp_supports only when used as evidential backing.\n\n### Example\n“Biochar reduces Hg bioavailability (Smith et al., 2020).” -> Reference[Smith et al., 2020].",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "whu_Computational_Experiment",
+      "description": "### Tier\nMid-level (Plan). Establish at mid-level extraction with a defined WHU_HASORIGINALTEXT scope before low-level expansion.\n\n### Definition\nA `whu_Computational_Experiment` is a mid-level planned analytical module for statistical, computational, modeling, or data-transformation procedures, organized as a Plan rather than a single atomic step.\n\n### WHU_HASORIGINALTEXT scope\nThe smallest contiguous span describing the computational analysis unit (e.g. statistical tests, modeling procedure, simulation).\n\n### Establishment gate\nCreate **only when** the same extraction context identifies **at least one** attributable Computational `whu_ResearchStep` with explicit operations (performed PCA, conducted regression, ran ANOVA). **Do not create an orphan Experiment.** Do not hallucinate Steps.\n\n### If no Step\nDo not create Computational_Experiment.\n\n### Expected low-level children\nComputational ResearchStep(s); optional low-level Goal (via mid2low hasGoal); Method/Software via declaredUsed; DataSet via declaredInput/Output—from this Experiment's original_text only.\n\n### Relations\nResearchSteps -> `p_plan_isStepOfPlan`; optional `whu_hasGoal`; `whu_fellow` for mid-level adjacency.\n\n### Example\n“PCA and Kruskal–Wallis tests were conducted in R 4.2.2.” -> Computational_Experiment with Computational ResearchStep(s).",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
+        }
+      ]
+    },
+    {
+      "label": "envo_EnvironmentMaterial",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent SpecimenCollection, SpecimenPreprocessing, or BioChemical_Experiment during low-level expansion.\n\n### Definition\n`envo_EnvironmentMaterial` is an ENVO-aligned **material phase or environmental matrix type** present in the environment (soil, sediment, pore water, air, particulate matter). It is a **category of substance**, not an individual collected sample, not a living organism, and not a named site.\n\n### Extract when\nCreate when the text names the matrix/medium itself with substance-type semantics (surface soil, river water, overlying water).\n\n### Do not extract when\n- “soil samples / soil specimens / water sample” → `whu_Specimen`\n- “rice plants / fish / bacteria” → `obi_organism`\n- a named field, pond, station, or site → `whu_EnvironmentFeature`\n- dried, sieved, digested, or otherwise processed sample products → `whu_ProcessedSpecimen`\n\n### Naming\nWHU_HASNAME must use the verbatim material phrase from the text. Do not append sample, specimen, or site words not present.\n\n### Relations\n`whu_EnvironmentFeature -> bfo_has_part -> envo_EnvironmentMaterial`; Specimen may `prov_wasDerivedFrom` EnvironmentMaterial; EnvironmentMaterial may `bfo_has_part` ChemicalEntity.\n\n### Example\n“Surface soil was collected from the paddy field.” -> EnvironmentMaterial[surface soil]; EnvironmentFeature[paddy field] only if the field is named as a place.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
+        }
+      ]
+    },
+    {
+      "label": "whu_Reagent",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.\n\n### Definition\nA `whu_Reagent` is a chemical or biological reagent, standard, solution, reference material, buffer, or other consumable explicitly used in a recorded research step.\n\n### Extract when\nCreate a Reagent when the passage names the reagent or gives identifying details such as concentration, grade, supplier, or formulation.\n\n### Relations\nLink it from the using `whu_ResearchStep` via `whu_declaredUsed`.\n\n### Example\n“Samples were digested with 65% suprapure HNO3.” -> Reagent[65% suprapure HNO3].",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "iao_ScalarMeasurementDatum",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.\n\n### Definition\nAn `iao_ScalarMeasurementDatum` is a scalar measurement datum represented by a single numeric magnitude together with its measurement unit; it is treated as a subtype of `iao_DataItem`.\n\n### Extract when\nUse this class when the passage reports a specific scalar value such as “28.4 ng/g”, optionally with an explicit comparator. If the record is categorical, composite, or not reducible to one scalar value plus unit, use `iao_DataItem`.\n\n### Relations\nLink to the measured/analyzed `whu_TargetVariable` via `iao_is_about`. A DataSet contains DataItem-level records via `dcterms_hasPart`.\n\n### Example\n“Mean THg concentration was 28.4 ng/g.” -> ScalarMeasurementDatum[value=28.4, unit=ng/g] is_about TargetVariable[THg concentration].",
+      "properties": [
+        {
+          "name": "whu_hascomparator",
+          "type": "STRING",
+          "description": "Extract only an explicit comparison operator or qualifier attached to the scalar value, e.g. '<', '<=', '>', '>=', '=', 'approximately'. Return null/omit when no comparator is stated."
+        },
+        {
+          "name": "iao_hasMeasurementUnit",
+          "type": "STRING",
+          "description": "Extract the measurement unit exactly as written in the source text (e.g. ng/g, mg/L, %, °C). Do not convert or normalize units during extraction."
+        },
+        {
+          "name": "iao_hasMeasurementValue",
+          "type": "FLOAT",
+          "description": "Extract only the numeric magnitude as a FLOAT, excluding the unit and comparator. Preserve the reported numerical value; do not perform unit conversion."
+        },
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "whu_Software",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.\n\n### Definition\nA `whu_Software` entity represents named software, a software package, computational environment, or analysis application explicitly used in a computational research step.\n\n### Extract when\nCreate Software when a software name is explicit; capture vendor/brand and version only when stated.\n\n### Relations\nLink from the using `whu_ResearchStep` via `whu_declaredUsed`.\n\n### Example\n“Statistical analyses were performed in R version 4.2.2.” -> Software[R], version=4.2.2.",
+      "properties": [
+        {
+          "name": "whu_brand",
+          "type": "STRING",
+          "description": "Extract the software vendor, provider, or product brand only when explicitly stated. Do not infer a vendor from the software name."
+        },
+        {
+          "name": "schema_softwareVersion",
+          "type": "STRING",
+          "description": "Extract the software version/release exactly as stated (e.g. 4.2.2, 26, R2021b). Omit when no version is provided."
+        },
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "whu_TargetVariable",
+      "description": "### Tier\nLow-level (foundational). Extract only from parent mid-level original_text in Goal, DataSet, or measurement contexts.\n\n### Definition\nA `whu_TargetVariable` is a **measurable quantity or variable** being measured, analyzed, compared, or predicted. It must correspond to an explicit measurement-quantity expression in the text.\n\n### Extract when\nThe text contains a complete measurement-quantity phrase (THg concentration, MeHg content, methylation rate) or a variable name explicitly tied to a reported unit in the same span.\n\n### Do not extract when\n- only a chemical symbol or substance name appears (Sb, mercury) → ChemicalEntity only\n- concentration/content/level/rate must be inferred from domain knowledge → **do not extract**\n- a Goal names an action without a measurement phrase → do not create TargetVariable or hasTarget link\n\n### Lexical rule\nWHU_HASNAME must be a verbatim substring of WHU_HASORIGINALTEXT or a contiguous measurement noun phrase present in the source. Never insert dimension words not in the text.\n\n### Relations\nGoal -> `whu_hasTarget` -> TargetVariable only when the measurement phrase is in the Goal original_text; TargetVariable -> `iao_is_about` -> ChemicalEntity when both are text-supported.\n\n### Example\n“Hg concentration in rice grain was quantified.” -> TargetVariable[Hg concentration] is_about ChemicalEntity[Hg]. “Sb was analyzed.” -> ChemicalEntity[Sb] only; no TargetVariable.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name grounded only in the source text. The name must appear verbatim in WHU_HASORIGINALTEXT or as a contiguous measurement-quantity noun phrase in the source. If the text only names a chemical symbol or substance (e.g. “Sb”, “Hg”), do NOT expand it to “Sb concentration”, “Hg content”, or similar—omit TargetVariable instead. No unit inference; no dimension-word insertion. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
+        }
+      ]
+    },
+    {
+      "label": "whu_SpecimenCollection",
+      "description": "### Definition\nA `whu_SpecimenCollection` is a mid-level sampling Plan composed of one or more collection-type `whu_ResearchStep` instances and representing acquisition of a physical specimen from an environmental or biological source.\n\n### Extract when\nCreate one when the passage describes a coherent sampling/collection procedure, including site, depth, timing, design, or sampling method.\n\n### Relations\nCollection ResearchSteps belong via `p_plan_isStepOfPlan` and produce `whu_Specimen` via `whu_declaredOutput`. The collection Plan links to its environmental context via `whu_hasContext`. At the plan-level shortcut view, an extracted Specimen may link back to the collection Plan through `p_plan_isOutputVarOf`.\n\n### Example\n“Topsoil (0–20 cm) was collected from paddy fields using a stainless-steel auger.” -> SpecimenCollection; SpecimenCollection hasContext EnvironmentFeature[paddy field]; ResearchStep[collection] declaredOutput Specimen[topsoil].",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
+        }
+      ]
+    },
+    {
+      "label": "mp_Claim",
+      "description": "### Tier\nLow-level (foundational). Argumentation node: extract within the WHU_HASORIGINALTEXT of a parent mid-level SupportGraph / ScienceEvidence during low-level expansion—not as a mid-level co-created container.\n\n### Definition\nAn `mp_Claim` is a principal scientific assertion functioning as the focal proposition in argumentation. It is more central than `mp_Statement`.\n\n### Extract when\nCreate a Claim when the passage presents a principal conclusion, hypothesis, or interpretation that is—or will be within the same pass—organized in a `whu_SupportGraph` as the **focal** proposition.\n\n### Do not extract when\nUse `mp_Statement` for ordinary observations or intermediate propositions that are not the focal claim of an argument graph.\n\n### Relations\nMay receive mp_supports/mp_challenges from SupportGraph only (never directly from ScienceEvidence). When co-created with SupportGraph, link via SupportGraph -> mp_supports/mp_challenges -> Claim (not prov_hadMember).\n\n### Example\n“Modified biochar significantly reduced MeHg production in paddy soil.” -> focal Claim in a SupportGraph.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "whu_Goal",
+      "description": "### Tier\nLow-level (foundational). Dependent on a parent mid-level Experiment; never extract as an isolated node.\n\n### Definition\nA `whu_Goal` is an explicitly stated scientific objective of a BioChemical or Computational Experiment.\n\n### Establishment gate\nCreate **only when** (1) a parent `whu_BioChemical_Experiment` or `whu_Computational_Experiment` already exists (or is established in the same overall extraction context) with a defined WHU_HASORIGINALTEXT, (2) the text contains explicit objective language (to quantify, to assess, to compare, to determine, to predict, aimed to, in order to), and (3) the Goal is linked by mid2low `whu_hasGoal` from that Experiment. Do not create an orphan Goal.\n\n### Do not extract when\n- no parent Experiment exists\n- only background motivation or significance is stated\n- the objective is inferred rather than linguistically explicit\n\n### WHU_HASORIGINALTEXT\nThe objective clause itself (must fall within or align to the parent Experiment span). TargetVariable children only when the objective clause contains a verbatim measurement-quantity phrase.\n\n### Relations\nExperiment -> `whu_hasGoal` -> Goal (mid2low); Goal -> `whu_hasTarget` -> TargetVariable only with lexical support in the Goal span (low).\n\n### Example\n“To quantify Hg concentration in rice grain.” -> Goal linked to BioChemical_Experiment; hasTarget only if “Hg concentration” appears in the goal clause.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level Experiment from which this Goal is expanded."
+        }
+      ]
+    },
+    {
+      "label": "mp_Statement",
+      "description": "### Tier\nLow-level (foundational). Argumentation node: extract within the WHU_HASORIGINALTEXT of a parent mid-level SupportGraph / ScienceEvidence during low-level expansion—not as a mid-level co-created container.\n\n### Definition\nAn `mp_Statement` is a complete proposition with evaluable content (observation, fact, interpretation, intermediate conclusion). A Claim is a specialized focal Statement.\n\n### Extract when\nCreate when the passage expresses a complete proposition that may support or challenge a Claim but is **not** the focal Claim of a SupportGraph.\n\n### Do not extract when\nDo not create for fragments, headings, or non-propositional phrases.\n\n### Relations\nMay be `prov_hadMember` of SupportGraph as non-focal member; may mp_supports/mp_challenges Claims per schema.\n\n### Example\n“Cadmium concentrations were higher in roots than in grains.” -> Statement supporting a focal Claim.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "whu_BioChemical_Experiment",
+      "description": "### Tier\nMid-level (Plan). Establish at mid-level extraction with a defined WHU_HASORIGINALTEXT scope before low-level expansion.\n\n### Definition\nA `whu_BioChemical_Experiment` is a mid-level planned experimental module organizing one or more laboratory/biochemical/analytical `whu_ResearchStep` instances.\n\n### WHU_HASORIGINALTEXT scope\nThe smallest contiguous span describing this experimental unit, including its method chain or analytical purpose in the same passage.\n\n### Establishment gate\nCreate **only when** the same extraction context identifies **at least one** attributable `whu_ResearchStep` with explicit operations (digest, extract, measure, assay, quantify). **Do not create an orphan Experiment.** Do not hallucinate ResearchSteps to complete an Experiment.\n\n### If no Step\nDo not create BioChemical_Experiment; treat as incomplete mid-level extraction requiring text-scope review.\n\n### Expected low-level children\nResearchStep(s); optional low-level Goal (via mid2low hasGoal); Method/Device/Reagent via declaredUsed; Specimen/ProcessedSpecimen/DataSet via declaredInput/Output—all from this Experiment's original_text only.\n\n### Low-level expansion\nChild steps and entities must be extracted from within this Experiment's WHU_HASORIGINALTEXT; do not span Chunks.\n\n### Relations\nResearchSteps -> `p_plan_isStepOfPlan` -> Experiment; optional `whu_hasGoal`; `whu_fellow` for mid-level adjacency only.\n\n### Example\n“THg and MeHg were quantified by CVAFS after acid digestion.” -> BioChemical_Experiment with digestion and measurement ResearchSteps in the same pass.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
+        }
+      ]
+    },
+    {
+      "label": "whu_Device",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.\n\n### Definition\nA `whu_Device` is a scientific instrument, measurement device, processing apparatus, or laboratory tool explicitly used in a ResearchStep.\n\n### Extract when\nCreate a Device when a concrete instrument/tool is named. Capture brand/manufacturer, model, and serial number only if explicitly stated.\n\n### Relations\nLink from the using `whu_ResearchStep` via `whu_declaredUsed`.\n\n### Example\n“Samples were analyzed using an Agilent 7700 ICP-MS.” -> Device[Agilent 7700 ICP-MS].",
+      "properties": [
+        {
+          "name": "schema_hasBrand",
+          "type": "STRING",
+          "description": "Extract the explicit device brand or manufacturer name. Do not infer it from a model code."
+        },
+        {
+          "name": "schema_hasModel",
+          "type": "STRING",
+          "description": "Extract the explicit device model designation, preserving letters, hyphens, and numbers."
+        },
+        {
+          "name": "schema_hasSerialNumber",
+          "type": "STRING",
+          "description": "Extract a serial number or unique instrument identifier only when explicitly stated."
+        },
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "whu_EnvironmentFeature",
+      "description": "### Tier\nMid-level (site/context). Establish at mid-level extraction with a defined WHU_HASORIGINALTEXT scope. Not a Plan, but treated as mid for layered extraction and routing. Prefer co-creating with `whu_SpecimenCollection` via `whu_hasContext` in the same mid pass when both appear.\n\n### Definition\nA `whu_EnvironmentFeature` is a named, locatable environmental place or geographic-ecological unit (field, wetland, river reach, sampling station, experimental site). It denotes **WHERE** something occurs or is sampled, not **WHAT** was collected.\n\n### Extract when\nCreate one when the text names a site/place/location and uses it as the environmental setting for sampling, organism location, or a recorded field ResearchStep. Coordinates may be captured as properties when explicit.\n\n### Do not extract when\n- The phrase refers to a **collected individual sample** → use `whu_Specimen` or `whu_ProcessedSpecimen`.\n- The phrase names an **environmental matrix/substance** without an independent place name (soil, water, sediment) → use `envo_EnvironmentMaterial`.\n- The phrase refers to a **living organism** → use `obi_organism`.\n- The text only says material was collected (e.g. “soil was collected”) without a distinct place name → use Specimen + EnvironmentMaterial, **not** EnvironmentFeature, unless a separate site name is explicit (e.g. “from the SWU paddy field”).\n\n### Decision test\nCan the phrase replace X in “at/from the [X]” where X remains a place? If not, do not use EnvironmentFeature.\n\n### Expected low-level children\n`envo_EnvironmentMaterial` via `bfo_has_part` from this Feature's original_text; Step/organism `prov_atLocation` and Specimen `prov_wasDerivedFrom` attach in mid2low/low expansion.\n\n### Relations\nEnvironmentFeature -> `bfo_has_part` -> EnvironmentMaterial expresses site-level containment of a material phase, not sampling provenance. SpecimenCollection -> `whu_hasContext` -> EnvironmentFeature; organism/ResearchStep may -> `prov_atLocation` -> EnvironmentFeature. A Specimen may `prov_wasDerivedFrom` EnvironmentFeature only when the site itself is stated as the provenance source and no more specific material or organism source is supported.\n\n### Example\n“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” -> EnvironmentFeature[SWU paddy field]; Specimen[topsoil] wasDerivedFrom EnvironmentMaterial[surface soil] or EnvironmentFeature as text supports.",
+      "properties": [
+        {
+          "name": "gn_population",
+          "type": "INTEGER",
+          "description": "Extract an explicitly stated population count associated with the named geographic/environmental feature. Do not infer or look up population externally."
+        },
+        {
+          "name": "geo_alt",
+          "type": "FLOAT",
+          "description": "Extract explicit altitude/elevation as a numeric value. Use the value as stated; do not infer from coordinates."
+        },
+        {
+          "name": "geo_lat",
+          "type": "FLOAT",
+          "description": "Extract explicit latitude as a decimal numeric value when present in the text."
+        },
+        {
+          "name": "geo_long",
+          "type": "FLOAT",
+          "description": "Extract explicit longitude as a decimal numeric value when present in the text."
+        },
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
+        }
+      ]
+    },
+    {
+      "label": "mp_Method",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.\n\n### Definition\nAn `mp_Method` is a named or describable scientific method, protocol, analytical technique, statistical procedure, or standard represented as information content rather than as a physical device.\n\n### Extract when\nCreate a Method for methods such as ICP-MS analysis, EPA 3052 digestion protocol, PCA, regression, or a named standard/procedure.\n\n### Distinguish from\nUse `whu_Device` for the physical instrument and `whu_Software` for the software implementation.\n\n### Relations\nLink from the using ResearchStep via `whu_declaredUsed`. A Method may be aggregated with a DataSet in `whu_ScienceEvidence` via `prov_hadMember`.\n\n### Example\n“Digestion followed EPA 3052.” -> Method[EPA 3052].",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "whu_SpecimenPreprocessing",
+      "description": "### Definition\nA `whu_SpecimenPreprocessing` is a mid-level preparation Plan composed of one or more preprocessing-type ResearchSteps that transform a raw `whu_Specimen` into a `whu_ProcessedSpecimen`.\n\n### Extract when\nCreate one for coherent preparation procedures such as drying, grinding, sieving, filtration, preservation, digestion, or extraction before downstream analysis.\n\n### Relations\nResearchSteps belong via `p_plan_isStepOfPlan`; they use `whu_declaredInput` for the raw Specimen and `whu_declaredOutput` for the ProcessedSpecimen. `whu_fellow(X,Y)` means the upstream SpecimenCollection is Y when preprocessing X follows collection.\n\n### Example\n“Soils were air-dried, ground, and passed through a 2-mm sieve.” -> SpecimenPreprocessing with corresponding ResearchStep(s).",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
+        }
+      ]
+    },
+    {
+      "label": "whu_ProcessedSpecimen",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of `whu_SpecimenPreprocessing` or `whu_BioChemical_Experiment`.\n\n### Definition\nA `whu_ProcessedSpecimen` is a **specific sample after a recorded preprocessing step** (dried soil, sieved powder, acid digest, extract, filtrate, homogenized tissue).\n\n### Extract when\nThe text names a prepared sample product resulting from an explicit processing operation in the same parent original_text.\n\n### Do not extract when\n- only a generic matrix type is named without processing evidence → EnvironmentMaterial or Specimen\n- only a site or organism is named → EnvironmentFeature or organism\n- no ResearchStep(SpecimenProcessing) or wasDerivedFrom Specimen evidence exists in the same extraction context → do not create ProcessedSpecimen in low-level expansion\n\n### Structural note\nShould be supported by a SpecimenProcessing ResearchStep `whu_declaredOutput` or `prov_wasDerivedFrom` Specimen. Do not hallucinate ProcessedSpecimen to complete a preprocessing chain.\n\n### Relations\nProcessedSpecimen -> `prov_wasDerivedFrom` -> Specimen; linked via declaredInput/declaredOutput to ResearchSteps; may `p_plan_isOutputVarOf` SpecimenPreprocessing and `p_plan_isInputVarOf` BioChemical_Experiment.\n\n### Example\n“Dried and sieved soil powder was used for Hg determination.” -> ProcessedSpecimen[dried and sieved soil powder].",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
+        }
+      ]
+    },
+    {
+      "label": "whu_DataSet",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.\n\n### Definition\nA `whu_DataSet` is a scientific data collection generated by or used in one or more ResearchSteps. In BAE it carries both dataset semantics and an evidential/argumentative role.\n\n### Extract when\nCreate a DataSet when the passage explicitly reports a coherent data artifact such as a table, figure, measurement set, spectrum set, modeled result set, or analysis output.\n\n### Relations\nResearchStep -> `whu_declaredInput`/`whu_declaredOutput` -> DataSet. At the plan-level shortcut view, a DataSet may `p_plan_isOutputVarOf` a Computational_Experiment where the text directly presents the experiment-level output. DataSet -> `dcterms_hasPart` -> DataItem.\n\n`iao_is_about` may be used at two complementary levels:\n- DataSet -> Reagent / Specimen / ProcessedSpecimen, when the dataset concerns those research resources;\n- DataSet -> TargetVariable, when the dataset concerns a measured/analyzed target variable.\nDataItem/ScalarMeasurementDatum may also `iao_is_about` TargetVariable at finer granularity.\n\nScienceEvidence -> `prov_hadMember` -> DataSet. A DataSet may directly `mp_supports`/`mp_challenges` a Claim or Statement only when the text explicitly establishes that argumentative relation.\n\n### Example\n“Figure 4 reports MeHg concentrations in rice tissues after biochar treatment.” -> DataSet[Figure 4 MeHg concentrations], which may be about the relevant Specimen and TargetVariable when those links are textually supported.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    },
+    {
+      "label": "whu_Specimen",
+      "description": "### Tier\nLow-level (foundational). Primarily extract from the WHU_HASORIGINALTEXT of `whu_SpecimenCollection` during low-level expansion.\n\n### Definition\nA `whu_Specimen` is a **specific physical sample** obtained by collection—an individual countable research object (soil samples, rice grain, fish tissue, water sample) that enters preparation or analysis.\n\n### Extract when\nThe text uses sample/specimen/tissue/grain or similar collected-object language, or explicitly describes material that was collected/taken.\n\n### Do not extract when\n- only a place/site is named → EnvironmentFeature\n- only a matrix type without individual sample semantics → EnvironmentMaterial\n- the material is explicitly post-preprocessing (dried, sieved, digest, extract) → ProcessedSpecimen\n\n### Provenance\nSpecimen may `prov_wasDerivedFrom` the most specific supported source: organism > EnvironmentMaterial > EnvironmentFeature. Do not relabel a source node as Specimen because a Specimen links to it.\n\n### Naming\nUse the verbatim collected-object phrase (e.g. “soil samples”). Do not expand into site or material class names not in the text.\n\n### Relations\nResearchSteps connect via `whu_declaredOutput` (collection) and `whu_declaredInput` (preprocessing/analysis). Specimen may `p_plan_isOutputVarOf` SpecimenCollection and `p_plan_isInputVarOf` SpecimenPreprocessing.\n\n### Example\n“Soil samples were collected from the paddy field.” -> Specimen[soil samples]; wasDerivedFrom EnvironmentFeature[paddy field] when only the site is explicit.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
+        }
+      ]
+    },
+    {
+      "label": "whu_ScienceEvidence",
+      "description": "### Tier\nMid-level argumentative composite. Requires co-occurring argument structure.\n\n### Definition\nA `whu_ScienceEvidence` binds identifiable data/results with method/analytical basis in an explicit argumentative role.\n\n### Establishment gate\nCreate only when **all** hold in the same argumentative original_text:\n1. identifiable DataSet or results reference\n2. identifiable Method or analytical basis\n3. explicit argumentative connector (support, demonstrate, indicate, contradict, challenge, etc.)\n4. a co-created `whu_SupportGraph` in the same pass, with ScienceEvidence linked via `mp_supports`/`mp_challenges` to that SupportGraph only (never directly to Claim; not via `prov_hadMember`)\n\n### Do not extract when\n- data are reported without argumentative role → DataSet only\n- no focal Claim and no SupportGraph can be co-created\n- Method and DataSet merely co-occur without argumentative language\n\n### No orphan rule\nDo not create ScienceEvidence first and add SupportGraph later. Do not hallucinate members to complete evidence. Do not use SupportGraph -> `prov_hadMember` -> ScienceEvidence. **Never** emit ScienceEvidence -> `mp_supports`/`mp_challenges` -> Claim.\n\n### WHU_HASORIGINALTEXT\nSmallest contiguous span containing evidential content **and** the argumentative connector.\n\n### Example\n“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar hypothesis.” -> ScienceEvidence mp_supports SupportGraph; SupportGraph mp_supports Claim (not ScienceEvidence -> Claim, not hadMember).",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
+        }
+      ]
+    },
+    {
+      "label": "whu_ResearchStep",
+      "description": "### Tier\nLow-level relative to parent Plan/Experiment. Extract only from the parent mid-level WHU_HASORIGINALTEXT.\n\n### Definition\nA `whu_ResearchStep` is the atomic recorded operation in a research workflow, modeled as `p-plan:Step`.\n\n### Structural dependency\nEvery ResearchStep **must** link via `p_plan_isStepOfPlan` to exactly one mid-level Plan (SpecimenCollection, SpecimenPreprocessing, BioChemical_Experiment, or Computational_Experiment). **Orphan ResearchSteps are forbidden.**\n\n### Extract when\nThe parent original_text contains a single verb-driven operation (collected, dried, digested, measured, analyzed, performed PCA).\n\n### Do not extract when\n- only an experiment module title or method name appears without an operational clause → do not create Step or parent Experiment\n- the operation cannot be assigned to a parent Plan in the same extraction pass\n\n### Relations\ndeclaredUsed/declaredInput/declaredOutput; `p_plan_isPrecededBy`; `prov_atLocation` when site is explicit for the step.\n\n### Example\n“After sieving, soil was digested with HNO3 and Hg was measured by CVAFS.” -> separate ResearchSteps within the same parent Experiment original_text.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
+        },
+        {
+          "name": "WHU_RESEARCHTYPE",
+          "type": "STRING",
+          "description": "Assign exactly one value: 'SpecimenCollection', 'SpecimenProcessing', 'BioChemical', or 'Computational'. Must be consistent with the p_plan_isStepOfPlan target Plan type. Choose from the described operation in the step's original_text, not from section title alone. HARD: BioChemical may only link to BioChemical_Experiment; Computational may only link to Computational_Experiment. Never cross-link BioChemical↔Computational even if both experiments appear in the same Chunk."
+        }
+      ]
+    },
+    {
+      "label": "obi_organism",
+      "description": "### Tier\nLow-level (foundational). Extract only when the parent mid-level WHU_HASORIGINALTEXT contains an explicit biological referent.\n\n### Definition\n`obi_organism` is a living biological individual, species, or population explicitly mentioned (plant, animal, microorganism). It denotes the **living source**, not its collected tissues, secretions, or environmental matrix.\n\n### Extract when\nCreate when a taxon, species, cultivar, or biological group is named as a living entity (rice plants, common carp, E. coli).\n\n### Do not extract when\n- grain, root tissue, fish muscle, leaf sample → `whu_Specimen` (Specimen may `prov_wasDerivedFrom` organism)\n- soil, sediment, water → `envo_EnvironmentMaterial`\n- field, wetland, pond → `whu_EnvironmentFeature`\n\n### Low-level rule\nDo not infer an organism from chemical-analysis context when no biological referent appears in the parent mid-level original_text.\n\n### Relations\nSpecimen -> `prov_wasDerivedFrom` -> organism; organism -> `prov_atLocation` -> EnvironmentFeature; organism -> `bfo_has_part` -> ChemicalEntity when constituent presence is explicit.\n\n### Example\n“Rice plants grown in the paddy field were sampled for grain.” -> organism[rice plants]; Specimen[grain] wasDerivedFrom organism.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
+        }
+      ]
+    },
+    {
+      "label": "whu_ChemicalEntity",
+      "description": "### Tier\nLow-level (foundational). Extract only from the parent mid-level WHU_HASORIGINALTEXT; do not use external chemical knowledge.\n\n### Definition\nA `whu_ChemicalEntity` is a chemical element, ion, compound, or identifiable substance **as named in the text** (Hg, MeHg, Sb, Cd²⁺). It is the **substance entity**, not a measured quantity.\n\n### Extract when\nThe text names a chemical symbol, formula, or compound with substance semantics.\n\n### Do not extract when\n- the phrase includes measurement-dimension words (concentration, content, level, rate, flux, amount) → `whu_TargetVariable` only if the full measurement phrase appears verbatim; otherwise omit TargetVariable\n- only a measured value with unit appears without a separable substance name → handle via ScalarMeasurementDatum/DataItem, not ChemicalEntity alone\n\n### Bare symbol rule\nIf the text contains only “Sb”, “Hg”, or similar symbols without measurement-dimension words, create **ChemicalEntity[Sb]** and **do not** create TargetVariable.\n\n### Relations\nSpecimen, organism, EnvironmentMaterial may `bfo_has_part` ChemicalEntity; TargetVariable -> `iao_is_about` -> ChemicalEntity only when both are independently text-supported.\n\n### Example\n“Total mercury and methylmercury were measured.” -> ChemicalEntity[mercury], ChemicalEntity[methylmercury]; TargetVariable only if “concentration/content” etc. appear in the text.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level entity from which this node is expanded."
+        }
+      ]
+    },
+    {
+      "label": "whu_SupportGraph",
+      "description": "### Tier\nMid-level argumentative container.\n\n### Definition\nA `whu_SupportGraph` is an argumentative aggregate organized around one focal `mp_Claim`.\n\n### Establishment gate\nCreate only when:\n1. a focal `mp_Claim` is identified in the same extraction pass, and\n2. at least one additional argumentative participant exists (Statement, ScienceEvidence linked by mp_supports/mp_challenges, Reference, Attribution)\n\n### Mandatory focal link\nSupportGraph -> `mp_supports`/`mp_challenges` -> Claim (required when co-created). ScienceEvidence is **not** a `prov_hadMember` of SupportGraph; attach it with `mp_supports`/`mp_challenges` instead.\n\n### Do not extract when\n- only an isolated Claim without supporting/challenging material\n- only DataSet/results without a focal Claim\n\n### WHU_HASORIGINALTEXT\nSpan covering the focal Claim and its immediate argumentative neighbors in one contiguous passage.\n\n### Relations\n`prov_hadMember` to Statement/Attribution/Reference only (not Claim). `mp_supports`/`mp_challenges` to focal Claim. ScienceEvidence polarity via `mp_supports`/`mp_challenges` to SupportGraph only (ScienceEvidence -> SupportGraph; never ScienceEvidence -> Claim).\n\n### Example\nClaim about biochar reducing MeHg with ScienceEvidence mp_supports SupportGraph, SupportGraph mp_supports Claim, and cited References as SupportGraph members.",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity."
+        }
+      ]
+    },
+    {
+      "label": "iao_DataItem",
+      "description": "### Tier\nLow-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.\n\n### Definition\nAn `iao_DataItem` is an individually reportable information-content item contained within a DataSet, including categorical records, counts, concentrations, statistical summaries, or other data records. `iao_ScalarMeasurementDatum` is used for the more specific single-value-plus-unit case.\n\n### Extract when\nCreate a DataItem when a distinct reportable record is present but cannot or should not be represented as a single scalar measurement datum.\n\n### Relations\nDataSet -> `dcterms_hasPart` -> DataItem; DataItem may -> `iao_is_about` -> TargetVariable.\n\n### Example\n“Soil pH was classified as acidic, neutral, or alkaline across sites.” -> DataItem[pH classification].",
+      "properties": [
+        {
+          "name": "WHU_HASNAME",
+          "type": "STRING",
+          "description": "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span."
+        },
+        {
+          "name": "WHU_HASORIGINALTEXT",
+          "type": "STRING",
+          "description": " Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."
+        }
+      ]
+    }
+  ]
+}

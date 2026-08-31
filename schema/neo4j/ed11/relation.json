@@ -1,0 +1,80 @@
+{
+  "relations": [
+    {
+      "label": "mp_supports",
+      "description": "### Define\n\n`mp:supports` links a **supporting Representation** (e.g., `whu:DataSet`, `whu:Method`, `mp:Statement`) to another **Representation** (`mp:Claim` / `mp:Statement`) that it **provides positive evidence for**.\n\n* This property encodes **affirmative argumentative relations**, showing how data, methods, or statements strengthen a scientific assertion.\n* It is the **positive counterpart** of `mp:challenges`.\n\n---\n\n### Purpose\n\n* **Evidence modeling**: Capture explicit positive evidence connections in micropublications.\n* **Argument construction**: Enable structured reasoning chains (e.g., Data → supports → Claim).\n* **Reproducibility assurance**: Show how datasets and methods provide a foundation for claims and statements.\n\n---\n\n### Context\n\nUse this property **only when the text explicitly signals support or evidence provision**.\n\nTrigger words/phrases include: *support*, *provide evidence for*, *validate*, *confirm*, *consistent with*, *corroborate*.\n\nDo **not** trigger for:\n\n* Co-mention without explicit evidence relation.\n* Neutral comparisons (e.g., “Dataset A is compared with Dataset B” without evaluative support).\n* Vague mentions (“studies have shown” without clear link).\n\n---\n\n### Notes\n\n* `mp:supports` always points from an **evidence Representation** → to a **Claim or Statement**.\n* A single Representation can **support one Claim** and **challenge another**, depending on the context.\n* Ensure clear distinction from `mp:challenges`:\n\n  * `mp:supports`: strengthens/affirms.\n  * `mp:challenges`: weakens/refutes.\n \n \n---\n\n### Examples\n\n*   **Challenged Statement:** The general assertion that \"biochar and its modified forms have been illustrated as a helpful way to alleviate Hg pollution in various soil/sediment systems\".\n    **Challenging Statement:** **\"In contrast, some other studies have reported that the effect of biochar on the remediation of Hg-contaminated soil/sediment is not as good as expected.\"** For example, Shu et al. (2016) reported that biochar application **\"increased the MeHg content of soils\"**.\n\n*   **Challenged Statement:** There is a **\"consensus that DOM, in general, can influence Hg bioavailability and methylation potential in two ways\"**.\n    **Challenging Statement:** **\"However, the relationships between Hg and DOM observed in both field investigations and the laboratory have been inconsistent, even concerning the above mechanisms\"**.\n\n*   **Challenged Statement:** Previous studies reported that biochar **\"could significantly change the content and properties of soil DOM\"** (e.g., biochar-induced elevation or decreased soil DOC concentrations).\n    **Challenging Statement (supported by `whu:DataSet`):** In the present study, **\"the DOC content in the treatment was not significantly different (p > 0.05) from the control,\"** and this **\"finding is different from previous studies\"**."
+    },
+    {
+      "label": "cito_isCitedBy",
+      "description": "Indicates that the subject micropublication cites the object micropublication."
+    },
+    {
+      "label": "whu_hasGoal",
+      "description": "Define: Links an experiment to its explicit scientific objective (Goal).\n\nContext: Look for “to quantify/assess/compare/evaluate …”. Subject: Bio_chemical_Experiment or Computational_Experiment; Object: Goal.\n\nExamples: “to compare metal levels across regions” → hasGoal(experiment, goal). "
+    },
+    {
+      "label": "p_plan_isPrecededBy",
+      "description": "Define: Declares an execution order between plans/steps.\n\nContext: Use when the text states sequence terms (“after”, “then”, “subsequently”).\n\nExamples: “After preprocessing, ICP‑MS was conducted.” → isPrecededBy(Bio_chemical_Experiment, SpecimenPreprocessing)."
+    },
+    {
+      "label": "prov_used",
+      "description": "Define: An activity step used an input entity (DataSet/Device/ProcessedSpecimen/Reagent/Software).\n\nContext: Triggers: “using/with/processed by/analysed in/implemented in”.\n\nExamples: “Data were analysed in R 4.2.2” → used(ComputationalActivityStep, Software:R)."
+    },
+    {
+      "label": "prov_wasAssociatedWith",
+      "description": "Define: A plan/experiment is associated with specific activity steps.\n\nContext: Link SpecimenCollection/Preprocessing to BioChemicalActivityStep; link Computational_Experiment to ComputationalActivityStep.\n\nExamples: “The collection involved grab sampling and composite mixing.” → 两个 BioChemicalActivityStep 与 SpecimenCollection 关联。"
+    },
+    {
+      "label": "whu_declareUsed",
+      "description": "Define: Declares that an ActivityStep follows a specific Method/standard.\n\nContext: Extract only when the text states “following/according to/using [Method/Standard]”. Subject: BioChemicalActivityStep or ComputationalActivityStep; Object: Method.\n\nExamples: “Digestion followed EPA 3052” → declareUsed(step, Method:EPA 3052)."
+    },
+    {
+      "label": "p_plan_isStepOfPlan",
+      "description": "Define: States an ActivityStep belongs to an experiment plan.\n\nContext: Connect BioChemicalActivityStep → Bio_chemical_Experiment; ComputationalActivityStep → Computational_Experiment.\n\nExamples: “instrument run” → isStepOfPlan(runStep, Bio_chemical_Experiment)."
+    },
+    {
+      "label": "prov_generated",
+      "description": "Define: An activity step produced a DataSet or ProcessedSpecimen.\n\nContext: Look for “produced/yielded/generated/obtained/output”.\n\nExamples: “ICP‑MS generated concentration data.” → generated(BioChemicalActivityStep, DataSet)."
+    },
+    {
+      "label": "p_plan_hasInputVar",
+      "description": "Define: Associates a plan/step with its input variable.\n\nContext: For SpecimenPreprocessing, link the consumed Specimen; for p-plan:Step, link its p-plan:Variable.\n\nExamples: “Preprocessing used homogenized rice grains.” → hasInputVar(Preprocessing, Specimen)"
+    },
+    {
+      "label": "iao_is_about",
+      "description": "Definition: the dataSet about speciemen for example how many specimen has been collected.\nContext: Extract this relation only when the text explicitly states a link from a subject of type whu:ProcessedSpecimen to an object of type whu:DataSet. Do not infer from general knowledge; prefer explicit verbs or relational phrases.\nExamples:\n- Positive: \"X (whu:ProcessedSpecimen) //purl.obolibrary.org/obo/iao is about> Y (whu:DataSet).\" -> (whu:ProcessedSpecimen) -[<http://purl.obolibrary.org/obo/IAO_is_about>]-> (whu:DataSet)\n- Negative: \"X and Y are discussed together\" (no explicit //purl.obolibrary.org/obo/IAO_is_about>) -> skip."
+    },
+    {
+      "label": "p_plan_isInputVarOf",
+      "description": "Define: A Specimen or ProcessedSpecimen serves as input to a plan.\n\nContext: Use when text says “used for … experiment/preprocessing”.\n\nExamples: “Processed powder was used for ICP‑MS.” → isInputVarOf(ProcessedSpecimen, Bio_chemical_Experiment)."
+    },
+    {
+      "label": "p_plan_isOutputVarOf",
+      "description": "Define: A Specimen/ProcessedSpecimen is the output of a plan.\n\nContext: For Specimen ← SpecimenCollection; for ProcessedSpecimen ← SpecimenPreprocessing.\n\nExamples: “The digestion produced solutions.” → isOutputVarOf(ProcessedSpecimen, SpecimenPreprocessing)."
+    },
+    {
+      "label": "prov_wasDerivedFrom",
+      "description": "Define: A material/result derives from a source entity.\n\nContext: Use for (Specimen → EnvironmentFeature) and (ProcessedSpecimen → Specimen).\n\nExamples: “Processed digests were derived from collected rice grains.” → wasDerivedFrom(ProcessedSpecimen, Specimen)."
+    },
+    {
+      "label": "dcterms_hasPart",
+      "description": "Definition: The 'hasPart' relation connects a DataSet to its constituent DataItems, indicating that these data items are part of the dataset.\nContext: Extract this relation when the text explicitly states that a dataset includes, contains, or is composed of specific data items, measurements, or observations. The subject should be the dataset, and the object should be the contained data item(s).\nExamples:\n- Positive: \"Dataset S1 includes measurements of cadmium concentration.\" -> (whu:DataSet) -[dcterms:hasPart]-> (whu:DataItem)\n- Positive: \"Dataset 2020-ENV contains temperature readings.\" -> (whu:DataSet) -[dcterms:hasPart]-> (whu:DataItem)\n- Negative: \"The study mentions both Dataset S1 and cadmium concentration\" (no explicit inclusion stated) -> skip."
+    },
+    {
+      "label": "mp_challenges",
+      "description": "### Define\n\n`mp:challenges` connects a **challenging Representation** (e.g., `whu:DataSet`, `whu:Method`, `mp:Statement`) to another **Representation** (`mp:Claim` / `mp:Statement`) that it **contradicts, refutes, or undermines**.\n\n* This relation encodes **conflicting evidence** or **argumentative opposition** within a micropublication graph.\n* It complements `mp:supports`, ensuring both **positive** and **negative** evidence relations are captured.\n\n---\n\n### Purpose\n\n* **Conflict modeling**: Capture when evidence or statements directly oppose a Claim/Statement.\n* **Argument balance**: Represent not only supportive but also contradictory findings in the scientific discourse.\n* **Reproducibility tracking**: Allow reasoning engines to highlight **where claims are disputed** across datasets, methods, or statements.\n\n---\n\n### Context\n\nUse this property **only when the text explicitly signals contradiction, refutation, or challenge**.\n\nTrigger words/phrases include: *challenge*, *contradict*, *refute*, *does not support*, *inconsistent with*, *fails to confirm*.\n\nDo **not** trigger for:\n\n* Mere co-mention without explicit opposition.\n* Neutral comparisons (e.g., “Dataset A differs from Dataset B” without evaluative contradiction).\n* General background text.\n\n---\n\n### Notes\n\n* `mp:challenges` always points from an **evidence/representation** → to a **Claim or Statement**.\n* A single Representation can simultaneously **support one Claim** and **challenge another**, depending on context.\n* Ensure that **support/challenge relations** are not confused:\n\n  * `mp:supports`: strengthens/affirms.\n  * `mp:challenges`: weakens/refutes.\n\n\n---\n\n### Examples\n \n\n*   **Challenged Statement:** Biochar and its modified forms are generally **\"a helpful way to alleviate Hg pollution\"** in soil/sediment systems.\n    **Challenging Statement:** **\"Some other studies have reported that the effect of biochar on the remediation of Hg-contaminated soil/sediment is not as good as expected,\"** for example, biochar application **\"increased the MeHg content of soils\"**.\n\n*   **Challenged Statement:** There is a **\"consensus that DOM, in general, can influence Hg bioavailability and methylation potential in two ways\"**.\n    **Challenging Statement:** Despite this, **\"the relationships between Hg and DOM observed in both field investigations and the laboratory have been inconsistent,\"** even regarding the accepted mechanisms.\n\n*   **Challenged Statement:** Previous studies reported that biochar **\"could significantly change the content and properties of soil DOM\"** (e.g., increased or decreased DOC).\n    **Challenging Statement (supported by `whu:Data`):** In this study, **\"the DOC content in the treatment was not significantly different (p > 0.05) from the control,\"** a finding that is **\"different from previous studies\"**."
+    },
+    {
+      "label": "whu_hasExecutionEnvironment",
+      "description": "Define: Links a biochemical step to its execution environment (temperature, humidity, duration).\n\nContext: Use when controlled conditions are reported with numeric values/units.\n\nExamples: “digestion at 180 °C for 30 min” → hasExecutionEnvironment with temperature=180, duration=30 min."
+    },
+    {
+      "label": "schema_hasManufacturer",
+      "description": "Define: Organization that manufactured the Device.\n\nContext: Use when explicit company/organization is named; if only brand occurs, keep hasBrand and skip manufacturer unless clearly stated.\n\nExamples: “Thermo Fisher Scientific” → hasManufacturer=Thermo Fisher Scientific."
+    },
+    {
+      "label": "p_plan_correspondsToStep",
+      "description": "Define: Maps an executed ActivityStep to a designed p-plan:Step.\n\nContext: Use when the paper enumerates planned steps (Step 1/2/3) and later refers to actual execution.\n\nExamples: “as in Step 2 (acid digestion)” → correspondsToStep(ActivityStep_digestion, Step_2)."
+    }
+  ]
+}

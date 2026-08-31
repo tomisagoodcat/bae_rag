@@ -1,0 +1,18 @@
+{
+  "potential_schema": [
+    ["SPECIMEN", "COME_FROM", "LOCATION"],
+["SPECIMEN", "COME_FROM", "ENVIRONMENT"],
+    ["METHOD", "IS_ABOUT", "TARGETOBJECT"],
+    ["DATA", "IS_ABOUT", "TARGETOBJECT"],
+    ["EXPERIMENT", "IS_ABOUT", "TARGETOBJECT"],
+    ["METHOD", "SUPPORT", "CLAIM"],
+    ["DATA", "SUPPORT", "CLAIM"],
+    ["EXPERIMENT", "HAS_GOAL", "GOAL"],
+    ["GOAL", "HAS_OBJECT", "TARGETOBJECT"],
+    ["DATA", "HAS_PART", "DATA_ITEM"],
+   
+    ["DATA", "WAS_GENERATED_BY", "METHOD"],
+    ["CLAIM", "MENTIONS", "SPECIMEN"],
+    ["CLAIM", "MENTIONS", "ENVIRONMENT"]
+  ]
+}

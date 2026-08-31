@@ -1,0 +1,1204 @@
+@prefix bfo: <http://purl.obolibrary.org/obo/BFO_> .
+@prefix cito: <http://purl.org/spar/cito/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix envo: <http://purl.obolibrary.org/obo/ENVO_> .
+@prefix geo1: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix iao: <http://purl.obolibrary.org/obo/IAO_> .
+@prefix mp: <http://purl.org/mp#> .
+@prefix obi: <http://purl.obolibrary.org/obo/OBI_> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix p-plan: <http://purl.org/net/p-plan#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix whu: <https://bdi.whu.edu.cn/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+bfo:0000023 a owl:Class ;
+    rdfs:label "role"@en ;
+    rdfs:comment "BFO role."@en .
+
+bfo:0000051 a owl:ObjectProperty ;
+    rdfs:label "has part"@en ;
+    rdfs:comment "Mereological has-part."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( whu:EnvironmentFeature whu:Specimen obi:0100026 envo:00010483 ) ] ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( envo:00010483 whu:ChemicalEntity ) ] ;
+    whu:prompt """### Definition
+BFO mereological relation used when one material/environmental entity physically contains another as a part.
+
+### Allowed schema patterns
+- EnvironmentFeature -> EnvironmentMaterial
+- Specimen -> ChemicalEntity
+- organism -> ChemicalEntity
+- EnvironmentMaterial -> ChemicalEntity
+
+### Extract when
+Emit only when the passage supports a part/constituent relation. Do not use `bfo_has_part` for mere location, provenance, or analytical aboutness."""@en .
+
+iao:0000004 a owl:DatatypeProperty ;
+    rdfs:label "has measurement value"@en ;
+    rdfs:comment "Numeric measurement value."@en ;
+    rdfs:domain iao:0000032 ;
+    rdfs:range xsd:float ;
+    whu:prompt "Extract only the numeric magnitude as a FLOAT, excluding the unit and comparator. Preserve the reported numerical value; do not perform unit conversion."@en .
+
+iao:0000136 a owl:ObjectProperty ;
+    rdfs:label "is about"@en ;
+    rdfs:comment "Information-content aboutness."@en ;
+    rdfs:domain iao:0000030 ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( whu:Reagent whu:Specimen whu:ProcessedSpecimen whu:TargetVariable whu:ChemicalEntity ) ] ;
+    whu:prompt """### Definition
+`iao_is_about` expresses aboutness between an information-content entity and the entity or variable it describes.
+
+### Allowed schema patterns
+Resource-oriented aboutness:
+- DataSet -> Reagent
+- DataSet -> Specimen
+- DataSet -> ProcessedSpecimen
+
+Target-variable aboutness:
+- TargetVariable -> ChemicalEntity
+- DataSet -> TargetVariable
+- DataItem -> TargetVariable
+- ScalarMeasurementDatum -> TargetVariable
+
+### Granularity rule
+Choose the pairing that matches the text's actual semantic granularity. Do not force extraction to TargetVariable when the passage only states that a dataset concerns a reagent or specimen, and do not replace a specific TargetVariable link with a broader resource link when the measured variable is explicit. Multiple aboutness links may coexist when independently supported.
+
+### Examples
+“The dataset reports responses of rice grain samples to selenium treatment.” -> DataSet is_about Specimen[rice grain] and, when explicitly represented, Reagent[selenium treatment].
+“The dataset reflects Hg content.” -> DataSet is_about TargetVariable[Hg content].
+“Mean Hg content was 28.4 ng/g.” -> ScalarMeasurementDatum[28.4 ng/g] is_about TargetVariable[Hg content].
+“Hg content” -> TargetVariable[Hg content] is_about ChemicalEntity[Hg]."""@en .
+
+dcterms:hasPart a owl:ObjectProperty ;
+    rdfs:label "has part"@en ;
+    rdfs:comment "DataSet contains DataItem members."@en ;
+    rdfs:domain whu:DataSet ;
+    rdfs:range iao:0000027 ;
+    whu:prompt """### Definition
+Uses `dcterms:hasPart` to represent a DataSet containing one or more `iao_DataItem` records.
+
+### Direction
+DataSet -> `dcterms_hasPart` -> DataItem.
+
+### Extraction note
+`iao_ScalarMeasurementDatum` is a subtype of DataItem. If the extraction runtime types a member specifically as ScalarMeasurementDatum, do not create an additional duplicate generic DataItem node solely to satisfy this relation."""@en .
+
+mp:challenges a owl:ObjectProperty ;
+    rdfs:label "challenges"@en ;
+    rdfs:comment "Negative argumentative challenge."@en ;
+    rdfs:domain mp:Representation ;
+    rdfs:range mp:Representation ;
+    whu:prompt """### Definition
+`mp_challenges` is the negative argumentative relation corresponding to `mp:challenges`. It links a challenging Representation to the Representation whose proposition or argument graph it contradicts, refutes, weakens, or undermines.
+
+### Direction
+challenging Representation -> `mp_challenges` -> challenged Representation.
+
+### Extract when
+Emit only when contradiction/challenge is explicit or unambiguous (e.g. contradicts, refutes, does not support, inconsistent with, fails to confirm, undermines). Absence of support is not automatically a challenge.
+
+### Allowed schema patterns
+Use only source-target combinations present in `potential_schema`, including DataSet -> Claim/Statement, Statement -> Claim, Claim -> Claim, and ScienceEvidence -> Claim/Statement/SupportGraph.
+
+### Example
+“The observed lack of treatment effect contradicts the proposed mechanism.” -> DataSet/ScienceEvidence challenges Claim/Statement."""@en .
+
+mp:supports a owl:ObjectProperty ;
+    rdfs:label "supports"@en ;
+    rdfs:comment "Positive argumentative support."@en ;
+    rdfs:domain mp:Representation ;
+    rdfs:range mp:Representation ;
+    whu:prompt """### Definition
+`mp_supports` is the positive argumentative relation corresponding to `mp:supports`. It links a supporting Representation to the Representation whose proposition, evidential role, or argument graph it affirmatively supports.
+
+### Direction
+supporting Representation -> `mp_supports` -> supported Representation.
+
+### Extract when
+Emit only when the passage explicitly or unambiguously expresses positive evidential/argumentative backing (e.g. supports, demonstrates, confirms, provides evidence for, is consistent with, indicates/suggests in an argumentative context). Mere co-occurrence, citation, method use, or data production does not by itself imply `mp_supports`.
+
+### Allowed schema patterns
+Use only source-target type combinations present in `potential_schema`. In this BAE schema these include Attribution -> Representation; Reference -> Claim/Statement when the cited source is used as backing; DataSet -> Claim/Statement; Statement -> Claim; Claim -> Claim; and ScienceEvidence -> Claim/Statement/SupportGraph.
+
+### Example
+“The measured decrease in grain MeHg supports the conclusion that modified biochar reduces Hg bioavailability.” -> DataSet/ScienceEvidence `mp_supports` Claim."""@en .
+
+p-plan:correspondsToStep a owl:ObjectProperty ;
+    rdfs:label "corresponds to step"@en ;
+    rdfs:comment "Optional execution-provenance relation; ordinary Methods prose does not require prov:Activity."@en ;
+    rdfs:domain prov:Activity ;
+    rdfs:range whu:ResearchStep ;
+    whu:prompt """### Definition
+Corresponds to P-PLAN `correspondsToStep`: links an explicitly executed provenance activity to the plan-level/textual `whu_ResearchStep` it realizes.
+
+### Extraction policy
+This relation is reserved for an external provenance/execution stage that supplies a `prov:Activity` (e.g. run log, execution timestamp, instrument-run identifier). It is not emitted from ordinary Methods prose when only the described ResearchStep is available.
+
+### Direction
+prov:Activity -> `p_plan_correspondsToStep` -> whu:ResearchStep."""@en .
+
+p-plan:isInputVarOf a owl:ObjectProperty ;
+    rdfs:label "is input var of"@en ;
+    rdfs:comment "Retained as the current plan-level shortcut/projection used by the GraphRAG schema; detailed step-level input remains whu:declaredInput."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( whu:Specimen whu:ProcessedSpecimen ) ] ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( whu:SpecimenPreprocessing whu:BioChemicalExperiment ) ] ;
+    whu:prompt """### Definition
+Plan-level shortcut relation corresponding to P-PLAN `isInputVarOf`, used in this extraction schema to connect a concrete Specimen or ProcessedSpecimen directly to the Plan/Experiment for which it serves as input.
+
+### Purpose
+This is a plan-level projection that skips the intermediate ResearchStep for concise retrieval and MetaPath construction. The detailed step-level input relation remains `ResearchStep -> whu_declaredInput -> domain entity`.
+
+### Direction
+input entity -> `p_plan_isInputVarOf` -> Plan/Experiment.
+
+### Allowed schema patterns
+- Specimen -> SpecimenPreprocessing
+- ProcessedSpecimen -> BioChemical_Experiment
+
+### Extract when
+Emit only when the passage directly supports that the entity is used as input to the named preprocessing/experiment module.
+
+### Example
+“Processed powder was used for ICP-MS analysis.” -> ProcessedSpecimen `p_plan_isInputVarOf` BioChemical_Experiment."""@en .
+
+p-plan:isOutputVarOf a owl:ObjectProperty ;
+    rdfs:label "is output var of"@en ;
+    rdfs:comment "Retained as the current plan-level shortcut/projection used by the GraphRAG schema; detailed step-level output remains whu:declaredOutput."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( whu:Specimen whu:ProcessedSpecimen whu:DataSet ) ] ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( whu:SpecimenCollection whu:SpecimenPreprocessing whu:ComputationalExperiment ) ] ;
+    whu:prompt """### Definition
+Plan-level shortcut relation corresponding to P-PLAN `isOutputVarOf`, used in this extraction schema to connect a concrete output entity directly to the Plan/Experiment that produces it.
+
+### Purpose
+This is a plan-level projection that skips the intermediate ResearchStep for concise retrieval and MetaPath construction. The detailed step-level output relation remains `ResearchStep -> whu_declaredOutput -> domain entity`.
+
+### Direction
+output entity -> `p_plan_isOutputVarOf` -> Plan/Experiment.
+
+### Allowed schema patterns
+- Specimen -> SpecimenCollection
+- ProcessedSpecimen -> SpecimenPreprocessing
+- DataSet -> Computational_Experiment
+
+### Extract when
+Emit only when the text directly supports that the entity is an output of the corresponding plan/experiment module.
+
+### Example
+“The preprocessing produced a filtered digest.” -> ProcessedSpecimen `p_plan_isOutputVarOf` SpecimenPreprocessing."""@en .
+
+p-plan:isPrecededBy a owl:ObjectProperty ;
+    rdfs:label "is preceded by"@en ;
+    rdfs:comment "Used for ResearchStep-level logical/temporal ordering."@en ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range whu:ResearchStep ;
+    whu:prompt """### Definition
+Standard P-PLAN ordering relation used between `whu_ResearchStep` instances.
+
+### Direction
+later/downstream ResearchStep -> `p_plan_isPrecededBy` -> earlier/upstream ResearchStep.
+
+### Extract when
+Emit for explicit temporal/logical ordering cues (after, following, then, subsequently, before) or an unambiguous immediate dependency between recorded steps.
+
+### Example
+“After sieving, samples were digested.” -> ResearchStep[digestion] isPrecededBy ResearchStep[sieving]."""@en .
+
+p-plan:isStepOfPlan a owl:ObjectProperty ;
+    rdfs:label "is step of plan"@en ;
+    rdfs:comment "ResearchStep membership in a plan."@en ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range p-plan:Plan ;
+    whu:prompt """### Definition
+Standard P-PLAN membership relation associating a `whu_ResearchStep` with the mid-level Plan/Experiment that organizes it.
+
+### Allowed targets
+SpecimenCollection, SpecimenPreprocessing, BioChemical_Experiment, or Computational_Experiment.
+
+### Direction
+ResearchStep -> `p_plan_isStepOfPlan` -> Plan/Experiment.
+
+### Constraint
+The target must be consistent with `WHU_RESEARCHTYPE`."""@en .
+
+cito:isCitedBy a owl:ObjectProperty ;
+    rdfs:label "is cited by"@en ;
+    rdfs:comment "Cited reference is cited by a representation."@en ;
+    rdfs:domain mp:Reference ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( mp:Claim mp:Statement whu:DataSet mp:Method ) ] ;
+    whu:prompt """### Definition
+`cito_isCitedBy` corresponds to CiTO `cito:isCitedBy`, the inverse of `cito:cites`. In this schema, the subject is the cited `mp_References` source and the object is the Representation that cites that source.
+
+### Direction
+Reference (cited source) -> `cito_isCitedBy` -> Claim/Statement/DataSet/Method (citing Representation).
+
+### Extract when
+Emit when the text explicitly ties the Representation to an identifiable citation. Do not infer `mp_supports` from citation alone; add support only when the citation is used as evidential backing.
+
+### Example
+“Biochar reduces Hg bioavailability (Smith et al., 2020).” -> Reference[Smith et al., 2020] isCitedBy Statement/Claim."""@en .
+
+gn:population a owl:DatatypeProperty ;
+    rdfs:label "population"@en ;
+    rdfs:comment "Stated population for an environment feature."@en ;
+    rdfs:domain whu:EnvironmentFeature ;
+    rdfs:range xsd:integer ;
+    whu:prompt "Extract an explicitly stated population count associated with the named geographic/environmental feature. Do not infer or look up population externally."@en .
+
+geo1:alt a owl:DatatypeProperty ;
+    rdfs:label "altitude"@en ;
+    rdfs:comment "Altitude of an environment feature."@en ;
+    rdfs:domain whu:EnvironmentFeature ;
+    rdfs:range xsd:float ;
+    whu:prompt "Extract explicit altitude/elevation as a numeric value. Use the value as stated; do not infer from coordinates."@en .
+
+geo1:lat a owl:DatatypeProperty ;
+    rdfs:label "latitude"@en ;
+    rdfs:comment "Latitude of an environment feature."@en ;
+    rdfs:domain whu:EnvironmentFeature ;
+    rdfs:range xsd:float ;
+    whu:prompt "Extract explicit latitude as a decimal numeric value when present in the text."@en .
+
+geo1:long a owl:DatatypeProperty ;
+    rdfs:label "longitude"@en ;
+    rdfs:comment "Longitude of an environment feature."@en ;
+    rdfs:domain whu:EnvironmentFeature ;
+    rdfs:range xsd:float ;
+    whu:prompt "Extract explicit longitude as a decimal numeric value when present in the text."@en .
+
+prov:atLocation a owl:ObjectProperty ;
+    rdfs:label "at location"@en ;
+    rdfs:comment "Entity or step located at an environment feature."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( obi:0100026 whu:ResearchStep ) ] ;
+    rdfs:range whu:EnvironmentFeature ;
+    whu:prompt """### Definition
+`prov_atLocation` associates an explicitly locatable entity or recorded research step with the environmental/site feature at which it is located or occurs.
+
+### Allowed schema patterns
+- `obi_organism -> prov_atLocation -> whu_EnvironmentFeature`
+- `whu_ResearchStep -> prov_atLocation -> whu_EnvironmentFeature`
+
+### Extract when
+Emit only when the passage explicitly identifies the relevant site/environment for the organism or ResearchStep. Prefer `whu_hasContext` for linking a SpecimenCollection Plan to its broader environmental context.
+
+### Example
+“Topsoil was sampled from the SWU paddy field.” -> ResearchStep[sampling] atLocation EnvironmentFeature[SWU paddy field]."""@en .
+
+prov:wasDerivedFrom a owl:ObjectProperty ;
+    rdfs:label "was derived from"@en ;
+    rdfs:comment "Material/provenance derivation."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( whu:Specimen whu:ProcessedSpecimen ) ] ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( whu:EnvironmentFeature envo:00010483 obi:0100026 whu:Specimen ) ] ;
+    whu:prompt """### Definition
+`prov_wasDerivedFrom` records material/provenance derivation between a resulting entity and its source entity.
+
+### Allowed schema patterns
+- Specimen -> EnvironmentFeature
+- Specimen -> envo_EnvironmentMaterial
+- Specimen -> obi_organism
+- ProcessedSpecimen -> Specimen
+
+### Extraction rule
+Use the most specific source explicitly supported by the passage. A Specimen may derive from the environmental feature/site as a whole, from a specific environmental material within it, or from a living organism. Do not invent a more specific source than the text provides.
+
+### Examples
+“Soil samples were collected from the paddy field.” -> Specimen wasDerivedFrom EnvironmentFeature[paddy field] when only the site is explicit.
+“Soil samples were taken from surface soil.” -> Specimen wasDerivedFrom EnvironmentMaterial[surface soil].
+“Rice grain was sampled from rice plants.” -> Specimen wasDerivedFrom organism[rice plant]."""@en .
+
+whu:BAE a owl:Ontology ;
+    rdfs:label "BAE Ontology"@en ;
+    rdfs:comment "BAE (Background–Argumentation–Experiment) core ontology. Derived from BAE_v3_clean with OOPS!-driven repairs (P10/P11/P04/P08/P32)."@en ;
+    owl:versionInfo "6.0-oops" .
+
+whu:EnvironmentContext a owl:Class ;
+    rdfs:label "Environment Context"@en ;
+    rdfs:comment "Conceptual mid-level representation organizing one or more concrete EnvironmentFeature descriptions; current extraction uses EnvironmentFeature rather than directly materializing EnvironmentContext."@en ;
+    rdfs:subClassOf iao:0000030,
+        mp:Representation .
+
+whu:belongsToModule a owl:ObjectProperty ;
+    rdfs:label "belongs to module"@en ;
+    rdfs:comment "Documentation link from a BAE domain class to its semantic module (EBM/EEM/MPU). Not used by Neo4j extraction."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( whu:EnvironmentFeature whu:SpecimenCollection whu:SpecimenPreprocessing whu:Specimen whu:ProcessedSpecimen whu:BioChemicalExperiment whu:ComputationalExperiment whu:ResearchStep whu:DataSet whu:ScienceEvidence whu:SupportGraph mp:Claim mp:Statement mp:Method mp:Attribution mp:Reference ) ] ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( whu:EBM whu:EEM whu:MPU ) ] .
+
+whu:declaredInput a owl:ObjectProperty ;
+    rdfs:label "declared input"@en ;
+    rdfs:comment "Step-level declared input entity."@en ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( whu:Specimen whu:ProcessedSpecimen whu:DataSet ) ] ;
+    whu:prompt """### Definition
+BAE-defined relation linking a ResearchStep directly to an actual domain entity explicitly functioning as that step's input.
+
+### Direction
+ResearchStep -> `whu_declaredInput` -> Specimen/ProcessedSpecimen/DataSet.
+
+### Extraction policy
+BAE reuses P-PLAN for Plan/Step organization and ordering; domain-specific input/output entities are connected through `whu_declaredInput`/`whu_declaredOutput`. Emit only when the input role is textually supported.
+
+### Example
+“Air-dried soil was sieved before digestion.” -> ResearchStep[sieving] declaredInput Specimen[air-dried soil]."""@en .
+
+whu:declaredOutput a owl:ObjectProperty ;
+    rdfs:label "declared output"@en ;
+    rdfs:comment "Step-level declared output entity."@en ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( whu:Specimen whu:ProcessedSpecimen whu:DataSet ) ] ;
+    whu:prompt """### Definition
+BAE-defined relation linking a ResearchStep directly to an actual domain entity explicitly generated or produced by that step.
+
+### Direction
+ResearchStep -> `whu_declaredOutput` -> Specimen/ProcessedSpecimen/DataSet.
+
+### Extract when
+Emit only when the passage supports an output/product relation for the specific step.
+
+### Example
+“Hg was measured by CVAFS.” -> ResearchStep[Hg measurement] declaredOutput DataSet[Hg measurements]."""@en .
+
+whu:declaredUsed a owl:ObjectProperty ;
+    rdfs:label "declared used"@en ;
+    rdfs:comment "BAE static paper-declared usage relation; it is not declared as a subproperty of prov:used."@en ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( mp:Method whu:Device whu:Reagent whu:Software ) ] ;
+    whu:prompt """### Definition
+Links a `whu_ResearchStep` to a Method, Device, Reagent, or Software explicitly stated as used in that step.
+
+### Direction
+ResearchStep -> `whu_declaredUsed` -> Method/Device/Reagent/Software.
+
+### Extract when
+Emit only when the text assigns the resource to the specific step. Do not attach a resource to an Experiment-level node when the using ResearchStep can be identified.
+
+### Example
+“Hg was measured by CVAFS using an F-732 analyzer.” -> ResearchStep declaredUsed Method[CVAFS] and Device[F-732]."""@en .
+
+whu:fellow a owl:ObjectProperty ;
+    rdfs:label "fellow"@en ;
+    rdfs:comment "Direction: downstream/later X -> upstream/earlier Y."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( whu:SpecimenPreprocessing whu:BioChemicalExperiment whu:ComputationalExperiment ) ] ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( whu:SpecimenCollection whu:SpecimenPreprocessing whu:BioChemicalExperiment whu:ComputationalExperiment ) ] ;
+    whu:prompt """### Definition
+`whu_fellow(X,Y)` is the BAE mid-level adjacency/dependency relation: Y is the immediate upstream predecessor or provider for X.
+
+### Direction
+downstream/later X -> `whu_fellow` -> upstream/earlier Y.
+
+### Allowed signatures
+1. SpecimenPreprocessing -> SpecimenCollection
+2. BioChemical_Experiment -> SpecimenPreprocessing
+3. Computational_Experiment -> BioChemical_Experiment
+4. BioChemical_Experiment -> BioChemical_Experiment
+5. Computational_Experiment -> Computational_Experiment
+
+### Extract when
+Use explicit temporal/dependency evidence or a clear shared-output/input transition. Do not use `whu_fellow` to connect SpecimenCollection with EnvironmentFeature; that contextual link is represented by `whu_hasContext`.
+
+### Direction rule
+“X follows/depends on Y” is always X -> `whu_fellow` -> Y.
+
+### Example
+“After sample preprocessing, Hg was determined by CVAFS.” -> BioChemical_Experiment fellow SpecimenPreprocessing."""@en .
+
+whu:hasComparator a owl:DatatypeProperty ;
+    rdfs:label "has comparator"@en ;
+    rdfs:comment "Optional comparator on a scalar measurement."@en ;
+    rdfs:domain iao:0000032 ;
+    rdfs:range xsd:string ;
+    whu:prompt "Extract only an explicit comparison operator or qualifier attached to the scalar value, e.g. '<', '<=', '>', '>=', '=', 'approximately'. Return null/omit when no comparator is stated."@en .
+
+whu:hasContext a owl:ObjectProperty ;
+    rdfs:label "has context"@en ;
+    rdfs:comment "SpecimenCollection-to-EnvironmentFeature uses hasContext, not fellow."@en ;
+    rdfs:domain whu:SpecimenCollection ;
+    rdfs:range whu:EnvironmentFeature ;
+    whu:prompt """### Definition
+BAE-defined relation linking a SpecimenCollection Plan to the environmental feature that provides its explicit sampling/research context.
+
+### Direction
+SpecimenCollection -> `whu_hasContext` -> EnvironmentFeature.
+
+### Extract when
+Emit when the collection procedure is explicitly tied to a bounded environmental setting/site. Use `prov_atLocation` for the location of a particular ResearchStep or organism.
+
+### Example
+“Topsoil samples were collected from the SWU paddy field.” -> SpecimenCollection hasContext EnvironmentFeature[SWU paddy field]."""@en .
+
+whu:hasGoal a owl:ObjectProperty ;
+    rdfs:label "has goal"@en ;
+    rdfs:comment "Links an experiment plan to an explicit Goal."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( whu:BioChemicalExperiment whu:ComputationalExperiment ) ] ;
+    rdfs:range whu:Goal ;
+    whu:prompt """### Definition
+Links a BioChemical or Computational Experiment to an explicitly stated scientific Goal.
+
+### Direction
+BioChemical_Experiment/Computational_Experiment -> `whu_hasGoal` -> Goal.
+
+### Extract when
+Use explicit objective language such as “to quantify”, “to assess”, “to compare”, “to determine”, or “to predict”. Do not infer a Goal from general background motivation."""@en .
+
+whu:hasName a owl:DatatypeProperty ;
+    rdfs:label "has name"@en ;
+    rdfs:comment "Canonical short name of a BAE entity grounded in source text."@en ;
+    rdfs:domain _:Nbc9f8146daf44ba5a2d1442f954ed145 ;
+    rdfs:range xsd:string ;
+    whu:prompt "Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence."@en .
+
+whu:hasOriginalText a owl:DatatypeProperty ;
+    rdfs:label "has original text"@en ;
+    rdfs:comment "Verbatim source-text span supporting creation of the entity."@en ;
+    rdfs:domain _:Nbc9f8146daf44ba5a2d1442f954ed145 ;
+    rdfs:range xsd:string ;
+    whu:prompt "Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans."@en .
+
+whu:hasTarget a owl:ObjectProperty ;
+    rdfs:label "has target"@en ;
+    rdfs:comment "Links a Goal to its TargetVariable."@en ;
+    rdfs:domain whu:Goal ;
+    rdfs:range whu:TargetVariable ;
+    whu:prompt """### Definition
+Links a research Goal to the specific TargetVariable toward which the goal is directed.
+
+### Direction
+Goal -> `whu_hasTarget` -> TargetVariable.
+
+### Extract when
+The target quantity is explicitly named or unambiguously recoverable from the stated objective.
+
+### Example
+“The experiment aimed to quantify Hg concentration.” -> Goal hasTarget TargetVariable[Hg concentration]."""@en .
+
+whu:isAboutDimension a owl:DatatypeProperty ;
+    rdfs:label "is-about measurement dimension"@en ;
+    rdfs:comment "Optional measurement-dimension tag for iao:is_about. In Neo4j it is stored as an edge property; in OWL the approximate domain is the ICE subject."@en ;
+    rdfs:domain iao:0000030 ;
+    rdfs:range xsd:string ;
+    whu:prompt "Optional controlled measurement-dimension tag for the aboutness relation. Choose only from an implementation-controlled vocabulary such as mass, volume, count, concentration, mass_concentration, molar_concentration, absorbance, intensity, ratio, rate, pH, conductivity, or turbidity. Assign only when the dimension is explicit or unambiguous from the reported unit/measure; otherwise omit."@en .
+
+whu:measurementUnitText a owl:DatatypeProperty ;
+    rdfs:label "measurement unit text"@en ;
+    rdfs:comment "Runtime string representation of the stated measurement unit."@en ;
+    rdfs:domain iao:0000032 ;
+    rdfs:range xsd:string ;
+    whu:prompt "Extract the measurement unit exactly as written in the source text (e.g. ng/g, mg/L, %, °C). Do not convert or normalize units during extraction."@en .
+
+whu:prompt a owl:AnnotationProperty ;
+    rdfs:label "LLM extraction prompt"@en ;
+    rdfs:comment "Extraction guidance copied or normalized from the current schema JSON descriptions. It is annotation metadata on domain classes/properties, not a separate extraction meta-ontology."@en .
+
+whu:researchType a owl:DatatypeProperty ;
+    rdfs:label "research type"@en ;
+    rdfs:comment "Controlled research-step type string."@en ;
+    rdfs:domain whu:ResearchStep ;
+    rdfs:range xsd:string ;
+    whu:prompt "Assign exactly one controlled value based on the step's semantic role: 'SpecimenCollection', 'SpecimenProcessing', 'BioChemical', or 'Computational'. Choose the value from the described operation, not from section title alone."@en .
+
+whu:softwareBrand a owl:DatatypeProperty ;
+    rdfs:label "software brand/vendor"@en ;
+    rdfs:comment "Software vendor/brand when stated."@en ;
+    rdfs:domain whu:Software ;
+    rdfs:range xsd:string ;
+    whu:prompt "Extract the software vendor, provider, or product brand only when explicitly stated. Do not infer a vendor from the software name."@en .
+
+schema:brand a owl:DatatypeProperty ;
+    rdfs:label "device brand"@en ;
+    rdfs:comment "Device brand/manufacturer."@en ;
+    rdfs:domain whu:Device ;
+    rdfs:range xsd:string ;
+    whu:prompt "Extract the explicit device brand or manufacturer name. Do not infer it from a model code."@en .
+
+schema:model a owl:DatatypeProperty ;
+    rdfs:label "device model"@en ;
+    rdfs:comment "Device model designation."@en ;
+    rdfs:domain whu:Device ;
+    rdfs:range xsd:string ;
+    whu:prompt "Extract the explicit device model designation, preserving letters, hyphens, and numbers."@en .
+
+schema:serialNumber a owl:DatatypeProperty ;
+    rdfs:label "device serial number"@en ;
+    rdfs:comment "Device serial number."@en ;
+    rdfs:domain whu:Device ;
+    rdfs:range xsd:string ;
+    whu:prompt "Extract a serial number or unique instrument identifier only when explicitly stated."@en .
+
+schema:softwareVersion a owl:DatatypeProperty ;
+    rdfs:label "software version"@en ;
+    rdfs:comment "Software version string."@en ;
+    rdfs:domain whu:Software ;
+    rdfs:range xsd:string ;
+    whu:prompt "Extract the software version/release exactly as stated (e.g. 4.2.2, 26, R2021b). Omit when no version is provided."@en .
+
+bfo:0000015 a owl:Class ;
+    rdfs:label "process"@en ;
+    rdfs:comment "BFO process."@en .
+
+bfo:0000031 a owl:Class ;
+    rdfs:label "generically dependent continuant"@en ;
+    rdfs:comment "BFO generically dependent continuant."@en .
+
+envo:00002297 a owl:Class ;
+    rdfs:label "environmental feature"@en ;
+    rdfs:comment "ENVO environmental feature."@en .
+
+iao:0000100 a owl:Class ;
+    rdfs:label "IAO data set"@en ;
+    rdfs:comment "IAO data set class (distinct from whu:DataSet)."@en ;
+    rdfs:subClassOf iao:0000030 .
+
+iao:0000109 a owl:Class ;
+    rdfs:label "measurement datum"@en ;
+    rdfs:comment "IAO measurement datum."@en ;
+    rdfs:subClassOf iao:0000027 .
+
+mp:Attribution a owl:Class ;
+    rdfs:label "attribution"@en ;
+    rdfs:comment "Provenance qualifier for a representation."@en ;
+    rdfs:subClassOf mp:Representation ;
+    owl:disjointWith mp:Data,
+        mp:Method,
+        mp:Reference,
+        mp:Statement ;
+    whu:prompt """### Definition
+`mp_Attribution` is the technical schema label used for an MP Attribution: a provenance/qualifier Representation that records who is responsible for, asserted, created, curated, or otherwise accounts for another Representation. The Attribution is not itself the responsible person or organization.
+
+### Extract when
+Create an Attribution only when the text explicitly identifies an accountable person, author group, institution, laboratory, project, or authority in relation to a Claim, Statement, DataSet, Method, or Reference.
+
+### Do not extract when
+Do not create an Attribution for vague agency such as “researchers believe” or “it is known” when no accountable source is identifiable. Do not infer authorship from document metadata unless the extraction passage explicitly supports that attribution.
+
+### Relations
+In this schema, an Attribution may `mp_supports` the Representation whose provenance/responsibility it qualifies, reflecting the Micropublication minimal-support interpretation of attribution.
+
+### Example
+“According to the NOM-Lab at Southwest University, DOM fluorescence was measured using EEM spectroscopy.” -> Attribution[NOM-Lab], supporting the relevant Method/DataSet/Statement representation."""@en .
+
+prov:Activity a owl:Class ;
+    rdfs:label "activity"@en ;
+    rdfs:comment "PROV activity / process."@en ;
+    rdfs:subClassOf bfo:0000015 .
+
+prov:Plan a owl:Class ;
+    rdfs:label "PROV plan"@en ;
+    rdfs:comment "PROV-O plan entity."@en ;
+    rdfs:subClassOf prov:Entity .
+
+whu:EBM a owl:Class ;
+    rdfs:label "Environment & Evidence Background Module"@en ;
+    rdfs:comment "Top-level semantic grouping for environment, specimen collection and preprocessing. It is not materialized as an operational KG instance."@en ;
+    rdfs:subClassOf whu:SemanticModule ;
+    owl:disjointWith whu:EEM,
+        whu:MPU .
+
+whu:ScienceEvidence a owl:Class ;
+    rdfs:label "Science Evidence"@en ;
+    rdfs:comment "Reusable composite evidence unit aggregating DataSet and Method."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty prov:hadMember ;
+            owl:someValuesFrom whu:DataSet ],
+        [ a owl:Restriction ;
+            owl:onProperty prov:hadMember ;
+            owl:someValuesFrom mp:Method ],
+        iao:0000030,
+        mp:Representation,
+        prov:Collection ;
+    owl:disjointWith whu:SupportGraph ;
+    whu:prompt """### Definition
+A `whu_ScienceEvidence` is a reusable composite evidence unit that binds at least one DataSet with the Method used to produce or analyze it in an explicit argumentative context. It bridges EEM experimental-process representation and MPU argumentation.
+
+### Extract when
+Create ScienceEvidence only when the passage contains (1) identifiable data/results, (2) the relevant method or analytical basis, and (3) an explicit or unambiguous argumentative role supporting or challenging a Claim/Statement. Raw data alone are a DataSet, not ScienceEvidence.
+
+### Relations
+ScienceEvidence -> `prov_hadMember` -> DataSet/Method. It may `mp_supports`/`mp_challenges` an explicit Claim or Statement. In this BAE schema it may also `mp_supports`/`mp_challenges` a SupportGraph to encode the evidence polarity within that graph; membership in the SupportGraph is separately represented by `prov_hadMember`.
+
+### Extraction boundary
+`WHU_HASORIGINALTEXT` should be the smallest contiguous span containing the evidential content and the argumentative connector. Do not infer ScienceEvidence solely from co-occurrence of a Method and DataSet.
+
+### Example
+“CVAFS measurements showed a 42% decrease in grain MeHg, supporting the biochar-remediation hypothesis.” -> ScienceEvidence[CVAFS evidence of reduced grain MeHg]."""@en .
+
+iao:0000027 a owl:Class ;
+    rdfs:label "data item"@en ;
+    rdfs:comment "IAO data item."@en ;
+    rdfs:subClassOf iao:0000030 ;
+    whu:prompt """### Definition
+An `iao_DataItem` is an individually reportable information-content item contained within a DataSet, including categorical records, counts, concentrations, statistical summaries, or other data records. `iao_ScalarMeasurementDatum` is used for the more specific single-value-plus-unit case.
+
+### Extract when
+Create a DataItem when a distinct reportable record is present but cannot or should not be represented as a single scalar measurement datum.
+
+### Relations
+DataSet -> `dcterms_hasPart` -> DataItem; DataItem may -> `iao_is_about` -> TargetVariable.
+
+### Example
+“Soil pH was classified as acidic, neutral, or alkaline across sites.” -> DataItem[pH classification]."""@en .
+
+p-plan:Step a owl:Class ;
+    rdfs:label "P-PLAN step"@en ;
+    rdfs:comment "P-PLAN step; BAE ResearchStep specializes this class."@en .
+
+prov:Location a owl:Class ;
+    rdfs:label "location"@en ;
+    rdfs:comment "PROV location; BAE EnvironmentFeature specializes this."@en .
+
+whu:EEM a owl:Class ;
+    rdfs:label "Experiment Evidence Module"@en ;
+    rdfs:comment "Top-level semantic grouping for biochemical/computational experiments and data generation. It is not materialized as an operational KG instance."@en ;
+    rdfs:subClassOf whu:SemanticModule ;
+    owl:disjointWith whu:MPU .
+
+whu:Goal a owl:Class ;
+    rdfs:label "Goal"@en ;
+    rdfs:comment "Explicit scientific objective represented as information content."@en ;
+    rdfs:subClassOf iao:0000030,
+        prov:Entity ;
+    owl:disjointWith whu:Software,
+        whu:TargetVariable ;
+    whu:prompt """### Definition
+A `whu_Goal` is an explicitly stated scientific objective of a BioChemical or Computational Experiment.
+
+### Extract when
+Create a Goal only when an objective is linguistically supported, e.g., “to quantify”, “to assess”, “to compare”, “to determine”, or “to predict”.
+
+### Do not extract when
+Do not convert broad background motivation or an inferred purpose into a Goal.
+
+### Relations
+Experiment -> `whu_hasGoal` -> Goal; Goal -> `whu_hasTarget` -> TargetVariable.
+
+### Example
+“To quantify Hg concentration in rice grain.” -> Goal[quantify Hg concentration in rice grain]."""@en .
+
+whu:SupportGraph a owl:Class ;
+    rdfs:label "Support Graph"@en ;
+    rdfs:comment "Claim-centered argumentative collection."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty prov:hadMember ;
+            owl:someValuesFrom mp:Claim ],
+        iao:0000030,
+        mp:Representation,
+        prov:Collection ;
+    whu:prompt """### Definition
+A `whu_SupportGraph` is a mid-level argumentative aggregate organized around one focal `mp_Claim`. It is modeled as a Representation, information-content entity, and `prov:Collection`.
+
+### Extract/construct when
+Create one for a focal Claim that has explicit supporting or challenging argumentative material. The SupportGraph organizes the Claim together with relevant Statements, Attributions, References, and ScienceEvidence.
+
+### Relations
+SupportGraph -> `prov_hadMember` -> Claim/Statement/Attribution/Reference/ScienceEvidence. ScienceEvidence may `mp_supports`/`mp_challenges` the SupportGraph to encode its polarity with respect to the graph’s focal Claim. `prov_hadMember` records membership only; it does not itself encode argumentative polarity.
+
+### Example
+A Claim about biochar reducing MeHg may be represented by one SupportGraph containing the Claim, supporting ScienceEvidence, cited References, and explanatory Statements."""@en .
+
+whu:SupportMaterial a owl:Class ;
+    rdfs:label "Support Material"@en ;
+    rdfs:comment "Abstract category for physical supporting resources such as devices and reagents."@en ;
+    rdfs:subClassOf whu:ResearchMaterial .
+
+bfo:0000040 a owl:Class ;
+    rdfs:label "material entity"@en ;
+    rdfs:comment "BFO material entity."@en .
+
+envo:00010483 a owl:Class ;
+    rdfs:label "environmental material"@en ;
+    rdfs:comment "ENVO environmental material."@en ;
+    rdfs:subClassOf bfo:0000040,
+        prov:Entity ;
+    whu:prompt """### Definition
+`envo_EnvironmentMaterial` is the Neo4j schema label used here for an ENVO-aligned environmental material: a material matrix or medium such as soil, sediment, water, air, or particulate matter.
+
+### Extract when
+Create an EnvironmentMaterial when the text explicitly names the environmental substance or matrix from which specimens are collected or with which they interact.
+
+### Distinguish from
+Do not use this class for a bounded site or environmental setting; use `whu_EnvironmentFeature`. Do not use it for the collected sample itself; use `whu_Specimen`.
+
+### Relations
+`whu_EnvironmentFeature -> bfo_has_part -> envo_EnvironmentMaterial`; a Specimen may `prov_wasDerivedFrom` the material; the material may `bfo_has_part` a `whu_ChemicalEntity`.
+
+### Example
+“Surface soil was collected from the paddy field.” -> EnvironmentFeature[paddy field] has_part EnvironmentMaterial[surface soil]."""@en .
+
+iao:0000032 a owl:Class ;
+    rdfs:label "scalar measurement datum"@en ;
+    rdfs:comment "IAO scalar measurement datum."@en ;
+    rdfs:subClassOf iao:0000109 ;
+    whu:prompt """### Definition
+An `iao_ScalarMeasurementDatum` is a scalar measurement datum represented by a single numeric magnitude together with its measurement unit; it is treated as a subtype of `iao_DataItem`.
+
+### Extract when
+Use this class when the passage reports a specific scalar value such as “28.4 ng/g”, optionally with an explicit comparator. If the record is categorical, composite, or not reducible to one scalar value plus unit, use `iao_DataItem`.
+
+### Relations
+Link to the measured/analyzed `whu_TargetVariable` via `iao_is_about`. A DataSet contains DataItem-level records via `dcterms_hasPart`.
+
+### Example
+“Mean THg concentration was 28.4 ng/g.” -> ScalarMeasurementDatum[value=28.4, unit=ng/g] is_about TargetVariable[THg concentration]."""@en .
+
+obi:0100026 a owl:Class ;
+    rdfs:label "organism"@en ;
+    rdfs:comment "OBI organism."@en ;
+    rdfs:subClassOf bfo:0000040,
+        prov:Entity ;
+    whu:prompt """### Definition
+`obi_organism` is the current technical schema label for a living biological source explicitly mentioned in the paper, such as a plant, animal, or microorganism from which a specimen is obtained or whose environmental location is relevant.
+
+### Extract when
+Create an organism node when a living source is explicitly identified, rather than only a collected tissue/sample or an environmental material.
+
+### Relations
+Specimen -> `prov_wasDerivedFrom` -> organism; organism -> `prov_atLocation` -> EnvironmentFeature; organism -> `bfo_has_part` -> ChemicalEntity when the text explicitly describes a constituent present in the organism.
+
+### Example
+“Rice plants grown in the paddy field were sampled for grain and root tissue.” -> organism[rice plant]; Specimen[grain/root] wasDerivedFrom organism."""@en .
+
+mp:Claim a owl:Class ;
+    rdfs:label "claim"@en ;
+    rdfs:comment "Focal argumentative proposition."@en ;
+    rdfs:subClassOf mp:Statement ;
+    whu:prompt """### Definition
+An `mp_Claim` is a principal scientific assertion that functions as a focal proposition in the argumentation structure. It is more central and argumentative than a general `mp_Statement`.
+
+### Extract when
+Create a Claim when the passage explicitly presents a principal conclusion, hypothesis, interpretation, or scientific assertion that is supported or challenged by evidence or other propositions.
+
+### Do not extract when
+Use `mp_Statement` for ordinary factual observations, contextual assertions, or propositions that are not functioning as a focal argumentative claim.
+
+### Relations
+Claims may receive `mp_supports`/`mp_challenges` from DataSet, Statement, Reference, ScienceEvidence, or other allowed Representations according to the potential schema.
+
+### Example
+“Modified biochar significantly reduced MeHg production in paddy soil.” -> Claim[modified biochar reduces MeHg production]."""@en .
+
+mp:Reference a owl:Class ;
+    rdfs:label "reference"@en ;
+    rdfs:comment "Cited bibliographic or dataset source."@en ;
+    rdfs:subClassOf mp:Representation ;
+    owl:disjointWith mp:Data,
+        mp:Method,
+        mp:Statement ;
+    whu:prompt """### Definition
+`mp_References` is the Neo4j-compatible technical label used in this schema for the canonical Micropublication class `mp:Reference`. A Reference represents an explicitly cited external bibliographic source, dataset citation, DOI, URL, or other identifiable source record.
+
+### Extract when
+Create one Reference per explicitly identifiable cited source, including author–year citations, numbered citations, DOI/URL references, or a bibliographic entry linked to the current passage.
+
+### Do not extract when
+Do not create a Reference for vague phrases such as “previous studies” unless an identifiable source is provided. Do not merge multiple cited works into one Reference node.
+
+### Relations
+Use `cito_isCitedBy` from the Reference to the Representation that cites it. Use `mp_supports` to a Claim or Statement only when the cited source is explicitly invoked as backing for that proposition; a neutral citation alone does not imply support.
+
+### Example
+“Biochar can reduce Hg bioavailability (Smith et al., 2020).” -> Reference[Smith et al., 2020]; Reference `cito_isCitedBy` Statement/Claim; add `mp_supports` only if the text uses the source as evidential backing."""@en .
+
+prov:Collection a owl:Class ;
+    rdfs:label "collection"@en ;
+    rdfs:comment "PROV collection."@en ;
+    rdfs:subClassOf prov:Entity .
+
+prov:hadMember a owl:ObjectProperty ;
+    rdfs:label "had member"@en ;
+    rdfs:comment "Collection membership."@en ;
+    rdfs:domain prov:Collection ;
+    rdfs:range prov:Entity ;
+    whu:prompt """### Definition
+PROV-O collection-membership relation used to aggregate components into BAE evidence and argumentation collections.
+
+### Allowed schema patterns
+- ScienceEvidence -> DataSet
+- ScienceEvidence -> Method
+- SupportGraph -> Claim
+- SupportGraph -> Statement
+- SupportGraph -> Attribution
+- SupportGraph -> Reference
+- SupportGraph -> ScienceEvidence
+
+### Semantics
+This relation encodes membership only. It does not encode positive/negative argumentative polarity; use `mp_supports` or `mp_challenges` for polarity.
+
+### Example
+ScienceEvidence hadMember DataSet; ScienceEvidence hadMember Method."""@en .
+
+whu:MPU a owl:Class ;
+    rdfs:label "Micropublication Argumentation Unit"@en ;
+    rdfs:comment "Top-level semantic grouping for scientific evidence and argumentation. It is not materialized as an operational KG instance."@en ;
+    rdfs:subClassOf whu:SemanticModule .
+
+whu:Reagent a owl:Class ;
+    rdfs:label "Reagent"@en ;
+    rdfs:comment "Physical/chemical reagent used in a research step."@en ;
+    rdfs:subClassOf whu:SupportMaterial ;
+    whu:prompt """### Definition
+A `whu_Reagent` is a chemical or biological reagent, standard, solution, reference material, buffer, or other consumable explicitly used in a recorded research step.
+
+### Extract when
+Create a Reagent when the passage names the reagent or gives identifying details such as concentration, grade, supplier, or formulation.
+
+### Relations
+Link it from the using `whu_ResearchStep` via `whu_declaredUsed`.
+
+### Example
+“Samples were digested with 65% suprapure HNO3.” -> Reagent[65% suprapure HNO3]."""@en .
+
+mp:Data a owl:Class ;
+    rdfs:label "data"@en ;
+    rdfs:comment "Micropublication data representation."@en ;
+    rdfs:subClassOf mp:Representation ;
+    owl:disjointWith mp:Statement .
+
+whu:ChemicalEntity a owl:Class ;
+    rdfs:label "Chemical Entity"@en ;
+    rdfs:comment "Physical chemical substance; normalization to ChEBI may be performed downstream."@en ;
+    rdfs:subClassOf whu:ResearchMaterial ;
+    whu:prompt """### Definition
+A `whu_ChemicalEntity` is a specific chemical element, compound, ion, or chemically identifiable substance explicitly named in the paper, with normalization to ChEBI where appropriate.
+
+### Extract when
+Create a ChemicalEntity when the text names the underlying substance itself (e.g., Hg, MeHg, Pb, Cd), not merely a measured variable such as “Hg concentration”.
+
+### Relations
+Specimen, organism, or EnvironmentMaterial may `bfo_has_part` a ChemicalEntity when the text supports physical presence. TargetVariable -> `iao_is_about` -> ChemicalEntity links a measured/analyzed quantity to its underlying substance.
+
+### Example
+“Total mercury and methylmercury concentrations were measured.” -> ChemicalEntity[Hg], ChemicalEntity[MeHg]; separate TargetVariables represent their concentrations."""@en .
+
+whu:Device a owl:Class ;
+    rdfs:label "Device"@en ;
+    rdfs:comment "Physical scientific instrument or apparatus."@en ;
+    rdfs:subClassOf whu:SupportMaterial ;
+    owl:disjointWith whu:Reagent ;
+    whu:prompt """### Definition
+A `whu_Device` is a scientific instrument, measurement device, processing apparatus, or laboratory tool explicitly used in a ResearchStep.
+
+### Extract when
+Create a Device when a concrete instrument/tool is named. Capture brand/manufacturer, model, and serial number only if explicitly stated.
+
+### Relations
+Link from the using `whu_ResearchStep` via `whu_declaredUsed`.
+
+### Example
+“Samples were analyzed using an Agilent 7700 ICP-MS.” -> Device[Agilent 7700 ICP-MS]."""@en .
+
+whu:SemanticModule a owl:Class ;
+    rdfs:label "BAE semantic module"@en ;
+    rdfs:comment "Abstract grouping for EBM/EEM/MPU documentation views. Not materialized as KG instances."@en .
+
+whu:Software a owl:Class ;
+    rdfs:label "Software"@en ;
+    rdfs:comment "Software is treated as information content rather than physical ResearchMaterial."@en ;
+    rdfs:subClassOf iao:0000030,
+        prov:Entity ;
+    owl:disjointWith whu:TargetVariable ;
+    whu:prompt """### Definition
+A `whu_Software` entity represents named software, a software package, computational environment, or analysis application explicitly used in a computational research step.
+
+### Extract when
+Create Software when a software name is explicit; capture vendor/brand and version only when stated.
+
+### Relations
+Link from the using `whu_ResearchStep` via `whu_declaredUsed`.
+
+### Example
+“Statistical analyses were performed in R version 4.2.2.” -> Software[R], version=4.2.2."""@en .
+
+whu:SpecimenCollection a owl:Class ;
+    rdfs:label "Specimen Collection"@en ;
+    rdfs:comment "Mid-level collection plan."@en ;
+    rdfs:subClassOf iao:0000030,
+        p-plan:Plan,
+        prov:Entity ;
+    owl:disjointWith whu:BioChemicalExperiment,
+        whu:ComputationalExperiment,
+        whu:SpecimenPreprocessing ;
+    whu:prompt """### Definition
+A `whu_SpecimenCollection` is a mid-level sampling Plan composed of one or more collection-type `whu_ResearchStep` instances and representing acquisition of a physical specimen from an environmental or biological source.
+
+### Extract when
+Create one when the passage describes a coherent sampling/collection procedure, including site, depth, timing, design, or sampling method.
+
+### Relations
+Collection ResearchSteps belong via `p_plan_isStepOfPlan` and produce `whu_Specimen` via `whu_declaredOutput`. The collection Plan links to its environmental context via `whu_hasContext`. At the plan-level shortcut view, an extracted Specimen may link back to the collection Plan through `p_plan_isOutputVarOf`.
+
+### Example
+“Topsoil (0–20 cm) was collected from paddy fields using a stainless-steel auger.” -> SpecimenCollection; SpecimenCollection hasContext EnvironmentFeature[paddy field]; ResearchStep[collection] declaredOutput Specimen[topsoil]."""@en .
+
+whu:TargetVariable a owl:Class ;
+    rdfs:label "Target Variable"@en ;
+    rdfs:comment "Measured, analyzed or predicted variable used to connect Goal, Data and ChemicalEntity."@en ;
+    rdfs:subClassOf iao:0000030,
+        prov:Entity ;
+    whu:prompt """### Definition
+A `whu_TargetVariable` is the specific measurable, analyzable, or predictable quantity toward which a research Goal is directed, such as Hg concentration, MeHg content, methylation rate, or a model response variable.
+
+### Extract when
+Create a TargetVariable when the passage names a quantity or variable being measured, analyzed, compared, or predicted. Keep it distinct from the underlying substance itself.
+
+### Relations
+`whu_Goal -> whu_hasTarget -> whu_TargetVariable`; `whu_TargetVariable -> iao_is_about -> whu_ChemicalEntity`; DataSet/DataItem/ScalarMeasurementDatum may `iao_is_about` the TargetVariable at the granularity supported by the text.
+
+### Example
+“Hg concentration in rice grain was quantified.” -> TargetVariable[Hg concentration] is_about ChemicalEntity[Hg]."""@en .
+
+whu:ResearchMaterial a owl:Class ;
+    rdfs:label "Research Material"@en ;
+    rdfs:comment "Abstract BAE category for physical entities collected, processed, analyzed or used in research."@en ;
+    rdfs:subClassOf bfo:0000040,
+        prov:Entity .
+
+mp:Method a owl:Class ;
+    rdfs:label "method"@en ;
+    rdfs:comment "Named scientific method as information content."@en ;
+    rdfs:subClassOf mp:Representation ;
+    owl:disjointWith mp:Data,
+        mp:Statement ;
+    whu:prompt """### Definition
+An `mp_Method` is a named or describable scientific method, protocol, analytical technique, statistical procedure, or standard represented as information content rather than as a physical device.
+
+### Extract when
+Create a Method for methods such as ICP-MS analysis, EPA 3052 digestion protocol, PCA, regression, or a named standard/procedure.
+
+### Distinguish from
+Use `whu_Device` for the physical instrument and `whu_Software` for the software implementation.
+
+### Relations
+Link from the using ResearchStep via `whu_declaredUsed`. A Method may be aggregated with a DataSet in `whu_ScienceEvidence` via `prov_hadMember`.
+
+### Example
+“Digestion followed EPA 3052.” -> Method[EPA 3052]."""@en .
+
+p-plan:Plan a owl:Class ;
+    rdfs:label "P-PLAN plan"@en ;
+    rdfs:comment "P-PLAN plan; BAE mid-level plans specialize this."@en ;
+    rdfs:subClassOf prov:Plan .
+
+whu:SpecimenPreprocessing a owl:Class ;
+    rdfs:label "Specimen Preprocessing"@en ;
+    rdfs:comment "Mid-level plan for specimen preparation."@en ;
+    rdfs:subClassOf iao:0000030,
+        p-plan:Plan,
+        prov:Entity ;
+    owl:disjointWith whu:BioChemicalExperiment,
+        whu:ComputationalExperiment ;
+    whu:prompt """### Definition
+A `whu_SpecimenPreprocessing` is a mid-level preparation Plan composed of one or more preprocessing-type ResearchSteps that transform a raw `whu_Specimen` into a `whu_ProcessedSpecimen`.
+
+### Extract when
+Create one for coherent preparation procedures such as drying, grinding, sieving, filtration, preservation, digestion, or extraction before downstream analysis.
+
+### Relations
+ResearchSteps belong via `p_plan_isStepOfPlan`; they use `whu_declaredInput` for the raw Specimen and `whu_declaredOutput` for the ProcessedSpecimen. `whu_fellow(X,Y)` means the upstream SpecimenCollection is Y when preprocessing X follows collection.
+
+### Example
+“Soils were air-dried, ground, and passed through a 2-mm sieve.” -> SpecimenPreprocessing with corresponding ResearchStep(s)."""@en .
+
+mp:Statement a owl:Class ;
+    rdfs:label "statement"@en ;
+    rdfs:comment "Evaluable proposition; Claim is a specialized Statement."@en ;
+    rdfs:subClassOf mp:Representation ;
+    whu:prompt """### Definition
+An `mp_Statement` is a complete proposition with evaluable semantic content, such as an observation, factual assertion, interpretation, or intermediate conclusion. A Claim is a specialized focal Statement.
+
+### Extract when
+Create a Statement when the passage expresses a complete proposition that may participate in support/challenge relations but is not best treated as the central Claim.
+
+### Do not extract when
+Do not create a Statement for topic fragments, headings, isolated noun phrases, or vague mentions without propositional content.
+
+### Example
+“Cadmium concentrations were higher in roots than in grains.” -> Statement[cadmium concentrations were higher in roots than grains]."""@en .
+
+whu:BioChemicalExperiment a owl:Class ;
+    rdfs:label "Bio-Chemical Experiment"@en ;
+    rdfs:comment "Mid-level biochemical/analytical experiment plan."@en ;
+    rdfs:subClassOf iao:0000030,
+        p-plan:Plan,
+        prov:Entity ;
+    owl:disjointWith whu:ComputationalExperiment ;
+    whu:prompt """### Definition
+A `whu_BioChemical_Experiment` is a mid-level planned experimental module in which physical/biological specimens are measured, assayed, chemically treated, or otherwise analyzed to generate scientific data.
+
+### Extract when
+Create one for a coherent laboratory/biochemical/analytical experimental unit containing one or more `whu_ResearchStep` instances.
+
+### Relations
+ResearchSteps belong via `p_plan_isStepOfPlan`; the Experiment may have a `whu_Goal`; its steps use Method/Device/Reagent through `whu_declaredUsed`, consume Specimen/ProcessedSpecimen through `whu_declaredInput`, and generate DataSet/ProcessedSpecimen through `whu_declaredOutput`. `whu_fellow(X,Y)` means Y is the immediate upstream predecessor/provider of X.
+
+### Example
+“THg and MeHg were quantified by CVAFS after acid digestion.” -> BioChemical_Experiment containing digestion/measurement ResearchSteps."""@en .
+
+whu:DataSet a owl:Class ;
+    rdfs:label "BAE scientific dataset"@en ;
+    rdfs:comment "Structured scientific dataset and evidential data representation."@en ;
+    rdfs:subClassOf iao:0000100,
+        mp:Data,
+        prov:Entity ;
+    whu:prompt """### Definition
+A `whu_DataSet` is a scientific data collection generated by or used in one or more ResearchSteps. In BAE it carries both dataset semantics and an evidential/argumentative role.
+
+### Extract when
+Create a DataSet when the passage explicitly reports a coherent data artifact such as a table, figure, measurement set, spectrum set, modeled result set, or analysis output.
+
+### Relations
+ResearchStep -> `whu_declaredInput`/`whu_declaredOutput` -> DataSet. At the plan-level shortcut view, a DataSet may `p_plan_isOutputVarOf` a Computational_Experiment where the text directly presents the experiment-level output. DataSet -> `dcterms_hasPart` -> DataItem.
+
+`iao_is_about` may be used at two complementary levels:
+- DataSet -> Reagent / Specimen / ProcessedSpecimen, when the dataset concerns those research resources;
+- DataSet -> TargetVariable, when the dataset concerns a measured/analyzed target variable.
+DataItem/ScalarMeasurementDatum may also `iao_is_about` TargetVariable at finer granularity.
+
+ScienceEvidence -> `prov_hadMember` -> DataSet. A DataSet may directly `mp_supports`/`mp_challenges` a Claim or Statement only when the text explicitly establishes that argumentative relation.
+
+### Example
+“Figure 4 reports MeHg concentrations in rice tissues after biochar treatment.” -> DataSet[Figure 4 MeHg concentrations], which may be about the relevant Specimen and TargetVariable when those links are textually supported."""@en .
+
+whu:ComputationalExperiment a owl:Class ;
+    rdfs:label "Computational Experiment"@en ;
+    rdfs:comment "Mid-level plan for statistical, computational or modeling analysis."@en ;
+    rdfs:subClassOf iao:0000030,
+        p-plan:Plan,
+        prov:Entity ;
+    whu:prompt """### Definition
+A `whu_Computational_Experiment` is a mid-level planned analytical module for statistical, computational, modeling, or transformation procedures applied primarily to data. It is represented as a Plan/organized semantic unit, not as a single atomic step.
+
+### Extract when
+Create one when the passage describes a coherent computational analysis such as regression, PCA, ANOVA, machine learning, simulation, or statistical modeling that contains one or more `whu_ResearchStep` instances.
+
+### Relations
+ResearchStep instances belong to it via `p_plan_isStepOfPlan`, use Method/Software via `whu_declaredUsed`, and consume/produce DataSet entities via `whu_declaredInput`/`whu_declaredOutput`. `whu_fellow(X,Y)` means Y is the immediate upstream predecessor/provider of X.
+
+### Example
+“PCA and Kruskal–Wallis tests were conducted in R 4.2.2.” -> Computational_Experiment with Computational ResearchStep(s), declaredUsed Software[R 4.2.2]."""@en .
+
+whu:ProcessedSpecimen a owl:Class ;
+    rdfs:label "Processed Specimen"@en ;
+    rdfs:comment "Physical specimen after preprocessing."@en ;
+    rdfs:subClassOf whu:ResearchMaterial ;
+    owl:disjointWith whu:ChemicalEntity ;
+    whu:prompt """### Definition
+A `whu_ProcessedSpecimen` is a physical specimen after preprocessing and before or during downstream experimental analysis.
+
+### Extract when
+Create one when the text explicitly identifies a materially transformed/prepared sample such as dried soil, sieved powder, digest, extract, filtrate, or homogenized tissue.
+
+### Relations
+ProcessedSpecimen -> `prov_wasDerivedFrom` -> Specimen. It is linked to ResearchSteps through `whu_declaredOutput` (produced by preprocessing) and `whu_declaredInput` (consumed by downstream analysis). At the plan-level shortcut view, ProcessedSpecimen may `p_plan_isOutputVarOf` SpecimenPreprocessing and `p_plan_isInputVarOf` BioChemical_Experiment.
+
+### Example
+“Dried and sieved soil powder was used for Hg determination.” -> ProcessedSpecimen[dried and sieved soil powder]."""@en .
+
+whu:EnvironmentFeature a owl:Class ;
+    rdfs:label "Environment Feature"@en ;
+    rdfs:comment "Concrete bounded environmental setting/site; distinct from environmental material."@en ;
+    rdfs:subClassOf envo:00002297,
+        prov:Entity,
+        prov:Location ;
+    whu:prompt """### Definition
+A `whu_EnvironmentFeature` is a bounded, locatable environmental setting or site described in the paper, such as a specific paddy field, wetland, river reach, sampling station, or experimental field. It is aligned conceptually with ENVO environmental feature and is distinct from the material present at the site.
+
+### Extract when
+Create one when the passage identifies a concrete environmental setting/site that frames sampling, organism location, or a recorded field ResearchStep. Coordinates may be captured as properties when explicit.
+
+### Relations
+EnvironmentFeature -> `bfo_has_part` -> EnvironmentMaterial; SpecimenCollection -> `whu_hasContext` -> EnvironmentFeature; organism/ResearchStep may -> `prov_atLocation` -> EnvironmentFeature. A Specimen may also `prov_wasDerivedFrom` an EnvironmentFeature when the passage identifies the site/environmental feature itself as the provenance source and does not support a more specific material or organism source.
+
+### Example
+“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” -> EnvironmentFeature[SWU paddy field]."""@en .
+
+whu:Specimen a owl:Class ;
+    rdfs:label "Specimen"@en ;
+    rdfs:comment "Collected physical biological/environmental sample."@en ;
+    rdfs:subClassOf whu:ResearchMaterial ;
+    owl:disjointWith whu:ChemicalEntity,
+        whu:ProcessedSpecimen ;
+    whu:prompt """### Definition
+A `whu_Specimen` is a physical biological or environmental sample that has been collected for research and may be passed to downstream preparation or experiments.
+
+### Extract when
+Create a Specimen for an actually collected sample such as rice grain, fish tissue, surface soil sample, or river-water sample.
+
+### Provenance
+A Specimen may `prov_wasDerivedFrom` the source most specifically supported by the passage:
+- `whu_EnvironmentFeature` when the site/environmental feature itself is stated as the source;
+- `envo_EnvironmentMaterial` when the source matrix/substance is explicit;
+- `obi_organism` when a living biological source is explicit.
+Do not invent a more specific source than the text supports.
+
+### Relations
+ResearchSteps connect through `whu_declaredOutput` (collection) and `whu_declaredInput` (preprocessing/analysis). At the plan-level shortcut view, Specimen may `p_plan_isOutputVarOf` SpecimenCollection and `p_plan_isInputVarOf` SpecimenPreprocessing. A Specimen may also `bfo_has_part` a ChemicalEntity when physical presence is explicit.
+
+### Example
+“Soil samples were collected from the paddy field.” -> Specimen[soil samples] wasDerivedFrom EnvironmentFeature[paddy field] when no more specific source matrix is stated."""@en .
+
+whu:ResearchStep a owl:Class ;
+    rdfs:label "Research Step"@en ;
+    rdfs:comment "Paper-recorded research-step representation; not an executed prov:Activity."@en ;
+    rdfs:subClassOf iao:0000030,
+        p-plan:Step,
+        prov:Entity ;
+    whu:prompt """### Definition
+A `whu_ResearchStep` is the unified minimal semantic unit for an atomic research step recorded in the paper. It is modeled as both `p-plan:Step` and an information-content representation of the described step.
+
+### Extract when
+Create one for an explicit atomic operation belonging to one of four categories: SpecimenCollection, SpecimenProcessing, BioChemical, or Computational.
+
+### Relations
+ResearchStep -> `whu_declaredUsed` -> Method/Device/Reagent/Software; -> `whu_declaredInput`/`whu_declaredOutput` -> Specimen/ProcessedSpecimen/DataSet; -> `p_plan_isStepOfPlan` -> the corresponding mid-level Plan/Experiment; -> `p_plan_isPrecededBy` -> its immediate/explicit predecessor; and, when location is explicit, -> `prov_atLocation` -> EnvironmentFeature.
+
+BAE reuses P-PLAN for Plan/Step organization and ordering. Domain-specific input/output links are represented directly by `whu_declaredInput` and `whu_declaredOutput`; P-PLAN `hasInputVar/hasOutputVar` are not used in this extraction schema.
+
+`p_plan_correspondsToStep` is reserved for cases where an external provenance stage provides an explicit executed `prov:Activity`.
+
+### Example
+“After sieving, soil was digested with HNO3 and Hg was measured by CVAFS.” -> separate ResearchSteps for sieving, digestion, and measurement, linked by `p_plan_isPrecededBy`."""@en .
+
+mp:Representation a owl:Class ;
+    rdfs:label "representation"@en ;
+    rdfs:comment "Micropublication representation (information content)."@en ;
+    rdfs:subClassOf iao:0000030,
+        prov:Entity .
+
+iao:0000030 a owl:Class ;
+    rdfs:label "information content entity"@en ;
+    rdfs:comment "IAO information content entity."@en ;
+    rdfs:subClassOf bfo:0000031 .
+
+prov:Entity a owl:Class ;
+    rdfs:label "entity"@en ;
+    rdfs:comment "PROV entity."@en .
+
+_:N0591e041fb584095968f026548f3bbe3 rdf:first p-plan:Step ;
+    rdf:rest ( prov:Entity prov:Location whu:SemanticModule ) .
+
+_:N8311300999b74cf58afa610dc726a005 rdf:first iao:0000030 ;
+    rdf:rest ( whu:ResearchMaterial p-plan:Plan p-plan:Step prov:Entity prov:Location whu:SemanticModule ) .
+
+_:Nbc9f8146daf44ba5a2d1442f954ed145 a owl:Class ;
+    owl:unionOf _:N8311300999b74cf58afa610dc726a005 .
+

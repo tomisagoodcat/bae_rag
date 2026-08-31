@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>KG Build Pipeline</title>
+
+  <link rel="stylesheet" href="/static/metro.css" />
+
+</head>
+
+<body>
+
+  <header class="app-header">
+
+    <h1>KG Build Pipeline</h1>
+
+    <p class="subtitle">BAE knowledge graph extraction console</p>
+
+  </header>
+
+
+
+  <main class="app-main">
+
+    <section class="stats-row">
+
+      <article class="tile tile-a1" id="tile-a1">
+
+        <h2>Neo4j Database</h2>
+
+        <div class="stat-grid">
+
+          <div class="stat">
+
+            <span class="stat-value" id="neo4j-nodes">—</span>
+
+            <span class="stat-label">Nodes</span>
+
+          </div>
+
+          <div class="stat">
+
+            <span class="stat-value" id="neo4j-rels">—</span>
+
+            <span class="stat-label">Relationships</span>
+
+          </div>
+
+        </div>
+
+        <button type="button" class="link-btn" id="refresh-stats">Refresh</button>
+
+      </article>
+
+
+
+      <article class="tile tile-a2" id="tile-a2">
+
+        <h2>Last Build Result</h2>
+
+        <div class="result-grid" id="build-result">
+
+          <div class="result-item"><span class="result-label">Duration</span><span class="result-value" id="res-duration">—</span></div>
+
+          <div class="result-item"><span class="result-label">Stages</span><span class="result-value" id="res-stages">—</span></div>
+
+          <div class="result-item"><span class="result-label">Entities</span><span class="result-value" id="res-entities">—</span></div>
+
+          <div class="result-item"><span class="result-label">Relations</span><span class="result-value" id="res-relations">—</span></div>
+
+          <div class="result-item"><span class="result-label">Documents</span><span class="result-value" id="res-documents">—</span></div>
+
+          <div class="result-item"><span class="result-label">Chunks</span><span class="result-value" id="res-chunks">—</span></div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+
+    <section class="papers-section tile">
+
+      <h2>Papers</h2>
+
+      <div class="papers-grid">
+
+        <div class="papers-item">
+
+          <span class="papers-label">To extract</span>
+
+          <span class="papers-value" id="papers-total">—</span>
+
+        </div>
+
+        <div class="papers-item">
+
+          <span class="papers-label">Progress</span>
+
+          <span class="papers-value" id="papers-progress">—</span>
+
+        </div>
+
+        <div class="papers-item">
+
+          <span class="papers-label">Result</span>
+
+          <span class="papers-value" id="papers-result">—</span>
+
+        </div>
+
+      </div>
+
+      <p class="papers-dir" id="papers-dir"></p>
+
+      <div class="papers-actions" id="papers-actions">
+
+        <button type="button" class="btn btn-secondary btn-small" id="btn-select-all">Select All</button>
+
+        <button type="button" class="btn btn-secondary btn-small" id="btn-deselect-all">Deselect All</button>
+
+        <span class="papers-selected" id="papers-selected">Selected: 0 / 0</span>
+
+      </div>
+
+      <div class="papers-list" id="papers-list"></div>
+
+    </section>
+
+
+
+    <section class="extract-mode-section tile">
+
+      <h2>Extraction Mode</h2>
+
+      <div class="mode-grid" id="extract-mode-grid">
+
+        <label class="mode-tile">
+
+          <input type="radio" name="extract_mode" value="mid" checked />
+
+          <span class="mode-body">
+
+            <span class="mode-title">Extract Mid</span>
+
+            <span class="mode-desc">Mid-tier schema only + Mid Quality Gate (validate / Qwen review / targeted re-extract).</span>
+
+          </span>
+
+        </label>
+
+        <label class="mode-tile">
+
+          <input type="radio" name="extract_mode" value="expand_mid" />
+
+          <span class="mode-body">
+
+            <span class="mode-title">Extract Low</span>
+
+            <span class="mode-desc">Expand Validated Mid (mid_gate_status=PASS): parent-scoped mid2low/low, SHACL repair, cross-parent link. No mid rebuild.</span>
+
+          </span>
+
+        </label>
+
+        <label class="mode-tile">
+
+          <input type="radio" name="extract_mode" value="mid_then_low" />
+
+          <span class="mode-body">
+
+            <span class="mode-title">Extract Mid + Low</span>
+
+            <span class="mode-desc">Run mid build + mid gate, then hierarchical low_expand on PASS docs in the same pipeline.</span>
+
+          </span>
+
+        </label>
+
+        <label class="mode-tile">
+
+          <input type="radio" name="extract_mode" value="low_and_all" />
+
+          <span class="mode-body">
+
+            <span class="mode-title">Extract Low and All (deprecated)</span>
+
+            <span class="mode-desc">Full potential_schema section-wide. Mid gate skipped. Isolated from parent-scoped low_expand.</span>
+
+          </span>
+
+        </label>
+
+      </div>
+
+      <p class="hint" id="extract-mode-hint">Mid mode: build_kg uses schema_tiers=[mid] and runs mid_quality_gate.</p>
+
+    </section>
+
+
+
+    <section class="stages-section">
+
+      <h2>Pipeline Stages</h2>
+
+      <div class="stage-grid" id="stage-grid"></div>
+
+      <p class="hint">Cancel takes effect between stages only (not mid-document LLM extraction).</p>
+
+    </section>
+
+
+
+    <section class="controls-section">
+
+      <div class="control-buttons">
+
+        <button type="button" class="btn btn-primary" id="btn-start">Start Build</button>
+
+        <button type="button" class="btn btn-secondary" id="btn-cancel" disabled>Cancel Build</button>
+
+      </div>
+
+      <div class="progress-wrap">
+
+        <div class="progress-bar">
+
+          <div class="progress-fill" id="progress-fill"></div>
+
+        </div>
+
+        <span class="progress-text" id="progress-text">0 / 0 stages</span>
+
+      </div>
+
+    </section>
+
+
+
+    <section class="log-section">
+
+      <h2>Build Log</h2>
+
+      <pre class="log-panel" id="log-panel"></pre>
+
+    </section>
+
+  </main>
+
+
+
+  <div id="modal-overlay" class="modal hidden" role="dialog" aria-modal="true">
+
+    <div class="modal-box">
+
+      <h3 id="modal-title"></h3>
+
+      <p id="modal-body"></p>
+
+      <button type="button" class="btn btn-primary" id="modal-close">OK</button>
+
+    </div>
+
+  </div>
+
+
+
+  <script src="/static/app.js"></script>
+
+</body>
+
+</html>
+
+

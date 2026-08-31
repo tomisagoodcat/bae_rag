@@ -1,0 +1,832 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix whu: <https://bdi.whu.edu.cn/> .
+@prefix mp: <http://purl.org/mp#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix p-plan: <http://purl.org/net/p-plan#> .
+@prefix bfo: <http://purl.obolibrary.org/obo/BFO_> .
+@prefix iao: <http://purl.obolibrary.org/obo/IAO_> .
+@prefix envo: <http://purl.obolibrary.org/obo/ENVO_> .
+@prefix obi: <http://purl.obolibrary.org/obo/OBI_> .
+@prefix cito: <http://purl.org/spar/cito/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#################################################################
+# BAE Low-level SHACL Shapes v1.0
+#
+# Source of truth:
+#   1) current potential_schema JSON supplied for low-stage design
+#   2) BAE_v3_clean_schema_aligned.ttl
+#   3) BAE_mid_shapes_v1.ttl conventions
+#
+# Validation stage:
+#   Run AFTER validated mid-level extraction and low/mid2low expansion.
+#
+# Design principles:
+#   - Prefer SHACL Core; use SHACL-SPARQL only for conditional / graph-level
+#     constraints (connectivity, cycle checks, parent-scoped conditions).
+#   - Violation = hard structural failure; Warning = review candidate.
+#   - Never repair by fabricating unsupported entities or relations.
+#   - H08 ("no hallucinated surface form") is intentionally omitted by user request.
+#   - Final-only hard constraints are explicitly deactivated and should be enabled
+#     only after cross-parent linking / final graph assembly.
+#################################################################
+
+whu:BAE_Low_SHACL_v1
+    a owl:Ontology ;
+    rdfs:label "BAE Low-level SHACL Shapes v1.0"@en ;
+    rdfs:comment "基层及 mid2low 展开后的结构验证规则。以当前 potential_schema 为执行基准，并与 BAE_v3_clean_schema_aligned.ttl 的正式 RDF IRI 对齐。Violation 为硬约束；Warning 用于选择性复核/修复。"@zh .
+
+#################################################################
+# H07 — Low-level entity must have original-text provenance
+# SHACL Core
+#################################################################
+
+whu:L00_LowLevelOriginalTextShape
+    a sh:NodeShape ;
+    sh:targetClass mp:Attribution ;
+    sh:targetClass mp:Reference ;
+    sh:targetClass mp:Claim ;
+    sh:targetClass mp:Statement ;
+    sh:targetClass mp:Method ;
+    sh:targetClass whu:ResearchStep ;
+    sh:targetClass whu:Device ;
+    sh:targetClass whu:Reagent ;
+    sh:targetClass whu:Software ;
+    sh:targetClass whu:Goal ;
+    sh:targetClass whu:TargetVariable ;
+    sh:targetClass whu:ChemicalEntity ;
+    sh:targetClass whu:Specimen ;
+    sh:targetClass whu:ProcessedSpecimen ;
+    sh:targetClass whu:DataSet ;
+    sh:targetClass envo:00010483 ;
+    sh:targetClass obi:0100026 ;
+    sh:targetClass iao:0000027 ;
+    sh:targetClass iao:0000032 ;
+    sh:name "H07 Low-level original-text provenance"@en ;
+    sh:description "每个基层抽取实例必须具有唯一、非空的 whu:hasOriginalText，作为当前实体的直接文本证据锚点。本规则检查节点级来源；关系级 provenance 若未 RDF-star/reification 化，不能由本 Shape 直接检查。"@zh ;
+    sh:property [
+        sh:path whu:hasOriginalText ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:minLength 1 ;
+        sh:severity sh:Violation ;
+        sh:message "H07: 基层实体缺少唯一、非空的 whu:hasOriginalText。"@zh
+    ] .
+
+#################################################################
+# H01 — ResearchStep must belong to exactly one legal Mid parent
+# SHACL Core
+#################################################################
+
+whu:L01_ResearchStepParentShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ResearchStep ;
+    sh:name "H01 ResearchStep parent"@en ;
+    sh:description "ResearchStep 必须且只能通过 p-plan:isStepOfPlan 归属于一个合法 Mid Parent：SpecimenCollection、SpecimenPreprocessing、BioChemicalExperiment 或 ComputationalExperiment。"@zh ;
+    sh:property [
+        sh:path p-plan:isStepOfPlan ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:or (
+            [ sh:class whu:SpecimenCollection ]
+            [ sh:class whu:SpecimenPreprocessing ]
+            [ sh:class whu:BioChemicalExperiment ]
+            [ sh:class whu:ComputationalExperiment ]
+        ) ;
+        sh:severity sh:Violation ;
+        sh:message "H01: ResearchStep 必须且只能归属于一个合法 Mid Parent。"@zh
+    ] .
+
+#################################################################
+# H01-B — ResearchStep researchType must match its Mid parent
+# Synced from BAE_low_shapes_v1.1.ttl (runtime mirror: low_validate.check_h01b).
+# Contract:
+#   - every ResearchStep must have exactly one whu:researchType;
+#   - SpecimenCollection | SpecimenProcessing | BioChemical | Computational
+#   - researchType and p-plan:isStepOfPlan parent type must be mutually consistent;
+#   - BioChemical must not attach to ComputationalExperiment (and vice versa).
+#################################################################
+
+whu:L01B_ResearchStepTypeParentConsistencyShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ResearchStep ;
+    sh:name "H01-B ResearchStep researchType-parent consistency"@en ;
+    sh:description "ResearchStep 必须具有唯一合法的 whu:researchType，且该值必须与 p-plan:isStepOfPlan 指向的 Mid Parent 类型一致。用于阻止 BioChemical 与 Computational ResearchStep 的交叉挂接。"@zh ;
+
+    sh:property [
+        sh:path whu:researchType ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:in (
+            "SpecimenCollection"
+            "SpecimenProcessing"
+            "BioChemical"
+            "Computational"
+        ) ;
+        sh:severity sh:Violation ;
+        sh:message "H01-B: ResearchStep 必须且只能具有一个合法 researchType：SpecimenCollection / SpecimenProcessing / BioChemical / Computational。"@zh
+    ] ;
+
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Violation ;
+        sh:message "H01-B: ResearchStep 的 researchType 与其 isStepOfPlan Mid Parent 类型不一致：{$this} researchType={?researchType}, parent={?parent}。"@zh ;
+        sh:select """
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+
+            SELECT $this ?parent ?researchType
+            WHERE {
+                $this p-plan:isStepOfPlan ?parent ;
+                      whu:researchType ?researchType .
+
+                {
+                    ?parent rdf:type whu:SpecimenCollection .
+                    FILTER (STR(?researchType) != "SpecimenCollection")
+                }
+                UNION
+                {
+                    ?parent rdf:type whu:SpecimenPreprocessing .
+                    FILTER (STR(?researchType) != "SpecimenProcessing")
+                }
+                UNION
+                {
+                    ?parent rdf:type whu:BioChemicalExperiment .
+                    FILTER (STR(?researchType) != "BioChemical")
+                }
+                UNION
+                {
+                    ?parent rdf:type whu:ComputationalExperiment .
+                    FILTER (STR(?researchType) != "Computational")
+                }
+            }
+        """
+    ] .
+
+#################################################################
+# H02 — Current potential_schema triple legality
+# SHACL-SPARQL
+#
+# Important:
+# - This rule validates existing structural triples against the complete current
+#   potential_schema (all tiers), because low-stage nodes coexist with mid edges
+#   that may use the same predicates.
+# - It does NOT require every allowed tuple to exist.
+#################################################################
+
+whu:L02_PotentialSchemaTripleLegalityShape
+    a sh:NodeShape ;
+    sh:targetClass envo:00010483 ;
+    sh:targetClass iao:0000027 ;
+    sh:targetClass iao:0000032 ;
+    sh:targetClass mp:Attribution ;
+    sh:targetClass mp:Claim ;
+    sh:targetClass mp:Reference ;
+    sh:targetClass mp:Statement ;
+    sh:targetClass obi:0100026 ;
+    sh:targetClass whu:BioChemicalExperiment ;
+    sh:targetClass whu:ComputationalExperiment ;
+    sh:targetClass whu:DataSet ;
+    sh:targetClass whu:EnvironmentFeature ;
+    sh:targetClass whu:Goal ;
+    sh:targetClass whu:ProcessedSpecimen ;
+    sh:targetClass whu:ResearchStep ;
+    sh:targetClass whu:ScienceEvidence ;
+    sh:targetClass whu:Specimen ;
+    sh:targetClass whu:SpecimenCollection ;
+    sh:targetClass whu:SpecimenPreprocessing ;
+    sh:targetClass whu:SupportGraph ;
+    sh:targetClass whu:TargetVariable ;
+    sh:name "H02 potential-schema triple legality"@en ;
+    sh:description "Low 阶段完成后，当前图中使用 BAE 结构谓词的 subject-predicate-object 组合必须属于当前 potential_schema 允许集合。本规则只拒绝非法组合，不要求所有合法模板均出现。"@zh ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Violation ;
+        sh:message "H02: 发现不在当前 potential_schema 中的 subject-predicate-object 组合：{$this} {?p} {?o}。"@zh ;
+        sh:select """
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX mp: <http://purl.org/mp#>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+            PREFIX bfo: <http://purl.obolibrary.org/obo/BFO_>
+            PREFIX iao: <http://purl.obolibrary.org/obo/IAO_>
+            PREFIX envo: <http://purl.obolibrary.org/obo/ENVO_>
+            PREFIX obi: <http://purl.obolibrary.org/obo/OBI_>
+            PREFIX cito: <http://purl.org/spar/cito/>
+            PREFIX dcterms: <http://purl.org/dc/terms/>
+
+            SELECT $this ?p ?o
+            WHERE {
+                $this ?p ?o .
+                FILTER (?p IN (
+                    bfo:0000051
+                    cito:isCitedBy
+                    dcterms:hasPart
+                    iao:0000136
+                    mp:challenges
+                    mp:supports
+                    p-plan:isInputVarOf
+                    p-plan:isOutputVarOf
+                    p-plan:isPrecededBy
+                    p-plan:isStepOfPlan
+                    prov:atLocation
+                    prov:hadMember
+                    prov:wasDerivedFrom
+                    whu:declaredInput
+                    whu:declaredOutput
+                    whu:declaredUsed
+                    whu:fellow
+                    whu:hasContext
+                    whu:hasGoal
+                    whu:hasTarget
+                ))
+
+                FILTER NOT EXISTS {
+                    VALUES (?allowedS ?allowedP ?allowedO) {
+                        (mp:Attribution                     mp:supports                  whu:DataSet)
+                        (mp:Attribution                     mp:supports                  mp:Method)
+                        (mp:Attribution                     mp:supports                  mp:Claim)
+                        (mp:Attribution                     mp:supports                  mp:Reference)
+                        (mp:Attribution                     mp:supports                  mp:Statement)
+                        (whu:ResearchStep                   whu:declaredUsed             mp:Method)
+                        (whu:ResearchStep                   whu:declaredUsed             whu:Device)
+                        (whu:ResearchStep                   p-plan:isPrecededBy          whu:ResearchStep)
+                        (whu:SpecimenPreprocessing          whu:fellow                   whu:SpecimenCollection)
+                        (whu:BioChemicalExperiment          whu:hasGoal                  whu:Goal)
+                        (whu:BioChemicalExperiment          whu:fellow                   whu:SpecimenPreprocessing)
+                        (whu:ResearchStep                   whu:declaredInput            whu:ProcessedSpecimen)
+                        (whu:ResearchStep                   whu:declaredUsed             whu:Reagent)
+                        (whu:ComputationalExperiment        whu:hasGoal                  whu:Goal)
+                        (whu:ComputationalExperiment        whu:fellow                   whu:BioChemicalExperiment)
+                        (whu:ResearchStep                   whu:declaredInput            whu:DataSet)
+                        (whu:ResearchStep                   whu:declaredUsed             whu:Software)
+                        (mp:Reference                       cito:isCitedBy               whu:DataSet)
+                        (mp:Reference                       cito:isCitedBy               mp:Method)
+                        (mp:Reference                       cito:isCitedBy               mp:Claim)
+                        (mp:Reference                       cito:isCitedBy               mp:Statement)
+                        (whu:Goal                           whu:hasTarget                whu:TargetVariable)
+                        (whu:ProcessedSpecimen              prov:wasDerivedFrom          whu:Specimen)
+                        (whu:DataSet                        dcterms:hasPart              iao:0000027)
+                        (whu:DataSet                        mp:challenges                mp:Claim)
+                        (whu:DataSet                        mp:supports                  mp:Claim)
+                        (whu:DataSet                        mp:challenges                mp:Statement)
+                        (whu:DataSet                        mp:supports                  mp:Statement)
+                        (mp:Statement                       mp:supports                  mp:Claim)
+                        (mp:Statement                       mp:challenges                mp:Claim)
+                        (mp:Claim                           mp:supports                  mp:Claim)
+                        (mp:Claim                           mp:challenges                mp:Claim)
+                        (whu:ScienceEvidence                prov:hadMember               whu:DataSet)
+                        (whu:ScienceEvidence                prov:hadMember               mp:Method)
+                        (whu:ScienceEvidence                prov:wasDerivedFrom          whu:ComputationalExperiment)
+                        (whu:SupportGraph                   prov:hadMember               mp:Statement)
+                        (whu:SupportGraph                   prov:hadMember               mp:Attribution)
+                        (whu:SupportGraph                   prov:hadMember               mp:Reference)
+                        (whu:ScienceEvidence                mp:supports                  whu:SupportGraph)
+                        (whu:ScienceEvidence                mp:challenges                whu:SupportGraph)
+                        (whu:ResearchStep                   p-plan:isStepOfPlan          whu:SpecimenCollection)
+                        (whu:ResearchStep                   p-plan:isStepOfPlan          whu:SpecimenPreprocessing)
+                        (whu:ResearchStep                   p-plan:isStepOfPlan          whu:BioChemicalExperiment)
+                        (whu:ResearchStep                   p-plan:isStepOfPlan          whu:ComputationalExperiment)
+                        (whu:EnvironmentFeature             bfo:0000051                  envo:00010483)
+                        (whu:Specimen                       bfo:0000051                  whu:ChemicalEntity)
+                        (obi:0100026                        bfo:0000051                  whu:ChemicalEntity)
+                        (envo:00010483                      bfo:0000051                  whu:ChemicalEntity)
+                        (whu:Specimen                       prov:wasDerivedFrom          obi:0100026)
+                        (obi:0100026                        prov:atLocation              whu:EnvironmentFeature)
+                        (whu:Specimen                       prov:wasDerivedFrom          envo:00010483)
+                        (whu:TargetVariable                 iao:0000136                  whu:ChemicalEntity)
+                        (whu:DataSet                        iao:0000136                  whu:TargetVariable)
+                        (iao:0000027                        iao:0000136                  whu:TargetVariable)
+                        (iao:0000032                        iao:0000136                  whu:TargetVariable)
+                        (whu:ResearchStep                   whu:declaredOutput           whu:Specimen)
+                        (whu:ResearchStep                   whu:declaredInput            whu:Specimen)
+                        (whu:ResearchStep                   whu:declaredOutput           whu:ProcessedSpecimen)
+                        (whu:ResearchStep                   whu:declaredOutput           whu:DataSet)
+                        (whu:BioChemicalExperiment          whu:fellow                   whu:BioChemicalExperiment)
+                        (whu:ComputationalExperiment        whu:fellow                   whu:ComputationalExperiment)
+                        (whu:ResearchStep                   prov:atLocation              whu:EnvironmentFeature)
+                        (whu:SpecimenCollection             whu:hasContext               whu:EnvironmentFeature)
+                        (mp:Reference                       mp:supports                  mp:Claim)
+                        (mp:Reference                       mp:supports                  mp:Statement)
+                        (whu:SupportGraph                   mp:supports                  mp:Claim)
+                        (whu:SupportGraph                   mp:challenges                mp:Claim)
+                        (whu:Specimen                       p-plan:isInputVarOf          whu:SpecimenPreprocessing)
+                        (whu:Specimen                       p-plan:isOutputVarOf         whu:SpecimenCollection)
+                        (whu:ProcessedSpecimen              p-plan:isInputVarOf          whu:BioChemicalExperiment)
+                        (whu:ProcessedSpecimen              p-plan:isOutputVarOf         whu:SpecimenPreprocessing)
+                        (whu:DataSet                        p-plan:isOutputVarOf         whu:ComputationalExperiment)
+                        (whu:Specimen                       prov:wasDerivedFrom          whu:EnvironmentFeature)
+                        (whu:DataSet                        iao:0000136                  whu:Reagent)
+                        (whu:DataSet                        iao:0000136                  whu:Specimen)
+                        (whu:DataSet                        iao:0000136                  whu:ProcessedSpecimen)
+                    }
+                    $this rdf:type ?allowedS .
+                    ?o rdf:type ?allowedO .
+                    FILTER (?p = ?allowedP)
+                }
+            }
+        """
+    ] .
+
+#################################################################
+# H03 — Goal must be attached to a BioChemical/Computational Experiment
+# SHACL Core
+#
+# No maxCount is imposed in v1 because the user confirmed the required parent
+# constraint, but did not freeze one-Goal-one-Experiment cardinality.
+#################################################################
+
+whu:L03_GoalExperimentParentShape
+    a sh:NodeShape ;
+    sh:targetClass whu:Goal ;
+    sh:name "H03 Goal experiment parent"@en ;
+    sh:description "Goal 必须至少由一个 BioChemicalExperiment 或 ComputationalExperiment 通过 whu:hasGoal 承载。"@zh ;
+    sh:property [
+        sh:path [ sh:inversePath whu:hasGoal ] ;
+        sh:minCount 1 ;
+        sh:or (
+            [ sh:class whu:BioChemicalExperiment ]
+            [ sh:class whu:ComputationalExperiment ]
+        ) ;
+        sh:severity sh:Violation ;
+        sh:message "H03: Goal 没有合法的 BioChemicalExperiment/ComputationalExperiment Parent。"@zh
+    ] .
+
+#################################################################
+# W03 — Goal should have TargetVariable
+# SHACL Core
+#################################################################
+
+whu:L04_GoalTargetWarningShape
+    a sh:NodeShape ;
+    sh:targetClass whu:Goal ;
+    sh:name "W03 Goal target completeness"@en ;
+    sh:description "Goal 应通过 whu:hasTarget 指向至少一个 TargetVariable。缺失时只产生 Warning，不得自动补造目标变量。"@zh ;
+    sh:property [
+        sh:path whu:hasTarget ;
+        sh:minCount 1 ;
+        sh:class whu:TargetVariable ;
+        sh:severity sh:Warning ;
+        sh:message "W03: Goal 未发现 whu:hasTarget -> TargetVariable；请复核父 Experiment 原文，不得凭模板补造 TargetVariable。"@zh
+    ] .
+
+#################################################################
+# W01 — Experiment without ResearchStep
+# SHACL Core
+#################################################################
+
+whu:L05_ExperimentResearchStepWarningShape
+    a sh:NodeShape ;
+    sh:targetClass whu:BioChemicalExperiment ;
+    sh:targetClass whu:ComputationalExperiment ;
+    sh:name "W01 Experiment ResearchStep completeness"@en ;
+    sh:description "BioChemicalExperiment / ComputationalExperiment 通常应展开出 ResearchStep。缺失时作为 Warning；若原文仅为概括性实验描述，可保留而不强制制造 Step。"@zh ;
+    sh:property [
+        sh:path [ sh:inversePath p-plan:isStepOfPlan ] ;
+        sh:qualifiedValueShape [ sh:class whu:ResearchStep ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "W01: Experiment 未发现 ResearchStep；请检查父 original_text 是否存在可显式分解的步骤。"@zh
+    ] .
+
+#################################################################
+# H04 — ResearchStep structural connectivity
+# SHACL-SPARQL
+#
+# Contract (revised for hierarchical Low expand):
+#   - one ResearchStep under a parent: PASS (no isPrecededBy required);
+#   - >=2 ResearchSteps under the same parent:
+#       * HARD: no self-loop; no directed cycle; no cross-parent edges;
+#         illegal isPrecededBy target type;
+#       * WARNING (not HARD): not every step participates in isPrecededBy;
+#         steps do not form one weakly connected component.
+#################################################################
+
+whu:L06_ResearchStepConnectivityShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ResearchStep ;
+    sh:name "H04 ResearchStep structural connectivity"@en ;
+    sh:description "同一 Mid Parent 下仅有一个 ResearchStep 时豁免；若有两个及以上：自环/有向环/跨 Parent/非法目标为 HARD；未连成 isPrecededBy 网络为 WARNING。"@zh ;
+
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Violation ;
+        sh:message "H04-a: ResearchStep 存在 p-plan:isPrecededBy 自环。"@zh ;
+        sh:select """
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+            SELECT $this
+            WHERE {
+                $this p-plan:isPrecededBy $this .
+            }
+        """
+    ] ;
+
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Violation ;
+        sh:message "H04-b: ResearchStep 的 isPrecededBy 形成有向循环。"@zh ;
+        sh:select """
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+            SELECT $this
+            WHERE {
+                $this p-plan:isPrecededBy+ $this .
+            }
+        """
+    ] ;
+
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Warning ;
+        sh:message "H04-c: 同一 Parent 存在多个 ResearchStep，但该 Step 未与同 Parent 的其他 Step 建立 isPrecededBy 入边或出边（WARNING）。"@zh ;
+        sh:select """
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+
+            SELECT $this
+            WHERE {
+                $this p-plan:isStepOfPlan ?parent .
+                ?other rdf:type whu:ResearchStep ;
+                       p-plan:isStepOfPlan ?parent .
+                FILTER (?other != $this)
+
+                FILTER NOT EXISTS {
+                    { $this p-plan:isPrecededBy ?linked .
+                       ?linked rdf:type whu:ResearchStep ;
+                               p-plan:isStepOfPlan ?parent .
+                       FILTER (?linked != $this)
+                    }
+                    UNION
+                    { ?linked p-plan:isPrecededBy $this ;
+                              rdf:type whu:ResearchStep ;
+                              p-plan:isStepOfPlan ?parent .
+                       FILTER (?linked != $this)
+                    }
+                }
+            }
+        """
+    ] ;
+
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Warning ;
+        sh:message "H04-d: 同一 Parent 下的多个 ResearchStep 未形成单一弱连通步骤图（WARNING）。"@zh ;
+        sh:select """
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+
+            SELECT $this ?other
+            WHERE {
+                $this p-plan:isStepOfPlan ?parent .
+                ?other rdf:type whu:ResearchStep ;
+                       p-plan:isStepOfPlan ?parent .
+                FILTER (?other != $this)
+
+                FILTER NOT EXISTS {
+                    $this (p-plan:isPrecededBy|^p-plan:isPrecededBy)+ ?other .
+                }
+            }
+        """
+    ] ;
+
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Violation ;
+        sh:message "H04-e: isPrecededBy 连接了属于不同 Mid Parent 的 ResearchStep。"@zh ;
+        sh:select """
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+
+            SELECT $this ?other
+            WHERE {
+                $this p-plan:isStepOfPlan ?parent ;
+                      p-plan:isPrecededBy ?other .
+                ?other a whu:ResearchStep ;
+                       p-plan:isStepOfPlan ?otherParent .
+                FILTER (?parent != ?otherParent)
+            }
+        """
+    ] .
+
+#################################################################
+# H05 — ResearchStep relation ranges
+# SHACL Core
+#################################################################
+
+whu:L07_ResearchStepRelationRangeShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ResearchStep ;
+    sh:name "H05 ResearchStep relation ranges"@en ;
+    sh:description "ResearchStep 的 declaredUsed、declaredInput、declaredOutput 与 isPrecededBy 必须满足当前 BAE schema 的目标类型约束。"@zh ;
+
+    sh:property [
+        sh:path whu:declaredUsed ;
+        sh:or (
+            [ sh:class mp:Method ]
+            [ sh:class whu:Device ]
+            [ sh:class whu:Reagent ]
+            [ sh:class whu:Software ]
+        ) ;
+        sh:severity sh:Violation ;
+        sh:message "H05: declaredUsed 的目标只能是 Method / Device / Reagent / Software。"@zh
+    ] ;
+
+    sh:property [
+        sh:path whu:declaredInput ;
+        sh:or (
+            [ sh:class whu:Specimen ]
+            [ sh:class whu:ProcessedSpecimen ]
+            [ sh:class whu:DataSet ]
+        ) ;
+        sh:severity sh:Violation ;
+        sh:message "H05: declaredInput 的目标只能是 Specimen / ProcessedSpecimen / DataSet。"@zh
+    ] ;
+
+    sh:property [
+        sh:path whu:declaredOutput ;
+        sh:or (
+            [ sh:class whu:Specimen ]
+            [ sh:class whu:ProcessedSpecimen ]
+            [ sh:class whu:DataSet ]
+        ) ;
+        sh:severity sh:Violation ;
+        sh:message "H05: declaredOutput 的目标只能是 Specimen / ProcessedSpecimen / DataSet。"@zh
+    ] ;
+
+    sh:property [
+        sh:path p-plan:isPrecededBy ;
+        sh:class whu:ResearchStep ;
+        sh:severity sh:Violation ;
+        sh:message "H05: isPrecededBy 的目标必须是 ResearchStep。"@zh
+    ] .
+
+#################################################################
+# W02 — SpecimenPreprocessing with steps but no ProcessedSpecimen output
+# SHACL-SPARQL
+#################################################################
+
+whu:L08_PreprocessingOutputWarningShape
+    a sh:NodeShape ;
+    sh:targetClass whu:SpecimenPreprocessing ;
+    sh:name "W02 Preprocessing output completeness"@en ;
+    sh:description "若 SpecimenPreprocessing 已具有 ResearchStep，但这些 Step 均未产生 ProcessedSpecimen，则提示复核是否漏抽处理后样本。"@zh ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Warning ;
+        sh:message "W02: SpecimenPreprocessing 已有 ResearchStep，但未发现 declaredOutput -> ProcessedSpecimen。"@zh ;
+        sh:select """
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+
+            SELECT $this
+            WHERE {
+                FILTER EXISTS {
+                    ?step rdf:type whu:ResearchStep ;
+                          p-plan:isStepOfPlan $this .
+                }
+                FILTER NOT EXISTS {
+                    ?step rdf:type whu:ResearchStep ;
+                          p-plan:isStepOfPlan $this ;
+                          whu:declaredOutput ?out .
+                    ?out rdf:type whu:ProcessedSpecimen .
+                }
+            }
+        """
+    ] .
+
+#################################################################
+# W04 — Local ScienceEvidence membership completeness
+# SHACL Core
+#################################################################
+
+whu:L09_ScienceEvidenceLocalMemberWarningShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ScienceEvidence ;
+    sh:name "W04 Local ScienceEvidence membership"@en ;
+    sh:description "Low local expansion 后，ScienceEvidence 应分别检查 DataSet 与 Method 成员。缺失只作为 Warning，以允许后续 cross-parent linking/repair。"@zh ;
+
+    sh:property [
+        sh:path prov:hadMember ;
+        sh:qualifiedValueShape [ sh:class whu:DataSet ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "W04: ScienceEvidence 当前未包含 DataSet 成员。"@zh
+    ] ;
+
+    sh:property [
+        sh:path prov:hadMember ;
+        sh:qualifiedValueShape [ sh:class mp:Method ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "W04: ScienceEvidence 当前未包含 Method 成员。"@zh
+    ] .
+
+#################################################################
+# W05 — Local SupportGraph argumentative membership
+# SHACL Core
+#################################################################
+
+whu:L10_SupportGraphLocalMemberWarningShape
+    a sh:NodeShape ;
+    sh:targetClass whu:SupportGraph ;
+    sh:name "W05 Local SupportGraph argumentative member"@en ;
+    sh:description "Low local expansion 后，SupportGraph 应至少具有一个由当前 potential_schema 允许的基层论证成员：Statement、Attribution 或 Reference。缺失只作为 Warning。"@zh ;
+    sh:property [
+        sh:path prov:hadMember ;
+        sh:qualifiedValueShape [
+            sh:or (
+                [ sh:class mp:Statement ]
+                [ sh:class mp:Attribution ]
+                [ sh:class mp:Reference ]
+            )
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "W05: SupportGraph 当前未发现 Statement / Attribution / Reference 成员。"@zh
+    ] .
+
+#################################################################
+# H06 — FINAL SupportGraph completeness
+# SHACL Core
+#
+# DEACTIVATED during local low expansion.
+# Enable only after cross-parent linking / final graph assembly.
+#################################################################
+
+whu:L11_FinalSupportGraphShape
+    a sh:NodeShape ;
+    sh:targetClass whu:SupportGraph ;
+    sh:deactivated true ;
+    sh:name "H06 Final SupportGraph completeness"@en ;
+    sh:description "Final KG 阶段，SupportGraph 必须具有至少一个合法 argumentative member，并通过 mp:supports 或 mp:challenges 连接至少一个 Claim。Local low 阶段保持 deactivated。"@zh ;
+
+    sh:property [
+        sh:path prov:hadMember ;
+        sh:qualifiedValueShape [
+            sh:or (
+                [ sh:class mp:Statement ]
+                [ sh:class mp:Attribution ]
+                [ sh:class mp:Reference ]
+            )
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "H06: Final SupportGraph 缺少合法 argumentative member。"@zh
+    ] ;
+
+    sh:property [
+        sh:path [
+            sh:alternativePath (
+                mp:supports
+                mp:challenges
+            )
+        ] ;
+        sh:qualifiedValueShape [ sh:class mp:Claim ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "H06: Final SupportGraph 未通过 mp:supports/mp:challenges 连接 Claim。"@zh
+    ] .
+
+#################################################################
+# H09 — Parent evidence boundary (revised)
+#
+# H09-A HARD: ResearchStep / Goal original_text must be supportable by
+#   parent original_text ∪ home FROM_CHUNK text.
+# H09-B WARNING: Method/Device/Reagent/Software/Specimen/ProcessedSpecimen/
+#   DataSet/ChemicalEntity/TargetVariable may appear only in home/neighbor;
+#   outside parent original alone → Warning, do not delete edges.
+#################################################################
+
+whu:L12_ResearchStepParentEvidenceBoundaryShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ResearchStep ;
+    sh:name "H09-A ResearchStep parent∪home evidence boundary"@en ;
+    sh:description "ResearchStep 的 hasOriginalText 必须可由 Mid Parent original_text ∪ home chunk 支撑（HARD）。"@zh ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Violation ;
+        sh:message "H09-A: ResearchStep original_text 不在 parent original ∪ home chunk 支撑范围内。"@zh ;
+        sh:select """
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+
+            SELECT $this
+            WHERE {
+                $this p-plan:isStepOfPlan ?parent ;
+                      whu:hasOriginalText ?childText .
+                ?parent whu:hasOriginalText ?parentText .
+                FILTER (!CONTAINS(LCASE(STR(?parentText)), LCASE(STR(?childText))))
+                # Note: Cypher mirror also ORs home chunk text; SPARQL cannot see Chunk without prov model.
+            }
+        """
+    ] .
+
+whu:L13_ResearchStepChildEvidenceBoundaryShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ResearchStep ;
+    sh:name "H09-B shared entity evidence boundary"@en ;
+    sh:description "ResearchStep 关联的 Method/Device/Reagent 等共享实体若不在 parent original 内，仅 WARNING。"@zh ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Warning ;
+        sh:message "H09-B: ResearchStep 关联基层实体 original_text 不在 Parent original 内（WARNING，不删边）。"@zh ;
+        sh:select """
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX p-plan: <http://purl.org/net/p-plan#>
+
+            SELECT $this ?child
+            WHERE {
+                $this p-plan:isStepOfPlan ?parent ;
+                      ?rel ?child .
+                FILTER (?rel IN (
+                    whu:declaredUsed,
+                    whu:declaredInput,
+                    whu:declaredOutput
+                ))
+                ?child whu:hasOriginalText ?childText .
+                ?parent whu:hasOriginalText ?parentText .
+                FILTER (!CONTAINS(LCASE(STR(?parentText)), LCASE(STR(?childText))))
+            }
+        """
+    ] .
+
+whu:L14_GoalParentEvidenceBoundaryShape
+    a sh:NodeShape ;
+    sh:targetClass whu:Goal ;
+    sh:name "H09-A Goal parent∪home evidence boundary"@en ;
+    sh:description "Goal 的 original_text 必须可由 Experiment parent original ∪ home chunk 支撑（HARD）。"@zh ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Violation ;
+        sh:message "H09-A: Goal original_text 不在其 Experiment Parent∪home 支撑范围内。"@zh ;
+        sh:select """
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+
+            SELECT $this ?parent
+            WHERE {
+                ?parent whu:hasGoal $this ;
+                        whu:hasOriginalText ?parentText .
+                $this whu:hasOriginalText ?childText .
+                FILTER (!CONTAINS(LCASE(STR(?parentText)), LCASE(STR(?childText))))
+            }
+        """
+    ] .
+
+whu:L15_EvidenceCollectionChildBoundaryShape
+    a sh:NodeShape ;
+    sh:targetClass whu:ScienceEvidence ;
+    sh:targetClass whu:SupportGraph ;
+    sh:name "H09-B Evidence/argument shared member boundary"@en ;
+    sh:description "ScienceEvidence/SupportGraph 的 hadMember 基层成员超出 parent original 时为 WARNING。"@zh ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Warning ;
+        sh:message "H09-B: hadMember 基层成员的 original_text 不在 parent original 内（WARNING）。"@zh ;
+        sh:select """
+            PREFIX whu: <https://bdi.whu.edu.cn/>
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+
+            SELECT $this ?child
+            WHERE {
+                $this whu:hasOriginalText ?parentText ;
+                      prov:hadMember ?child .
+                ?child whu:hasOriginalText ?childText .
+                FILTER (!CONTAINS(LCASE(STR(?parentText)), LCASE(STR(?childText))))
+            }
+        """
+    ] .
+
+#################################################################
+# H07 relation-level provenance note
+#
+# The current aligned BAE RDF does not formally reify ordinary object-property
+# assertions with source Chunk/span metadata. Therefore relation-level source
+# validation cannot be expressed safely in SHACL without RDF-star/reification
+# or an explicit assertion/provenance node model.
+#################################################################
+
+whu:L16_RelationProvenanceDocumentationShape
+    a sh:NodeShape ;
+    sh:deactivated true ;
+    sh:name "H07 relation-level provenance — schema extension required"@en ;
+    sh:description "当前 SHACL v1 已强制基层节点 hasOriginalText，但普通 RDF 边尚无正式的 assertion/sourceChunk/sourceSpan 表示，因此关系级 provenance 暂不能安全验证。若后续将关系 RDF-star/reification 化，可再启用专门 Shape。"@zh .
+
+#################################################################
+# Notes on retained P-PLAN shortcut relations
+#################################################################
+
+whu:L17_PPlanShortcutDocumentationShape
+    a sh:NodeShape ;
+    sh:deactivated true ;
+    sh:name "P-PLAN plan-level shortcut policy"@en ;
+    sh:description "p-plan:isInputVarOf / isOutputVarOf 在当前 potential_schema 中保留为 plan-level shortcut/projection；v1 仅通过 H02 检查其合法 subject-target 组合，不设置 minCount，不作为 Low completeness repair 目标。ResearchStep 细粒度输入输出仍以 whu:declaredInput / whu:declaredOutput 为主。"@zh .

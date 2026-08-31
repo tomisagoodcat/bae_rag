@@ -1,0 +1,260 @@
+{
+  "entities": [
+    {
+      "label": "whu_ActivityStep",
+      "description": ""
+    },
+    {
+      "label": "whu_ComputationalExperiment",
+      "description": ""
+    },
+    {
+      "label": "whu_DataItem",
+      "description": ""
+    },
+    {
+      "label": "whu_ExperimentalActivity",
+      "description": ""
+    },
+    {
+      "label": "whu_TargetObject",
+      "description": ""
+    },
+    {
+      "label": "whu_Target_analyte",
+      "description": "Define: Chemical entity measured/assessed (e.g., As, Cd, Pb, Hg, Na, K).\n\nContext: Create when analytes are listed as measurement targets; typically link to data via iao:is_about (measurement) and to goals; align to CHEBI when possible.\n\nExamples: “We quantified Cd and Pb by ICP‑MS.” → Target_analyte nodes: Cd, Pb."
+    },
+    {
+      "label": "nbfeb8daccf044235b7033d55afc49265b1",
+      "description": ""
+    },
+    {
+      "label": "Error2",
+      "description": ""
+    },
+    {
+      "label": "bfo_0000040",
+      "description": ""
+    },
+    {
+      "label": "chebi_ChemicalEntity",
+      "description": ""
+    },
+    {
+      "label": "iao_IAO_0000100",
+      "description": ""
+    },
+    {
+      "label": "mp_Data",
+      "description": ""
+    },
+    {
+      "label": "mp_DataSet",
+      "description": ""
+    },
+    {
+      "label": "mp_Material",
+      "description": ""
+    },
+    {
+      "label": "p_plan_Variable",
+      "description": ""
+    },
+    {
+      "label": "dcat_Dataset",
+      "description": ""
+    },
+    {
+      "label": "schema_Product",
+      "description": ""
+    },
+    {
+      "label": "whu_Computational_Experiment",
+      "description": "Define: Data‑only analysis (statistics/modeling/transforms) using software to produce derived datasets or results.\n\nContext: Create when methods like t‑test/ANOVA/PCA/regression/ML are reported. Link prov:wasAssociatedWith → ComputationalActivityStep; prov:used → Software; whu:hasGoal → Goal.\n\nExamples: “We ran PCA in R 4.2.2; t‑tests assessed group differences (p<0.05).” → Computational_Experiment."
+    },
+    {
+      "label": "whu_ExecutionEnvironment",
+      "description": ""
+    },
+    {
+      "label": "whu_Reagent",
+      "description": " Define: Chemical/biological reagent used in preprocessing or measurement (e.g., HNO₃ 65%, H₂O₂ 30%, standards, reference materials).\n\nContext: Create when concentration/grade/brand are given; connect via prov:used from BioChemicalActivityStep.\n\nExamples: “suprapure HNO₃ (65%) from Merck” → Reagent."
+    },
+    {
+      "label": "schema_Organization",
+      "description": ""
+    },
+    {
+      "label": "whu_EnvironmentFeature",
+      "description": "\n    Define: An environmental or geographic context (e.g., soil, river, urban air, farmland, site, province/city) that can carry coordinates and optional demographics.\n\nContext: Create a node of type whu:EnvironmentFeature when the text names a sampling location or environmental setting used to derive specimens or frame experiments. If coordinates appear, map them to geo:lat, geo:long, geo:alt; if population appears, map to gn:population.\n\nExamples:\n\n“Samples were taken from paddy fields in Nanjing (32.1°N, 118.8°E, 20 m).” → EnvironmentFeature with geo:lat=32.1, geo:long=118.8, geo:alt=20.\n\n“Urban air in Shanghai; population 24M.” → EnvironmentFeature with gn:population=24000000.\n    \n    ",
+      "properties": [
+        {
+          "name": "gn_population",
+          "type": "INTEGER",
+          "description": ""
+        },
+        {
+          "name": "geo_alt",
+          "type": "FLOAT",
+          "description": ""
+        },
+        {
+          "name": "geo_lat",
+          "type": "FLOAT",
+          "description": ""
+        },
+        {
+          "name": "geo_long",
+          "type": "FLOAT",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "label": "whu_Software",
+      "description": "Define: Named software used in analysis/simulation.\n\nContext: Create Software with whu:brand (name) and schema:softwareVersion when present; connect via prov:used from ComputationalActivityStep/Experiment.\n\nExamples: “R (4.2.2)”, “SPSS 26”, “MATLAB R2021b”.",
+      "properties": [
+        {
+          "name": "whu_brand",
+          "type": "STRING",
+          "description": ""
+        },
+        {
+          "name": "schema_softwareVersion",
+          "type": "STRING",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "label": "mp_Attribution",
+      "description": "Definition: Attribution specifies the agents responsible for creating, asserting, or being accountable for a Representation.\nContext: Extract when authorship/responsibility/source agency is explicitly assigned (persons, institutions, projects). Avoid inference without explicit statements.\nExamples:\n- Positive: 'This claim was asserted by Dr. Smith.' -> mp:Attribution linked to the claim and agent\n- Positive: 'Data provided by the EPA.' -> mp:Attribution linked to the dataset and EPA\n- Negative: 'Researchers often believe...' (no specific agent) -> skip."
+    },
+    {
+      "label": "nbfeb8daccf044235b7033d55afc49265b19",
+      "description": ""
+    },
+    {
+      "label": "mp_Micropublication",
+      "description": "Definition: A Micropublication is a structured evidence graph containing a central Claim/Statement and supporting elements (DataSet, Method, Attribution, References).\nContext: Extract when the text presents an explicit scientific assertion plus its evidence components. Link the MPU to its Claim/Statement and to supporting Data/Method/Attribution/References.\nExamples:\n- Positive: 'The study claims cadmium exceeds limits, supported by Dataset S1 (ICP-MS) and Method M1 (digestion), attributed to Dr. Li.'\n- Positive: 'Claim: Nitrate levels are rising; supported by monitoring data and sampling protocol; attributed to the Environmental Science Lab.'\n- Negative: 'Cadmium is discussed' (no structured evidence) -> skip."
+    },
+    {
+      "label": "nbfeb8daccf044235b7033d55afc49265b31",
+      "description": ""
+    },
+    {
+      "label": "mp_References",
+      "description": "Definition: References encodes bibliographic citations or source links tied to a Representation and may support or contextualize it.\nContext: Extract when explicit citations (e.g., 'Smith 2020', DOI/URL, numbered references) are tied to a specific Representation.\nExamples:\n- Positive: 'According to Smith (2020), ...' -> mp:References linked to the cited work and to the Statement/Claim\n- Positive: 'Dataset S1 from DOI:10.1234/abcd was used.' -> mp:References linked to the DataSet\n- Negative: 'Previous studies have shown...' (no specific source) -> skip."
+    },
+    {
+      "label": "nbfeb8daccf044235b7033d55afc49265b39",
+      "description": ""
+    },
+    {
+      "label": "nbfeb8daccf044235b7033d55afc49265b45",
+      "description": ""
+    },
+    {
+      "label": "whu_Device",
+      "description": "Define: Scientific instrument used in biochemical steps.\n\nContext: Create Device and fill schema:hasBrand (brand/name), schema:hasModel, schema:hasSerialNumber if stated; connect via prov:used from BioChemicalActivityStep.\n\nExamples: “Agilent 7700 ICP‑MS”, “Thermo Fisher iCAP Q; SN: Q12345”.",
+      "properties": [
+        {
+          "name": "schema_hasBrand",
+          "type": "STRING",
+          "description": ""
+        },
+        {
+          "name": "schema_hasModel",
+          "type": "STRING",
+          "description": ""
+        },
+        {
+          "name": "schema_hasSerialNumber",
+          "type": "STRING",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "label": "whu_Goal",
+      "description": "Define: Stated scientific objective of an experiment/plan (e.g., “quantify Hg in rice”, “compare urban vs rural PM2.5 metals”).\n\nContext: Create only when explicitly stated; link from experiment via whu:hasGoal.\n\nExamples: “to quantify As, Cd, Pb in white rice” → Goal."
+    },
+    {
+      "label": "whu_SpecimenCollection",
+      "description": "Define: A sampling plan describing how specimens are collected (where/when/design/tools).\n\nContext: Create SpecimenCollection when sampling methodology is stated; link steps via prov:wasAssociatedWith → BioChemicalActivityStep; output via p-plan:isOutputVarOf on Specimen.\n\nExamples: “We randomly collected 60 white‑rice samples from 10 districts during 2022–2023.” → SpecimenCollection producing Specimen."
+    },
+    {
+      "label": "p_plan_Step",
+      "description": ""
+    },
+    {
+      "label": "prov_Entity",
+      "description": ""
+    },
+    {
+      "label": "whu_ScalarMeasurementDatum",
+      "description": "Definition: A scalar numerical measurement datum with one numeric value, an optional unit (string label), and an optional comparator (e.g., '<', '<=', 'between').\nContext: Use whu:ScalarMeasurementDatum when the text provides an explicit numeric measurement (possibly with unit and comparator). Ideal for values like '0.2 mg/kg', 'Hg < 0.2 mg/kg', or ranges '12–15 mg/kg'.\nExamples:\n- Positive: 'Cadmium concentration was 0.15 mg/kg.' -> value=0.15, unit='mg/kg'\n- Positive: 'Hg < 0.2 mg/kg.' -> value=0.2, unit='mg/kg', comparator='<'\n- Positive: 'Temperature 25 °C.' -> value=25, unit='°C'\n- Negative: 'High cadmium level' (no explicit number) -> skip.",
+      "properties": [
+        {
+          "name": "whu_hascomparator",
+          "type": "STRING",
+          "description": ""
+        },
+        {
+          "name": "iao_hasMeasurementUnit",
+          "type": "STRING",
+          "description": ""
+        },
+        {
+          "name": "iao_hasMeasurementValue",
+          "type": "FLOAT",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "label": "whu_Bio_chemical_Experiment",
+      "description": "### Define:\n\nA **BioChemicalExperiment** is a structured set of laboratory or field-based procedures applied to physical **specimens** or their **processed derivatives**, using defined **instruments**, **reagents**, and **protocols**. These experiments aim to transform or analyze specimens to produce scientifically valid **data**, which can serve as **evidence in claims** and may also be inputs for downstream computational analysis.\n\n> Typical examples include heavy metal detection in soil using ICP-MS, or pesticide residue analysis via HPLC.\n\n---\n\n### Purpose:\n\n1. **Transformation & Measurement**: Apply specific techniques to extract or quantify chemical/biological targets from specimens (e.g., nutrients, pollutants, biomarkers).  \n2. **Evidence Generation**: Produce raw or processed data as core scientific evidence that can **support or challenge scientific claims**, and may serve as input to computational workflows or comparative analysis.  \n\n---\n\n### Context:\n\nTrigger this class when a procedure is described that:  \n\n- Applies instruments, reagents, or chemical methods to a physical sample.  \n- Explicitly yields **measured data** from physical material.  \n- Is causally or sequentially linked to downstream reasoning steps.  \n\n**Use semantic links**:  \n* `prov:wasAssociatedWith` → `whu:BioChemicalActivityStep`\n* `whu:hasGoal` → experiment’s scientific intent  \n* `p-plan:isPrecededBy` ← `whu:SpecimenPreprocessing`  \n\n---\n\n### Examples:\n\n> **BioChemicalExperiment 1**: *Characterization of Porewater Dissolved Organic Matter (DOM) using UV absorbance and fluorescence spectroscopy, producing fluorescence indices and absorbance spectra.*  \n\n> **BioChemicalExperiment 2**: *Detection of heavy metals in rice grains through ICP-MS following nitric acid digestion, yielding concentration data for Cd, Hg, and Pb in grains.*"
+    },
+    {
+      "label": "whu_ComputationalActivityStep",
+      "description": "Define: Atomic computational operation that declares a whu:Method, uses Software and input DataSet, and generates a new DataSet or result.\n\nContext: Create per transform/test/modeling step. Link p-plan:isStepOfPlan → Computational_Experiment; prov:used (Software, DataSet); prov:generated (DataSet).\n\nExamples: “Log‑transform concentrations; run one‑way ANOVA; compute Pearson r.” → separate ComputationalActivitySteps."
+    },
+    {
+      "label": "whu_SpecimenPreprocessing",
+      "description": "Describe how specimens were preprocessed before experimentation (e.g., cooling, freezing, filtering)."
+    },
+    {
+      "label": "whu_Method",
+      "description": "Define: Static protocol or named method/standard that steps can declare as used (e.g., “EPA 6020B”, “AOAC 2015.01”, “ISO 17294‑2”).\n\nContext: Create when a protocol is cited; connect via whu:declareUsed from ActivityStep; may mp:supports a DataSet.\n\nExamples: “Digestion followed EPA 3052” → Method."
+    },
+    {
+      "label": "whu_ProcessedSpecimen",
+      "description": "Define: A specimen after preprocessing (e.g., drying, sieving, digestion) used as input to biochemical experiments.\n\nContext: Create when the text describes an output of SpecimenPreprocessing. Connect: prov:wasDerivedFrom → Specimen; p-plan:isOutputVarOf ← SpecimenPreprocessing; p-plan:isInputVarOf → Bio_chemical_Experiment; numeric quantity via iao:is_about.\n\nExamples: “Dried and acid-digested rice flour was used for ICP‑MS.” → ProcessedSpecimen with edges above."
+    },
+    {
+      "label": "whu_Specimen",
+      "description": "Define: Physical biological/environmental sample collected from an EnvironmentFeature, used in downstream plans/experiments.\n\nContext: Create whu:Specimen when the text names collected materials (e.g., “rice grains”, “surface soil”, “river water”). Link with prov:wasDerivedFrom → EnvironmentFeature; p-plan:isOutputVarOf ← SpecimenCollection; p-plan:isInputVarOf → SpecimenPreprocessing. If measurements of count/mass/volume appear, attach via iao:is_about → whu:ScalarMeasurementDatum.\n\nExamples: “We collected 30 rice grain samples from supermarkets in Nanjing.” → Specimen (+ prov:wasDerivedFrom to city feature; iao:is_about count=30)."
+    },
+    {
+      "label": "mp_Claim",
+      "description": "Definition: A Claim is the central assertion argued by a Micropublication.\nContext: Extract when the text explicitly advances a principal scientific assertion to be supported or challenged by evidence.\nExamples:\n- Positive: 'We conclude cadmium exceeds the permissible limit.' -> mp:Claim\n- Negative: 'We measured cadmium.' (methodological fact, not a central assertion) -> consider mp:Statement instead."
+    },
+    {
+      "label": "mp_Representation",
+      "description": "Definition: A Representation is any publishable/argumentative entity in the Micropublications model (e.g., Claim, Statement, Data, Method, Attribution, References).\nContext: Use this class only when typing elements that participate in evidence relations (support/challenge) or composition within a Micropublication.\nExamples:\n- Positive: 'Statement S2 supports Claim C1.' -> both S2 and C1 are mp:Representation.\n- Positive: 'Dataset S1 supports Claim C3.' -> both S1 and C3 are mp:Representation.\n- Negative: 'General background text' (no argumentative role) -> skip."
+    },
+    {
+      "label": "mp_Statement",
+      "description": "Definition: A Statement is an assertion with a truth value (true/false), typically supported by evidence.\nContext: Extract when the text presents a complete proposition (claim, observation, factual assertion). Model as a subclass of mp:Sentence if available in your schema.\nExamples:\n- Positive: 'Cadmium levels exceeded 0.2 mg/kg.' -> mp:Statement\n- Positive: 'Arsenic contamination is above safety limits.' -> mp:Statement\n- Negative: 'Heavy metals are discussed.' (no evaluable proposition) -> skip."
+    },
+    {
+      "label": "whu_BioChemicalActivityStep",
+      "description": "Define: Atomic biochemical procedure that declares a whu:Method, consumes ProcessedSpecimen/Reagent/Device, and generates ProcessedSpecimen and/or DataSet.\n\nContext: Create per step (e.g., “acid digestion”, “instrument run”). Link p-plan:isStepOfPlan → Bio_chemical_Experiment; prov:used (Device/Reagent/ProcessedSpecimen); prov:generated (DataSet/ProcessedSpecimen); optional p-plan:correspondsToStep; whu:hasExecutionEnvironment.\n\nExamples: “Microwave digestion with HNO₃ (65%) using MARS 6; run ICP‑MS.” → two steps: digestion and measurement."
+    },
+    {
+      "label": "whu_DataSet",
+      "description": "### Define\n\nA **scientific dataset** that is either **generated by** or **used in** research activities.\n\n* It is modeled as a subclass of **mp\\:Data**, **dcat\\:Dataset**, and **prov\\:Entity**, and is aligned with **bfo\\:GenericallyDependentContinuant** (indicating dependence on publications).\n* **whu\\:Data** participates in scientific argumentation: it can **support** or **challenge** `mp:Statement` / `mp:Claim` via `mp:support` or `mp:challenge`.\n* **Provenance** is explicit: data is causally linked to `whu:ActivityStep` through `prov:wasGeneratedBy` or `prov:wasUsedBy`.\n* A dataset may appear as a **table, figure, or file**. A part of a dataset (e.g., a **row in a table**) can also count as `whu:Data` if it independently supports or challenges a claim.\n\n---\n\n### Purpose\n\n* **Scientific argumentation**: A dataset can **support** or **challenge** a `mp:Claim` / `mp:Statement`.\n* **Measurement linkage**: A dataset can link to `whu:ScalarMeasurementDatum`, which contains the **value**, **unit**, and **logical comparator**.\n* **Method dependency**: A dataset is associated with a `whu:Method` that defines how the data was obtained.\n* **Provenance in activities**: A research activity (`whu:ActivityStep`) may **use** a dataset (`prov:used`) and subsequently **generate** another dataset (`prov:generated`).\n\n---\n\n### Context\n\nUse this class **only when the text explicitly describes data as a research artifact**. Avoid speculative inference; rely on **explicit mentions** (e.g., dataset, table, figure, measurement) and unambiguous descriptions.\n\n* **Argumentation role**: Trigger when a dataset **supports** or **challenges** a `whu:Claim` / `mp:Statement`.\n* **Tables and figures**: If a **table or figure** is described but cannot be separated into smaller parts, treat it as a single `whu:Data`.\n* **Scalar measurements**: When a `whu:ScalarMeasurementDatum` supports or challenges a claim but is not linked to an existing dataset, create a `whu:Data` node to connect it.\n* **Research activities**: Trigger when a research activity (`whu:BioChemicalActivityStep`, `whu:ComputationalActivityStep`) **uses** a dataset (`prov:used`) and **generates** another dataset (`prov:generated`).\n\n---\n\n### Use semantic links\n\n* `whu:Data` → `mp:support` → `mp:Claim`\n* `whu:Data` → `mp:supports` → `mp:Statement`\n* `whu:Data` → `mp:challenges` → `mp:Claim`\n* `whu:Data` → `mp:challenges` → `mp:Statement`\n* `whu:Data` → `dcterms:hasPart` → `whu:ScalarMeasurementDatum`\n* `whu:Method` → `mp:supports` → `whu:Data`\n* `whu:BioChemicalActivityStep` / `whu:ComputationalActivityStep` → `prov:used` → `whu:Data`\n* `whu:BioChemicalActivityStep` / `whu:ComputationalActivityStep` → `prov:generated` → `whu:Data`\n\n---\n\n### Examples\n\n> **whu\\:Data 1** : Figure 4: MeHg accumulations in different tissues of rice plants in the three treatments.\n\n* **Generated by / Used in research activities**: This dataset was generated from the measurements of MeHg concentrations in various tissues of rice plants (roots, stalks, leaves, and grains) collected at the mature stage after harvest.\n* **Supports / Challenges claims**: This dataset supports the conclusion that the application of both original and modified biochar significantly decreased the bioaccumulation of MeHg in rice plants, particularly in hulls and grains, compared to the control. It also highlights that grains were the most cumulative part of the rice plant.\n\n> **whu\\:Data 2** : Porewater Dissolved Organic Matter (DOM) Characteristics\n\n* **Generated / Used**: This dataset comprises measurements of DOM properties (Dissolved Organic Carbon (DOC) content, Specific Ultraviolet Absorbance SUVA(254), spectral slope SR, absorption coefficient a(355), modified humification index HIX, and autochthonous contribution index BIX) from porewater samples, obtained via optical analyses (fluorescence, UV-Vis) and a TOC analyzer.\n* **Supports / Challenges claims**: This data supports that biochar significantly altered DOM characteristics, showing increased aromaticity, molecular weight, chromophoric components, and humic character. It also indicated enhanced microbial activity in biochar treatments, crucial for explaining observed MeHg production.\n* **Provenance**: DOM characterization was conducted in the Environmental Biogeochemistry Laboratory of Natural Organic Matter (NOM-Lab) at Southwest University (SWU)."
+    }
+  ]
+}

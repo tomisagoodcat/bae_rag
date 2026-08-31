@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oops:OOPSResponse xmlns:oops="http://www.oeg-upm.net/oops">
+<oops:Pitfall>
+<oops:Code>P04</oops:Code><oops:Name>Creating unconnected ontology elements</oops:Name>
+<oops:Description>Ontology elements (classes, object properties and datatype properties) are created isolated, with no relation to the rest of the ontology.	</oops:Description>
+<oops:Importance>Minor</oops:Importance>
+<oops:NumberAffectedElements>10</oops:NumberAffectedElements>
+<oops:Affects>
+<oops:AffectedElement>https://bdi.whu.edu.cn/EBM</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/MPU</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000031</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/EEM</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000015</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000023</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/ENVO_00002297</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#Step</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#Location</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000040</oops:AffectedElement>
+</oops:Affects>
+</oops:Pitfall>
+<oops:Pitfall>
+<oops:Code>P08</oops:Code><oops:Name>Missing annotations</oops:Name>
+<oops:Description>This pitfall consists in creating an ontology element and failing to provide human readable annotations attached to it. Consequently, ontology elements lack annotation properties that label them (e.g. rdfs:label, lemon:LexicalEntry, skos:prefLabel or skos:altLabel) or that define them (e.g. rdfs:comment or dc:description). This pitfall is related to the guidelines provided in [5].	</oops:Description>
+<oops:Importance>Minor</oops:Importance>
+<oops:NumberAffectedElements>54</oops:NumberAffectedElements>
+<oops:Affects>
+<oops:AffectedElement>http://purl.org/mp#Statement</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#Activity</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#Location</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#Representation</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#Attribution</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#Reference</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#Plan</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#Data</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#Claim</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#Method</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#Step</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#Collection</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#Plan</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#Entity</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000015</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/IAO_0000109</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000040</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/ENVO_00002297</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/IAO_0000100</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000031</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/IAO_0000027</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/IAO_0000032</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/ENVO_00010483</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/IAO_0000030</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000023</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/OBI_0100026</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/spar/cito/isCitedBy</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#wasDerivedFrom</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasTarget</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#supports</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/dc/terms/hasPart</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/declaredOutput</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#hadMember</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#isStepOfPlan</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/declaredInput</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#challenges</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000051</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/IAO_0000136</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#atLocation</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasGoal</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/2003/01/geo/wgs84_pos#lat</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasName</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/IAO_0000004</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/researchType</oops:AffectedElement>
+<oops:AffectedElement>http://www.geonames.org/ontology#population</oops:AffectedElement>
+<oops:AffectedElement>https://schema.org/model</oops:AffectedElement>
+<oops:AffectedElement>https://schema.org/brand</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/2003/01/geo/wgs84_pos#long</oops:AffectedElement>
+<oops:AffectedElement>https://schema.org/softwareVersion</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/softwareBrand</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasOriginalText</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/2003/01/geo/wgs84_pos#alt</oops:AffectedElement>
+<oops:AffectedElement>https://schema.org/serialNumber</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasComparator</oops:AffectedElement>
+</oops:Affects>
+</oops:Pitfall>
+<oops:Pitfall>
+<oops:Code>P10</oops:Code><oops:Name>Missing disjointness</oops:Name>
+<oops:Description>The ontology lacks disjoint axioms between classes or between properties that should be defined as disjoint. This pitfall is related with the guidelines provided in [6], [2] and [7].	</oops:Description>
+<oops:Importance>Important</oops:Importance>
+</oops:Pitfall>
+<oops:NumberAffectedElements>1</oops:NumberAffectedElements>
+<oops:Pitfall>
+<oops:Code>P11</oops:Code><oops:Name>Missing domain or range in properties</oops:Name>
+<oops:Description>Object and/or datatype properties without domain or range (or none of them) are included in the ontology. 	</oops:Description>
+<oops:Importance>Important</oops:Importance>
+<oops:NumberAffectedElements>3</oops:NumberAffectedElements>
+<oops:Affects>
+<oops:AffectedElement>https://bdi.whu.edu.cn/isAboutDimension</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasOriginalText</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasName</oops:AffectedElement>
+</oops:Affects>
+</oops:Pitfall>
+<oops:Pitfall>
+<oops:Code>P13</oops:Code><oops:Name>Inverse relationships not explicitly declared</oops:Name>
+<oops:Description>This pitfall appears when any relationship (except for those that are defined as symmetric properties using owl:SymmetricProperty) does not have an inverse relationship (owl:inverseOf) defined within the ontology.	</oops:Description>
+<oops:Importance>Minor</oops:Importance>
+<oops:NumberAffectedElements>21</oops:NumberAffectedElements>
+<oops:Affects>
+<oops:MightBeInverse>
+<oops:AffectedElement>http://purl.org/mp#supports</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#challenges</oops:AffectedElement>
+</oops:MightBeInverse>
+<oops:NoInverseSuggestion>
+<oops:AffectedElement>http://purl.org/spar/cito/isCitedBy</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/declaredUsed</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#wasDerivedFrom</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasTarget</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#correspondsToStep</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/dc/terms/hasPart</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/declaredOutput</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#hadMember</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/fellow</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#isStepOfPlan</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/declaredInput</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#isInputVarOf</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#isOutputVarOf</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000051</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#isPrecededBy</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/IAO_0000136</oops:AffectedElement>
+<oops:AffectedElement>http://www.w3.org/ns/prov#atLocation</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasGoal</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/hasContext</oops:AffectedElement>
+</oops:NoInverseSuggestion>
+</oops:Affects>
+</oops:Pitfall>
+<oops:Pitfall>
+<oops:Code>P22</oops:Code><oops:Name>Using different naming conventions in the ontology</oops:Name>
+<oops:Description>The ontology elements are not named following the same convention (for example CamelCase or use of delimiters as &quot;-&quot; or &quot;_&quot;) . Some notions about naming conventions are provided in [2].	</oops:Description>
+<oops:Importance>Minor</oops:Importance>
+<oops:NumberAffectedElements>1</oops:NumberAffectedElements>
+<oops:Affects>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/BFO_0000015</oops:AffectedElement>
+<oops:AffectedElement>https://bdi.whu.edu.cn/EBM</oops:AffectedElement>
+</oops:Affects>
+</oops:Pitfall>
+<oops:Pitfall>
+<oops:Code>P32</oops:Code><oops:Name>Several classes with the same label</oops:Name>
+<oops:Description>Two or more classes have the same content for natural language annotations for naming, for example the rdfs:label annotation. This pitfall might involve lack of accuracy when defining terms.	</oops:Description>
+<oops:Importance>Minor</oops:Importance>
+<oops:NumberAffectedElements>1</oops:NumberAffectedElements>
+<oops:Affects>
+<oops:HaveSameLabel>
+<oops:AffectedElement>https://bdi.whu.edu.cn/DataSet</oops:AffectedElement>
+<oops:AffectedElement>http://purl.obolibrary.org/obo/IAO_0000100</oops:AffectedElement>
+</oops:HaveSameLabel>
+</oops:Affects>
+</oops:Pitfall>
+<oops:Suggestion>
+<oops:Name>SUGGESTION: symmetric or transitive object properties.</oops:Name>
+<oops:Description>The domain and range axioms are equal for each of the following object properties. Could they be symmetric or transitive?</oops:Description>
+<oops:NumberAffectedElements>3</oops:NumberAffectedElements>
+<oops:Affects>
+<oops:AffectedElement>http://purl.org/mp#supports</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/mp#challenges</oops:AffectedElement>
+<oops:AffectedElement>http://purl.org/net/p-plan#isPrecededBy</oops:AffectedElement>
+</oops:Affects>
+</oops:Suggestion>
+</oops:OOPSResponse>

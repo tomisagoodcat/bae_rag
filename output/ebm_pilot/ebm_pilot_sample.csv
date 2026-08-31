@@ -1,0 +1,339 @@
+chunk_id,document_id,section,text,chunk_index,EBM_num,EEM_num,MPU_num
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:9889,doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market,Methods_Materials,"spectroscopy was performed using an Ortec High-Purity germanium coaxial gamma photon detector system with an efficiency of 71% and a resolution of 1.8 keV at the 60 Co 1332 keV gamma line. Long lived radioisotopes were counted on an EG&amp;G Ortec High-Purity Germanium detector with an efficiency of 20% and a resolution of 1.9 keV at the 60 Co 1332 keV gamma line.
+
+Ag, Al, As, Ba, Br, Ca, Cd, Ce, Co, Cr, Cs, Eu, Fe, Hf, Hg, La, Mg, Na, Rb, Sb, Sc, Se, Sm, Sr, Th, Ti, U, V were analyzed by INAA; B, Cu, Mn were analyzed by ICP-OES; Zn by F-AAS and P and S by
+
+Student's t -test was done to determine statistical between data for brown and white rice samples, using in Microsoft Excel 2007.
+
+Mo, K, TXRF.
+
+significance XLSTAT2011
+
+Dietary intake estimates were calculated assuming a body weight of 70 kg for males and 65 kg for females, and an average per capita consumption of rice by Jamaicans estimated at 71.2 g/day, based on a rice supply quantity of 26.0 kg/person/year (FAOSTAT, 2007).
+
+## 2.1. Quality control
+
+Approximately 10% of the samples were analyzed in duplicate, with the differences between duplicates being less than 15%; at least one reagent blank and a certified reference material were also included in each analysis batch.
+
+Reference materials used were NIST (National Institute of Standards and Technology, MD, USA) 8436 -Durum Wheat Flour, NIST 1568a -Rice Flour, NIST 1547 -Peach Leaves, NIST 1570a -Spinach Leaves, and IAEA (International Atomic Energy Agency, Vienna, Austria) 336 -Lichen. Reference material data are presented in Table 1.
+
+For most elements the relative standard deviation of duplicate analyses was less than 10%, with a few (Al, Mo, S, U) having RSD between 10 and 20%; elements with RSDs greater than 20% were those which approached the detection limit of the technique (Ca, V, Ba, Sb, Sm). The agreement between techniques was excellent. Recovery for all reference materials used (were within acceptable limits of /C6 15%.
+
+Reference values were not available for B, Hf, Mo, and Ti in any appropriate reference materials. For B analysis by ICP-OES, the data was validated by the use of the internal standards (Sc, Y) and an independent B standard solution; the mean recovery was 95%. For the remaining elements, analyzed by INAA, validation was achieved by the irradiation and counting of single element standards (Certiprep) with identical geometry to that used for samples (Grant et al., 1998) employing the improved relative standardization method (Kennedy and St-Pierre, 1993). Recoveries were 96%, 95% and 98% for Hf, Mo and Ti respectively. The linear range for elements analyzed using F-AAS, ICP-OES and TXRF is low mg/kg to 10 3 mg/kg in the samples. Digested samples which were beyond the linear range were diluted to fall within the linear range and reanalyzed. The linear range for INAA is low m g/kg to 10 4 mg/kg. Detection Limits and linear ranges are shown in Table 2; INAA detection limits may vary (Howe et al., 2005).
+
+## 2.2. Samples
+
+The rice brands and types purchased are listed in Table 3.
+
+## 3. Results and discussion
+
+Twenty-six (26) rice samples were analyzed for a total of 36 elements. The analytical data are summarized in Table 4.
+
+Table 1 Reference material data.
+
+| Reference material            | Element   | Technique used   |   n |   Analyzed value (mg/kg) | Reference value (mg/kg)   | 95% confidence interval b   |
+|-------------------------------|-----------|------------------|-----|--------------------------|---------------------------|-----------------------------|
+| NIST 1547 - Peach Leaves      | Al        | INAA             |   2 |                  254     | 249 /C6 8                 | na                          |
+| NIST 1547 - Peach Leaves      | Ba        | INAA             |   2 |                  121     | 124 /C6 4                 | na                          |
+| NIST 1547 - Peach Leaves      | Ca        | INAA             |   2 |                    1.54  | 1.56 /C6 0.02             | ",1,1,1,0
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:14121,doc_02_Characterization of mercury species in brown and white rice,Results," which suggested HgT was not stored between July and September in the leaves. Instead, inorganic Hg(II) was possibly reemitted to the atmosphere from the leaves (Graydon et al., 2006; Stamenkovic and Gustin, 2009), or transported to other plant components, or exuded from the roots to the soil (Marschner, 1995).
+
+## Table 1
+
+QA/QC data for HgT, MeHg and other trace elements. The minimum detection levels (MDLs) for HgT and MeHg were estimated from the region of the standard curve where there was a signi /uniFB01 cant change in sensitivity. MDLs for other trace elements were based on instrument aqueous detection levels, which were corrected for the total volume (50 mL) and the mass of rice digested (1 g).
+
+The relative percent difference (RPD) was de /uniFB01 ned as the percent difference between replicate analyses (i.e., 100 /C2 the standard deviation divided by the mean).
+
+| Parameter   | Matrix                             | Average recovery /C6 1sd (%)                 | Reference material                                                                                     | MDL                              | Average RPD (%) ( n ¼ # of samples)      |
+|-------------|------------------------------------|----------------------------------------------|--------------------------------------------------------------------------------------------------------|----------------------------------|------------------------------------------|
+| Hg T        | Surface water Rice and plants      | 100 /C6 2.9 85 /C6 7.6 92 /C6 11 85 /C6 0.56 | Matrix spike Cabbage: GBW10014 (GSB-5) Lobster: Tort-2 Soil: GBW (e) 070009 Sediment: GBW07305 (GSD-5) | 0.71 ng/L 1.2 ng/g               | 4.8 a ( n ¼ 76) a 12 ( n ¼ 66)           |
+| MeHg        | Surface water Rice and plants Soil | 92 /C6 18 99 /C6 34 95 /C6 20                | Matrix spike Matrix spike Sediment: BCR 580                                                            | 0.056 ng/L 0.075 ng/g 0.075 ng/g | 32 a ( n ¼ 8) a 24 ( n ¼ 30) 25 ( n ¼ 3) |
+| Mn          | Rice                               | 110 /C6 2.1                                  | Rice: GBW10010 (GSB-1)                                                                                 | 0.075 m g/g                      | 5.3 ( n ¼ 5)                             |
+| Mg          | Rice                               | 86 /C6 5.7                                   | Rice: GBW10010 (GSB-1)                                                                                 | 0.0075 m g/g                     | 7.8 ( n ¼ 5)                             |
+| K           | Rice                               | 120 /C6 1.4                                  | Rice: GBW10010 (GSB-1)                                                                                 | 0.15 m g/g                       | 3.8 ( n ¼ 5)                             |
+| Cu          | Rice                               | 88 /C6 0.83                                  | Rice: GBW10010 (GSB-1)                                                                                 | 0.075 m g/g                      | 7.2 ( n ¼ 5)                             |
+| Zn          | Rice                               | 110 /C6 7.1                                  | Rice: GBW10010 (GSB-1)                                                                                 | 0.075 m g/g                      | 4.0 ( n ¼ 5)                             |
+| Ni          | Rice                               | 97 /C6 13                                    | Rice: GBW10010 (GSB-1)                                                                                 | 0.025 m g/g                      | 27 ( n ¼ 5)                              |
+
+a RPD for aqueous HgT and MeHg represented values for samples run at the same time, since there was insuf /uniFB01 cient volume for duplicate analyses for samples collected for this study.
+
+Fig.
+
+2. HgT levels in plant components collected in a) July (root, stems, and leaves) and b) ",3,2,2,0
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:17155,doc_03_Rice consumption contributes to low level methylmercury exposure in southern China,Introduction," rice samples ( Oryza sativa L.) were collected in 2007 from markets in urban area or residents' house in rural area in 7 provinces in southern China, which include 4 coastal area: Guangdong ( n =47), Shanghai ( n =34), Jiangsu ( n =26), Guangxi ( n =38) and 3 inland areas: Hunan ( n =78), Jiangxi ( n =30), and Guizhou ( n =31).
+
+Generally, the urban residents purchase rice from the market and the rural residents plant rice by themselves and can be self-suf /uniFB01 cient. The spatial distribution is given in Fig.
+
+1 and the basic information is listed in the Supporting information Table S1. Guangdong, Shanghai, and Jiangsu are the most economically developed provinces, while Guizhou is the poorest province in inland China. These 7 provinces cover 29.2% of population (388 million) and 46.4% of total rice production (90.4 million tons) in China. Except Shanghai City, the rice supply in other 6 provinces can be self-suf /uniFB01 cient. The arsenic concentration and speciation in these rice samples have been reported (Zhu et al., 2008). The /uniFB01 sh MeHg data in these 7 provinces were adopted from literatures.
+
+## 2.2. Analytical method
+
+In the laboratory, the rice samples were air dried, crushed, and sieved to 150 meshes. For total mercury (THg) analysis, rice samples were digested in a water bath (95 °C) with a fresh mixed acid of HNO3:H2SO4 (4:1, v/v) (Horvat et al., 1991) and determined by SnCl2 reduction, purge, gold trap, and cold vapor atomic /uniFB02 uorescence spectrometry (CVAFS) detection according to USEPA Method 1631 (USEPA, 1999).
+
+For MeHg measurement, rice samples were digested using the KOH-methanol/solvent extraction technique (Liang et al., 1994, 1996) and measured by aqueous ethylation, purge, trap, and gas chromatography (GC) coupled with CVAFS detection according to USEPA Method 1630 (USEPA, 2001). Detail information of quality control is available in the Supporting information.
+
+## 2.3. Calculation of PDI and relative contribution
+
+To estimate MeHg intake from rice and /uniFB01 sh consumption, we calculated PDI values for the general adult in these 7 provinces according to the following formula (1):
+
+<!-- formula-not-decoded -->
+
+where PDI is given in micrograms per kilogram of body weight per day ( μ g·kg -1 ·d -1 ); bw (body weight)=60 kg; C is MeHg concentration in rice or /uniFB01 sh (ng·g -1 ); IR is daily intake rate (g·d -1 ).
+
+Fig.
+
+1. The spatial location of different provinces for rice sampling in southern China.
+
+<!-- image -->
+
+The speci /uniFB01 c PDIs for each province were calculated using the mean of MeHg concentrations in the rice or /uniFB01 sh collected in this speci /uniFB01 c area. The rice MeHg concentrations in these 7 provinces were obtained through this investigation, while the /uniFB01 sh MeHg concentrations in these 7provinces were based on the data from literature (Fu et al., 2010; He et al., 2010; Shang et al., 2010; Shao et al., 2011). The /uniFB01 sh MeHg data of Guangdong province was based on Shang et al. (2010), which include 122 /uniFB01 sh samples collected from 18 /uniFB01 sh ponds from six cities in this province. The /uniFB01 sh MeHg concentrations of Shanghai, Guangxi, Jiangxi and Jiangsu province were adopted from the fourth Chinese Total Dietary Study (TDS) carried out in 2007. The /uniFB01 sh MeHg concentrations of Hunan province were based on 73 /uniFB01 sh Hg data from Fu et al., 2010, which was on the assumption that 70% of Hg in /uniFB01 sh is in the form of MeHg. The /uniFB01 sh MeHg concentrations of Guizhou province were adopted from He et al. (2010), which consisted of 70 /uniFB01 sh MeHg data from Hongfeng Reservoir. The /uniFB01 sh MeHg data in these 7 provinces are representative to perform risk assessment.
+
+The daily intake rates of rice and /uniFB01 sh for urban and rural population were adopted from of /uniFB01 cial data in the section of ' People's Living Conditions ' in China Statistical Yearbook (NBS, 2010). The urban and rural population is ",2,1,3,13
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:10188,doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market,Discussion,"   |                            0.003  | 0.0002-100,000         |
+| Cu        |                            0.77   | 0.77-250               |
+| Eu        |                            0.001  | 0.0001-1000            |
+| Fe        |                            3.1    | 0.17-100,000           |
+| Hf        |                            0.0005 | 0.0001-100,000         |
+| Hg        |                            0.015  | 0.01-100,000           |
+| K         |                           36.1    | 36.1-5000              |
+| La        |                            0.002  | 0.0009-100,000         |
+| Mg        |                          100      | 11-100,000             |
+| Mn        |                            0.03   | 0.03-250               |
+| Mo        |                            0.05   | 0.01-100,000           |
+| Na        |                            0.03   | 0.002-10,000           |
+| P         |                           10      | 10-1000                |
+| Rb        |                            0.13   | 0.05-10,000            |
+| S         |                           10      | 10-1000                |
+| Sb        |                            0.003  | 0.0005-100,000         |
+| Sc        |                            0.0004 | 0.00002-100,000        |
+| Se        |                            0.03   | 0.0007-100,000         |
+| Sm        |                            0.0004 | 0.0001-10,000          |
+| Sr        |                            1.48   | 0.4-100,000            |
+| Th        |                            0.002  | 0.0007-10,000          |
+| Ti        |                            4.1    | 1-100,000              |
+| U         |                            0.001  | 0.0004-10,000          |
+| V         |                            0.017  | 0.005-100,000          |
+| Zn        |                            1      | 1-500                  |
+
+such is monitored and/or regulated in many food types. The limit for cadmium in polished rice established by Codex is 0.4 mg/kg. The WHO has also suggested a PTWI of 0.007 mg/kg bw.
+
+All rice sampled was well below the prescribed limit.
+
+## 3.1.4. Mercury
+
+The average mercury content of the white rice samples ranged from &lt; 0.015 to &lt; 0.085 mg/kg while the range for brown rice was &lt; 0.024 to &lt; 0.112 mg/kg. The mean values in white rice and brown rice were &lt; 0.049 mg/kg and &lt; 0.062 mg/kg respectively. Mercury has no known essentiality in humans and the toxic effects of mercury compounds and in particular methylmercury are well known.
+
+Methylmercury poisoning through the ingestion of fish from industrially contaminated waters was the cause of mass poisoning in Minamata, Japan (Ekino et al., 2007). The symptoms of mercury poisoning range from the neurological to the renal, reproductive and cardiovascular systems and its effect on the nervous system of the developing fetus have been described (McDowell, 1992; Berry, 2008).
+
+## 3.2.
+
+Essential elements
+
+## 3.2.1. Calcium
+
+The calcium content of rice was generally low, with a mean concentration of 127 mg/kg among the white rice samples collected and 104 mg/kg in the brown rice. The concentration of calcium in white rice ranged from &lt; 24.6 to 425 mg/kg while the range in brown rice was 41.5-148 mg/kg. The calcium content of Zatarain's Parboiled was significantly higher than other samples at 425 mg/kg. Calcium is the most abundant mineral in the human body and is stored mostly in the bones and teeth. It is also essential
+
+Table 3 Purchased rice samples.
+
+| Purchased samples                      | Country of Origin                                   |
+|----------------------------------------|-----------------------------------------------------|
+| Bulk Rice (White, long grain)          | Guyana                                              |
+| Daawat Brown Rice                      | India                                               |
+| Roland Arborio Rice                    | Italy                                               |
+| ",6,3,4,15
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:10191,doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market,Discussion,"             | 833-3097             | 2157 /C6 595            | 2221                    |
+| La        | 0.421                         | < 0.002-0.035         | 0.010 /C6 0.009         | 0.003-0.056          | 0.014 /C6 0.017         | 0.007                   |
+| Mg        | < 0.0001                      | 176-562               | 371 /C6 127             | 340-1450             | 1205 /C6 335            | 1229                    |
+| Mn        | < 0.0001                      | 5.02-17.1             | 10.5 /C6 3.68           | 5.19-43.5            | 26.5 /C6 12.2           | 18.3                    |
+| Mo        | 0.887                         | 0.438-1.62            | 0.790 /C6 0.275         | 0.447-1.20           | 0.770 /C6 0.276         | 0.54                    |
+| Na        | 0.013                         | 1.65-11.4             | 6.00 /C6 2.95           | 5.07-48.1            | 15.1 /C6 13.2           | 21.3                    |
+| P         | < 0.0001                      | 335-2591              | 1203 /C6 714            | 931-4339             | 3361 /C6 1014           | 3705                    |
+| Rb        | 0.035                         | 0.699-9.10            | 4.75 /C6 2.12           | 2.13-16.4            | 7.55 /C6 4.17           | 2.92                    |
+| S         | 0.032                         | 912-1328              | 1131 /C6 149            | 1118-1671            | 1291 /C6 200            | 1387                    |
+| Sb        | 0.618                         | 0.002-0.010           | 0.005 /C6 0.003         | 0.003-0.009          | 0.005 /C6 0.002         | 0.002                   |
+| Sc        | 0.251                         | 0.001-0.002           | 0.002 /C6 0.001         | 0.001-0.007          | 0.002 /C6 0.002         | 0.001                   |
+| Se        | 0.389                         | < 0.028-0.236         | 0.108 /C6 0.066         | < 0.058-0.204        | 0.131 /C6 0.057         | 0.322                   |
+| Sm        | 0.545                         | < 0.0004-0.004        | 0.002 /C6 0.001         | 0.0004-0.004         | 0.001 /C6 0.001         | 0.001                   |
+| Sr        | 0.0002                        | 1.48-2.73             | 1.93 /C6 0.348          | 2.01-4.19            | 2.83 /C6 0.682          | 3.16                    |
+| Th        | 0.007                         | < 0.003-0.008         | < 0.005 /C6 0.002       | 0.002 to < 0.011     | < 0.008 /C6 0.003       | < 0.009                 |
+| Ti        | 0.262                         | < 4.10 to < 13.1      | < 8.51 /C6 2.69         | < 5.90 to < 13.9     | < 9.82 /C6 2.79         | < 11.8                  |
+| U         | 0.911                         | < 0.001 to < 0.020    | < 0.006 /C6 0.006       | < 0.003 to < 0.009   | < 0.006 /C6 0.002       | 0.006                   |
+| V         | 0.013                         | < 0.017-0.072         | 0.037 /C6 0.015         | < 0.021-0.091        | 0.057 /C6 0.024         | < 0.049                 |
+| Zn        | < 0.0001                      | 12.6-19.0             | 15.6 /C6 1.90           | 16.6-24.5            | 20.2 /C6 2.73           | 22.5                    |
+
+N.B.: detection limits for neutron activation analysis are variable; n : number of samples; SD: standard deviation.
+
+and potentially toxic. While adequate intake recommendations vary by age and gender, the Recommended Daily Intake for most adult females is 25 m g/day and 35 m g/day for most adult males (NIH).
+
+## 3.2.4. Copper
+
+The copper concentration of white rice samples ranged from &lt; 0.770 to 2.72 mg/kg and the brown rice samples from 1.60 to 4.74 mg/kg. The mean concentration found in white rice was 1.65 mg/kg; in brown rice the mean was 2.96 mg/kg. Copper is essential to humans in small quantities as a key component of redox enzymes and hemocyanin; it is involved in mitochondrial function, cellular metabolism, connective tissue formation, and the absorption, storage and metabolism of iron (NIH). The copper ",9,6,7,5
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:14120,doc_02_Characterization of mercury species in brown and white rice,Introduction,"determined in brown and white rice grains following EPA Method 3050b (USEPA,1996).
+
+All elements were analyzed using /uniFB02 ame atomic absorption spectrometry (AAS, Model 5100 PC, Perkin Elmer, Inc., Waltham, USA), aside from Ni, which was analyzed by inductively coupled plasma mass spectrometry (GV Instruments, Cheshire, UK).
+
+## 2.2.6. QA/QC
+
+HgT, MeHgand other trace elements were quanti /uniFB01 edusingdaily calibration curves with the coef /uniFB01 cient of variation ( r 2 ) &gt; 0.99. The minimum detection levels (MDLs) for HgT and MeHg were estimated from the region of the standard curve where there was a signi /uniFB01 cant change in sensitivity (40 CFR, Appendix B to Part 136, De /uniFB01 nition and Procedure for Determination of the Method Detection Limit).
+
+MDLs for trace elements (Mg, K, Mn, Zn, Cu, and Ni) were based on instrument aqueous detection levels, corrected for the total volume (50 mL) and the mass of rice digested (1 g). MDLs, percent recovery of matrix spikes and standard reference material, and relative percent difference between replicate analyses (RPDs) are summarized in Table 1.
+
+## 2.3.
+
+Statistics
+
+The statistical program, Stata, was used for unpaired t -tests and one-way analysis of variance (ANOVA), and tests were considered signi /uniFB01 cant at the 95% alpha-level. Due to the small sample size, interpretation of p -values is cautionary.
+
+## 3.
+
+Results and discussion
+
+## 3.1. Aqueous HgT and MeHg concentrations
+
+Mean un /uniFB01 ltered and /uniFB01 ltered aqueous HgT and MeHg levels in sites 1 e 3 (Table S1) were similar to mean values reported for background sites in eastern Guizhou province (un /uniFB01 ltered HgT 2.2 e 18 ng/L, /uniFB01 ltered HgT 0.89 e 5.3 ng/L from this study; un /uniFB01 ltered HgT 8.4 e 13 ng/L, /uniFB01 ltered HgT 3.7 e 5.2 ng/L from Zhang et al., 2010b; un /uniFB01 ltered MeHg 0.47 e 0.50 ng/L, /uniFB01 ltered MeHg 0.077 e 0.46 ng/L from this study; un /uniFB01 ltered MeHg 0.32 ng/L, /uniFB01 ltered 0.14 ng/L from Zhang et al., 2010c). For the present study, highest un /uniFB01 ltered aqueous MeHg levels were observed in the canal (site 1: 0.47 ng/L; site 2: 0.50 ng/L; site 3: 0.50 ng/L and canal: 3.6 ng/L), located downstream from a cooking oil factory and between sites 1 and 2 (Fig. 1). Although water from the canal may be a source of MeHg to the rice paddies in site 2, un /uniFB01 ltered aqueous MeHg levels collected within each site were similar (see Section 3.4).
+
+## 3.2. HgT and MeHg concentrations in rice plants
+
+HgT and MeHg concentrations for rice plants harvested in July and September are shown in Figs. 2 and 3.
+
+In both months, mean leaf HgT levels were similar or higher than root HgT levels, which suggested stems were not the only source of HgT to the leaves. Findings were consistent with previous research that demonstrated leaf HgT was mainly accumulated from the atmosphere and not the roots (Ericksen et al., 2003; Rea et al., 2002; Stamenkovic and Gustin, 2009; Zhang et al., 2010d).
+
+In July leaf HgT levels were signi /uniFB01 cantly higher in site 1 compared to sites 2 and 3 (ANOVA, p &lt; 0.05, n ¼ 6) (site 1: 300 /C6 47 ng/g, site 2: 42 /C6 12 ng/g, site 3: 52 /C6 24 ng/g). Site 1 was located downwind from a cooking oil factory emitting pollution from a smokestack at the same time rice plants were collected, although atmospheric Hg was not measured. Site 2 was located upwind from the factory and Site 3 was further downwind (Fig. 1). The mean HgT value for leaves at site 1 (300 ng/g) was derived from rice plants collected in 2 paddies (leaf HgT paddy 1: 270 /C6 14 ng/g, n ¼ 2 replicates; leaf HgT paddy 2: 330 /C6 90 ng/g, n ¼ 4 replicates). In contrast to July, leaf HgT levels in September were similar at all 3 sites (one-way ANOVA, p &gt; 0.05, n ¼ 6), which suggested HgT was not stored between July and September in the leaves. Instead, inorganic Hg(II) was possibly reemitted to the atmosphere from the leaves (Graydon et al., 2006; Stamenkovic and ",2,3,3,0
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:14378,doc_02_Characterization of mercury species in brown and white rice,Discussion,"elements (Mg, K, Mn, Zn, and Ni) were also signi /uniFB01 cantly higher in brown rice compared to white rice ( p &lt; 0.05, n ¼ 12), and borderline signi /uniFB01 cant for Cu ( p &lt; 0.054, n ¼ 12). Between sites, there were no signi /uniFB01 cant differences for MeHg and other trace elements (Mg, K, Mn, Zn, Cu, and Ni) in brown and white rice grain; however, HgT levels in brown rice were signi /uniFB01 cantly higher in site 3 compared to site 2 (ANOVA, p &lt; 0.05, n ¼ 12) (Table 2).
+
+The concentration of Hg species in brown rice is comprised of the weighted contributions from bran and polished white rice. The proportion of brown rice in white rice may be derived as follows, where 7% is the percentage of bran milled (see Section 2.2.2 methods for rice milling).
+
+<!-- formula-not-decoded -->
+
+Dividing by the concentration in brown rice in equation (1) gives the following result:
+
+<!-- formula-not-decoded -->
+
+The term on the right (i.e., 0.93 /C2 [white]/[brown]) represents the proportion of trace element transferred from brown rice to white rice (from Villareal et al., 1991). The authors reported the following percentages for rice with 10% bran removed: Cu 99%, Zn 66%, K 48%, Mn 45%, and Mg 40%, which indicated Cu was transported more ef /uniFB01 ciently into the endosperm (i.e., white rice) compared to Mg (Villareal et al., 1991). From this study, average percentages for the same trace elements differed but the rankings were the same (Cu 86 /C6 13%, Zn 77 /C6 7.4%, K 57 /C6 7.9%, Mn 57 /C6 8.3%, and Mg 48 /C6 8.5%).
+
+Percentages for Ni and Hg species were: Ni 85 /C6 24%, HgT 82 /C6 14%, and MeHg 120 /C6 59%. When one rice sample from Wanshanwasincluded, which was grown under /uniFB02 ooded conditions (white rice HgT: 110 /C6 9.2, MeHg 12 /C6 2.4; brown rice: HgT: 200 /C6 16, MeHg 17 /C6 8.9), percentages for Hg species did not signi /uniFB01 cantly change (HgT 80 /C6 16%, and MeHg 120 /C6 58%).
+
+Percentage differences re /uniFB02 ect where elements reside in the rice grain. Using synchrotron X-ray /uniFB02 uorescence (XRF) and particle induced X-ray emission (PIXE) to map the locations of nutrients in the rice grain, Lombi et al. (2009) reported both Zn and Cu decreased in concentration from the pericarp to the interior of the endosperm, while K and Mn were localized in the aleurone/pericarp region. During the milling process, the embryo, pericarp and most of the aleurone layer are removed, leaving polished white rice. Nutrients more concentrated in these layers are reduced during the milling process.
+
+Unlike most other trace elements, milled white rice did not result in a reduction in MeHg levels. Variability for MeHg was also higher compared to other micronutrients, which possibly re /uniFB02 ected higher RPD between replicate digestions (MeHg: 24%; HgT: 12%; Ni: 27%, others: &lt; 8%) (Table 1). Similar MeHg levels in white and brown rice grain suggested more ef /uniFB01 cient unloading of this species into the endosperm. In rice grain, the /uniFB01 lial tissue (endosperm, germ, and aleurone) is isolated from the maternal tissue (pericarp, placenta, vascular tissue, chalaza, and nucellus) (Krishnan and Dayanandan, 2003). The ovular vascular trace, which is part of the maternal tissue, is the only source of nutrients for the developing grain (Krishnan and Dayanandan, 2003), and is considered a bottleneck for nutrient unloading (Lombi et al., 2009). It is possible organic nutrients, including MeHg, utilize membrane transport pathways into the grain more ef /uniFB01 ciently, which was reported in rice grain for organic dimethylarsinic acid (Carey et al., 2010; Lombi et al., 2009; Meharg et al., 2008) and for organic selenium species (Li et al., 2010; Sun et al., 2010; Williams et al., 2009).
+
+## 4. Conclusions
+
+AWD water-saving methods did not affect the uptake rate (i.e., slope of the regression line) of HgT and MeHg between the soil and rice grain, although other factors may be important.
+
+Despite drier, more aerobic ",9,6,17,58
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:17154,doc_03_Rice consumption contributes to low level methylmercury exposure in southern China,Results,"removed and destroyed by cooking
+
+⁎ Corresponding author at: State Key Laboratory of Environmental Geochemistry, Institute of Geochemistry, Chinese Academy of Sciences, 46 Guanshui Road, Guiyang, 550002, China. Tel.
+
+: +86 851 5891356; fax: +86 851 5891609.
+
+E-mail address: fengxinbin@vip.skleg.cn (X. Feng).
+
+or cleaning processes. MeHg contamination in /uniFB01 sh poses a particular challenge to public health, because /uniFB01 sh is a highly nutritious food, with known bene /uniFB01 ts for human health (Mergler et al., 2007).
+
+Recent studies have highlighted that rice can accumulate relatively high levels of MeHg (174 ng·g -1 ) in mercury (Hg) mining areas in Guizhou Province, Southwestern China (Horvat et al., 2003; Qiu et al., 2008; Zhang et al., 2010a). Shi et al. (2005) also found the MeHg concentrations in rice samples produced in 15 provinces in China ranged from 1.9 to 10.5 ng·g -1 . Furthermore, rice, rather than /uniFB01 sh, is the main route of human MeHg exposure in Wanshan Hg mining area (Feng et al., 2008) and even in Guizhou Province in China (Zhang et al., 2010b). The bioavailability of Hg in rice is not known but adverse effects including neurobiological disruptions and increase of c-fos gene expression have been observed in rats feeding experiments with MeHg contaminated rice (Cheng et al., 2006; Ji et al., 2006). The probable daily intake (PDI) of MeHg from rice consumption indicated potential human health risk in Hg mining areas (Feng et al., 2008; Li et al., 2011; Zhang et al., 2010b). The MeHg translocation and accumulation in rice plant (Meng et al., 2010, 2011) and the effects of mitigation methods and cultivar variations (Peng et al., 2012; Rothenberg et al., 2011) were observed.
+
+Withrapideconomicgrowthinthelast 3 decades, China is considered as the largest anthropogenic source of Hg emission in the world (Pacyna et al., 2006). Its annual Hg emission reached 604.7 t in 2000, accounting for 28% of the global emissions (Pacyna et al., 2006). Coal combustion and non-ferrous metal smelting are the most important anthropogenic sources (Streets et al., 2005). The large Hg emissions have resulted in serious environmental Hg pollution in China (Feng, 2004; Jiang et al., 2006; Zhang and Wong, 2007). But there are no comprehensive studies regarding this environmental health problem to evaluate human Hg exposure and associated health effects.
+
+Furthermore, Hg concentrations in soil are not evenly distributed over China; southern China has higher Hg concentrations than northern China (Zheng, 1994) as the Global Circum-Paci /uniFB01 c Hg Belt crosses southern China (Feng, 2004). Northern and southern China are divided by the Huai River-Qinling Mountains in geography, with big differences in climate (cold and dry in northern China; warm and rainy in southern China), geography, culture, language, and cuisine. Rice is the second largest produced crop in the world and China is the largest rice producer with 30.7% of the global production (UNCTAD, 2011).
+
+Southern China is the main rice cultivation area accounting for 93% of national rice production in 2009 (NBS, 2010) and rice is the staple food for the population in this region. The relative high Hg background in the soil (Zheng, 1994) andfrequentrice intake indicate that the general population in southern China may be at risk of elevated exposure to MeHg.
+
+The objective of this study was to evaluate human health risk through rice and /uniFB01 sh consumption in southern China and to calculate the relative contribution from rice and /uniFB01 sh consumption. It will provide an overview of human MeHg exposure and risk assessment and new understanding of MeHg exposure pathways in southern China.
+
+## 2. Materials and methods
+
+## 2.1. Sample collection
+
+A total of 284 polished rice samples ( Oryza sativa L.) were collected in 2007 from markets in urban area or residents' house in rural area in 7 provinces in southern China, which include 4 coastal area: Guangdong ( n =47),",1,6,13,42
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:17160,doc_03_Rice consumption contributes to low level methylmercury exposure in southern China,Discussion," population.
+
+There are clear differences in the pattern of rice and /uniFB01 sh consumption between urban and rural population as a result of income difference (Supporting information Table S3). As incomes rise, diets improve: the city dweller consumes signi /uniFB01 cantly less grain and more meat, /uniFB01 sh, fruits and vegetables than the rural counterpart (NBS, 2010).
+
+## 4.3. Potential health risk
+
+Overall, the average PDI of MeHg from rice and /uniFB01 sh consumption was below the guidelines for public health concerns. However, the 95th percentile PDI of MeHg from rice consumption for rural population in Hunan exceeded the RfD of 0.1 μ g·kg -1 ·d -1 for children and pregnant women established by the USEPA (1997), which indicated some subpopulations may be at potential risk of MeHg exposure.
+
+Other high risk groups include residents in regions affected by point sources of Hg pollution.
+
+For example, Zhang et al. (2010b) predicted that approximately 22,400 and 107,200 residents in Guizhou Hg mining areas were exposed to MeHg exceeding the JEFCA and USEPA guideline, respectively. Besides Hg mining areas, the population in the vicinity of hotspots of Hg pollution, such as amalgamation gold mining, chemical plant, metal smelting and coal combustion power plant, may be also at potential risk of MeHg exposure (Feng, 2004; Li et al., 2009).
+
+The results of PDIs of MeHg from rice and /uniFB01 sh consumption (0.020 μ g·kg -1 ·d -1 for urban population and 0.028 μ g·kg -1 ·d -1 for rural population) were comparable with the previous report on MeHg exposure from /uniFB01 sh consumption in 12 provinces in China (0.006 μ g· kg -1 ·d -1 , Shang et al., 2010), US adult women (0.02 μ g·kg -1 ·d -1 , Mahaffey et al., 2004), Korean population (0.03 μ g·kg -1 ·d -1 , Lee et al., 2006), and Southeast Asia populations (0.027 -0.097 μ g·kg -1 ·d -1 , Agusa et al., 2007), but were lower than that reported in Japanese populations with high /uniFB01 sh consumption (0.14 μ g·kg -1 ·d -1 , Zhang et al., 2009). The results of this study con /uniFB01 rmed the low risk of human MeHg exposure through rice and /uniFB01 sh consumption in southern China, even serious environmental Hg pollution were found in China (Feng, 2004; Jiang et al., 2006; Zhang and Wong, 2007).
+
+The low averages of hair THg concentrations (generally b 1 μ g/g) reported in /uniFB01 ve coastal sites (Shanghai, Ningbo, Dalian, Xiamen, and Zhoushan) in eastern China (Liu et al., 2008) also con /uniFB01 rmed our results in this study.
+
+Because rice does not contain a lot of bene /uniFB01 cial micronutrients associated with /uniFB01 sh (e.g., n -3long-chain polyunsaturated fatty acid, selenium, the essential amino acids, Li et al., 2010a, 2010b), the current Reference Doses of MeHg exposures from /uniFB01 sh consumption may underestimate the health effects of MeHg exposure from rice consumption. It is urgent and critical to setup the dose -response relationship of MeHg exposure from rice consumption and to reduce the health risk in southern China.
+
+## 5. Conclusions
+
+Theaveragelevels of THg and MeHg in the rice samples collected from southern China were generally low.
+
+But 12.7% of the rice samples had THg concentration exceeding the national limit. The general populations in southern China had low risk of MeHg exposure through rice and /uniFB01 sh consumption. However, rice consumption is still the main route of MeHg exposure for rural population in southern China.
+
+## Acknowledgements
+
+This research was /uniFB01 nanced by the Chinese Academy of Sciences through a knowledge innovation project (KZCX2-YW-135) and the National Natural Science Foundation of China (21007068).
+
+## Appendix A. Supplementary data
+
+Supplementary data to this article can be found online at http:// dx.doi.org/10.1016/j.envint.2012.08.006.
+
+## References
+
+Agusa T, Kunito T, Sudaryanto A, Monirith I, Kan-Atireklap S, Iwata H, et al. Exposure assessment for trace elements from consumption of marine /uniFB01 sh in ",7,4,17,47
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:10192,doc_01_Dietary intake of minerals and trace elements in rice on the Jamaican market,Discussion,"component of redox enzymes and hemocyanin; it is involved in mitochondrial function, cellular metabolism, connective tissue formation, and the absorption, storage and metabolism of iron (NIH). The copper content of rice varies greatly with different cultivars (Yan et al., 2006) and so this could be a function of the variety selected for the local field trials.
+
+lists iron deficiency as the 6th leading cause of illness and disease in low income countries.
+
+There are several recognized factors related to this deficiency; low bioavailability of iron in foods, inability to meet iron demand during growth spurts such as infancy and pregnancy, blood loss in women of childbearing age through menstruation and childbirth, blood losses from parasitic infections and loss from diseases like malaria. Most of the iron in the body is found in heme proteins such as hemoglobin and myoglobin, both involved in oxygen transport. Iron is also found as a constituent of heme enzymes such as cytochromes, catalases and peroxidizes and other non heme compounds (McDowell, 1992). The amount of bioavailable iron in rice and other staple plants is low, and the phytic acid present in rice may add to this lack of bioavailability (Glahn et al., 2002). This is a likely contributor to the global iron deficiency problem. The polishing of rice may remove phytic acid and polyphenols, and enrichment may be an important tool in combating iron deficiency (Liang, 2007).
+
+## 3.2.5. Iron
+
+The iron content of white rice ranged from &lt; 3.10 to 153 mg/kg while the range for brown rice samples was 12.8-38.2 mg/kg. The mean value found in white rice was 22.3 mg/kg and the mean in brown rice was 20.1 mg/kg. 44% of the white rice samples had iron levels below the limit of detection, and the reported mean is likely a reflection of enrichment. The highest value was found in Riceland Enriched White Rice.
+
+The second highest concentration was Mahatma Long Grain Enriched rice. The bulk rice most consumed by Jamaicans had the lowest detected concentration. The WHO
+
+## 3.2.6. Magnesium
+
+Magnesium concentrations in white rice ranged from 176 to 562 mg/kg, and 340 to 1450 mg/kg in brown rice.
+
+The mean concentration found in white rice was 371 mg/kg and the mean in brown rice was 1205 mg/kg. Bulk rice had a value of 381 mg/kg and as such may not be an adequate source of dietary magnesium, but several types of Jamaican foods do contain significant levels of magnesium (Howe et al., 2005). Magnesium toxicity whether by dietary intake or parenteral administration is improbable as excessive magnesium is excreted (Rude, 1998). Magnesium
+
+deficiency in animals and humans however, is well known and described in literature. Symptoms range from growth retardation, nausea, muscle weakness, tetany and this deficiency may affect cardiac function (McDowell, 1992). It was thought the typical westernized diet provided adequate magnesium; however a significant amount of the US population may be falling short of recommended intake amounts (Rude, 1998). This may suggest that a tendency toward deficiency is more likely than previously estimated. According to the NIH, a cup of cooked brown rice contains approximately 80 mg of magnesium, which would be about 20% of RDA.
+
+## 3.2.7. Manganese
+
+The manganese concentrations in white rice samples ranged from 5.02 to 17.1 mg/kg; the range for brown rice was 5.1943.5 mg/kg. The mean concentration of manganese in the white rice samples analyzed was 10.5 mg/kg and 26.5 mg/kg in brown rice samples, with Roland Black Japonica rice having the highest levels. Brown rice is known as a good source of manganese and several of the samples had manganese levels in excess of 30 mg/ kg. Manganese is essential to human beings. It can function as an enzyme activator for several enzymes and as a component of some metalloenzymes.
+
+It is also important for bone growth, carbohydrate and lipid metabolism. Because of its ubiquity in foods, deficiency is unlikely in an adequate diet. ",10,14,19,23
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:13601,doc_02_Characterization of mercury species in brown and white rice,Methods_Materials,"Statistics
+
+The statistical program, Stata, was used for unpaired t -tests and one-way analysis of variance (ANOVA), and tests were considered signi /uniFB01 cant at the 95% alpha-level. Due to the small sample size, interpretation of p -values is cautionary.
+
+## 3.
+
+Results and discussion
+
+## 3.1. Aqueous HgT and MeHg concentrations
+
+Mean un /uniFB01 ltered and /uniFB01 ltered aqueous HgT and MeHg levels in sites 1 e 3 (Table S1) were similar to mean values reported for background sites in eastern Guizhou province (un /uniFB01 ltered HgT 2.2 e 18 ng/L, /uniFB01 ltered HgT 0.89 e 5.3 ng/L from this study; un /uniFB01 ltered HgT 8.4 e 13 ng/L, /uniFB01 ltered HgT 3.7 e 5.2 ng/L from Zhang et al., 2010b; un /uniFB01 ltered MeHg 0.47 e 0.50 ng/L, /uniFB01 ltered MeHg 0.077 e 0.46 ng/L from this study; un /uniFB01 ltered MeHg 0.32 ng/L, /uniFB01 ltered 0.14 ng/L from Zhang et al., 2010c). For the present study, highest un /uniFB01 ltered aqueous MeHg levels were observed in the canal (site 1: 0.47 ng/L; site 2: 0.50 ng/L; site 3: 0.50 ng/L and canal: 3.6 ng/L), located downstream from a cooking oil factory and between sites 1 and 2 (Fig. 1). Although water from the canal may be a source of MeHg to the rice paddies in site 2, un /uniFB01 ltered aqueous MeHg levels collected within each site were similar (see Section 3.4).",2,15,12,0
+4:a588b8f8-4a1b-4a79-8a1a-924958fc2820:16752,doc_03_Rice consumption contributes to low level methylmercury exposure in southern China,Methods_Materials,"al., 2003).
+
+We hypothesize that rice and /uniFB01 sh consumption are two sources of human MeHg exposure in southern China. According to the PDIs of MeHg from rice and /uniFB01 sh consumption, the relative contributions were calculated to assess the main pathway in urban and rural population in these 7 provinces.
+
+## 2.4. Data analysis
+
+All data were analyzed using SPSS 11.5 for windows.
+
+The characteristics of Hg concentrations were described in mean±standard deviation (SD) and examined using descriptive statistics. Mean values of rice Hg concentrations were compared between different provinces using t test. The correlation coef /uniFB01 cients between rice THg and MeHg concentrations were studied by the Pearson correlation analysis. The results of statistical tests were considered statistically signi /uniFB01 cant if p b 0.05.
+
+## 3.
+
+Results
+
+## 3.1. Hg in rice and /uniFB01 sh
+
+The THg concentrations in all rice samples ranged from 0.86 to 47.2 ng·g -1 with a mean of 10.1 ng·g -1 . The MeHg concentrations in all rice samples varied from 0.13 to 18.2 ng·g -1 with a mean of 2.47 ng·g -1 . The MeHg constituted a large proportion of THg in the rice grain, with an average of 35.8% (1.70 -96.7%). There was a signi /uniFB01 -cant correlation between THg and MeHg concentrations in rice samples (r=0.36, p b 0.01). In addition, the percentage of Hg as MeHg in rice was negatively correlated to the THg concentrations (r= -0.55, p b 0.001).
+
+The average concentrations among rice collected from different provinces varied from 3.60 to 20.1 ng·g -1 for THg (Fig. 2) and from 1.76 to 3.33 ng·g -1 for MeHg (Table 1, Fig. 3). The comparisons between Hg concentrations in the rice samples collected from these 7 provinces in southern China are shown in Fig. 2 for THg and Fig. 3 for MeHg. The THg concentrations in rice samples collected from Guangdong, Hunan, Guizhou, Jiangsu, Guangxi, and Jiangxi were signi /uniFB01 cantly higher than that from Shanghai City. The MeHg concentrations in rice samples collected from Hunan and Guangxi were signi /uniFB01 cantly higher than that from Shanghai City.",1,37,37,0
