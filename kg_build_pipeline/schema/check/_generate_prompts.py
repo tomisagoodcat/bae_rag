@@ -56,7 +56,10 @@ SECTION_ZH = {
     "Purpose": "用途",
     "Separate from support": "与支持关系区分",
     "ScienceEvidence/SupportGraph": "ScienceEvidence / SupportGraph",
+    "SupportGraph/focal Claim": "SupportGraph / 焦点 Claim",
+    "Empty pass": "空轮次",
     "Examples": "示例",
+    "HARD naming ban (places)": "场所命名禁令（HARD）",
 }
 
 PROP_ZH = {

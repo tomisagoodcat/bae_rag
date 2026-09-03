@@ -31,6 +31,7 @@ stages:
   low_expand: false
   subgraph_annotate: true
   chunk_merge: true
+  entity_normalize: true
   entity_merge: false
   pagerank: true
   metapath: true
@@ -55,7 +56,7 @@ mid_quality_gate:
   reject_mode: mark
   reject_rules: [M13, M06]
   merge_validator_issues: true
-  merge_rules: [M13, M06, M01, M02, M03, M04, M05, M09]
+  merge_rules: [M14, M13, M06, M01, M02, M03, M04, M05, M09]
   max_reextract_issues_per_iter: 15
   early_stop_on_unchanged_hard: true
 
@@ -112,3 +113,17 @@ metapath:
 entity_merge:
   exact_match_property: WHU_HASNAME
   wcc_attribution_master: true
+
+entity_normalize:
+  ontology_index_dir: kg_build_pipeline/resources/ontologies/_index
+  hard_merge:
+    enabled: true
+    match_property: WHU_HASORIGINALTEXT
+  external_concept:
+    enabled: true
+    exact_match_only: false
+    llm_align: true
+    llm_labels: [whu_ChemicalEntity, whu_Reagent]
+    max_candidates: 8
+    confidence_llm: 0.6
+    min_query_length: 2

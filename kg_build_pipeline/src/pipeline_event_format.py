@@ -142,6 +142,16 @@ def format_pipeline_event(event: Dict[str, Any]) -> Optional[str]:
             line += f" | merged_issues={merged}"
         return line
 
+    if etype == "mid_gate_scrub":
+        fn = event.get("filename", "")
+        it = event.get("iteration", "")
+        clone_n = event.get("deleted_identical_ot", 0)
+        ch_n = event.get("deleted_challenges_no_lexicon", 0)
+        return (
+            f"[mid_gate] {fn} iter {it} | scrub: identical-OT edges={clone_n}, "
+            f"challenges-no-lexicon={ch_n}"
+        )
+
     if etype == "mid_gate_reject":
         fn = event.get("filename", "")
         it = event.get("iteration", "")

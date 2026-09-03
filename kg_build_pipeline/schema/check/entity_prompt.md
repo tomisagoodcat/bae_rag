@@ -44,6 +44,17 @@
 
 ### Entity Description 实体描述
 
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Argumentation node: extract within the WHU_HASORIGINALTEXT of a parent mid-level SupportGraph / ScienceEvidence during low-level expansion—not as a mid-level co-created container.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
+
 #### Definition / 定义
 
 **English**
@@ -144,6 +155,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 | 属性数量 Property count | 2 |
 
 ### Entity Description 实体描述
+
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Argumentation node: extract within the WHU_HASORIGINALTEXT of a parent mid-level SupportGraph / ScienceEvidence during low-level expansion—not as a mid-level co-created container.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
 
 #### Definition / 定义
 
@@ -305,7 +327,7 @@ Do not create Computational_Experiment.
 
 **English**
 
-Computational ResearchStep(s); Method/Software via declaredUsed; DataSet via declaredInput/Output—from this Experiment's original_text only.
+Computational ResearchStep(s); optional low-level Goal (via mid2low hasGoal); Method/Software via declaredUsed; DataSet via declaredInput/Output—from this Experiment's original_text only.
 
 **中文**
 
@@ -373,83 +395,94 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 
 **English**
 
-Low-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent SpecimenCollection, SpecimenPreprocessing, or BioChemical_Experiment during low-level expansion.
+Low-level (foundational). **Primary parent:** expand from `whu_EnvironmentFeature` via `bfo_has_part` (mid2low). Also appear under Specimen provenance when the text names a matrix source (`prov_wasDerivedFrom`). Do **not** treat SpecimenCollection / Experiment parents as a license to create Material for places or sales channels.
 
 **中文**
 
-基层（基础型）。在从父级 SpecimenCollection、SpecimenPreprocessing 或 BioChemical_Experiment 的 WHU_HASORIGINALTEXT 进行基层扩展时抽取。
+基层（基础型）。**主父类：** 经 `bfo_has_part`（mid2low）从 `whu_EnvironmentFeature` 展开；也可在 Specimen 溯源且来源为基质时出现。禁止因 SpecimenCollection/Experiment 父节点而把场所/销售渠道建成 Material。
 
 
 #### Definition / 定义
 
 **English**
 
-`envo_EnvironmentMaterial` is an ENVO-aligned **material phase or environmental matrix type** present in the environment (soil, sediment, pore water, air, particulate matter). It is a **category of substance**, not an individual collected sample, not a living organism, and not a named site.
+`envo_EnvironmentMaterial` is an ENVO-aligned **environmental material / matrix type** (soil, sediment, water, air, particulate matter, pore water). It is a **category of environmental medium**, not a place, not a shop/market, not a collected Specimen, and not a living organism or food commodity.
 
 **中文**
 
-`envo_EnvironmentMaterial` 是与 ENVO 对齐的**物质相或环境基质类型**（土壤、沉积物、孔隙水、空气、颗粒物）。它是**物质类别**，不是单个采集样本，不是生物体，也不是命名地点。
+`envo_EnvironmentMaterial` 是与 ENVO 对齐的**环境物质/基质类型**（土壤、沉积物、水、空气、颗粒物、孔隙水）。它是**环境介质类别**，不是地点、不是超市/市场、不是 Specimen，也不是生物体或食品商品。
 
 
 #### Extract when / 何时抽取
 
 **English**
 
-Create when the text names the matrix/medium itself with substance-type semantics (surface soil, river water, overlying water).
+Create only when the text names the matrix/medium itself with substance-type semantics (surface soil, river water, overlying water, ambient air, sediment).
 
 **中文**
 
-当文本以物质类型语义命名基质/介质本身时创建（如 surface soil、river water、overlying water）。
+仅当文本以物质类型语义命名基质/介质本身时创建（如 surface soil、river water、overlying water、ambient air、sediment）。
 
 
 #### Do not extract when / 何时不抽取
 
 **English**
 
-- “soil samples / soil specimens / water sample” → `whu_Specimen`
-- “rice plants / fish / bacteria” → `obi_organism`
-- a named field, pond, station, or site → `whu_EnvironmentFeature`
-- dried, sieved, digested, or otherwise processed sample products → `whu_ProcessedSpecimen`
+- “soil samples / water sample / rice samples” → `whu_Specimen`
+- “rice / rice plants / fish / bacteria” → `obi_organism` or Specimen (not Material)
+- a named field, pond, station, city/district, **supermarket, wet market, restaurant, catering venue, shop** → `whu_EnvironmentFeature` (place/context), **never** Material
+- dried, sieved, digested products → `whu_ProcessedSpecimen`
 
 **中文**
 
-- “soil samples / soil specimens / water sample” → `whu_Specimen`
-- “rice plants / fish / bacteria” → `obi_organism`
-- 命名字段、池塘、站点或地点 → `whu_EnvironmentFeature`
-- 干燥、筛分、消解等加工后的样品产物 → `whu_ProcessedSpecimen`
+- “soil samples / water sample / rice samples” → `whu_Specimen`
+- “rice / rice plants / fish / bacteria” → `obi_organism` 或 Specimen（不是 Material）
+- 命名田块、池塘、站点、区市、**超市、农贸市场、餐饮、商店** → `whu_EnvironmentFeature`（场所），**绝不可**标为 Material
+- 干燥、筛分、消解等加工产物 → `whu_ProcessedSpecimen`
+
+
+#### HARD naming ban (places) / 场所命名禁令（HARD）
+
+**English**
+
+WHU_HASNAME must be a matrix phrase. **Forbidden as Material names:** supermarket / market / restaurant / catering / shop / sampling station / site / field (as place only) / 超市 / 农贸市场 / 市场 / 餐饮 / 饭店 / 采样点 / 监测站 / 区县市 alone as venue. If the span is a place or sales channel, use EnvironmentFeature + hasContext/atLocation/wasDerivedFrom→Feature—not Material.
+
+**中文**
+
+WHU_HASNAME 必须是基质短语。**禁止作为 Material 名：** supermarket/market/restaurant/catering/shop/sampling station、超市/农贸市场/市场/餐饮/饭店/采样点/监测站等。若片段是场所或销售渠道，用 Feature + hasContext/atLocation/wasDerivedFrom→Feature，不要建 Material。
 
 
 #### Naming / 命名规则
 
 **English**
 
-WHU_HASNAME must use the verbatim material phrase from the text. Do not append sample, specimen, or site words not present.
+Use the verbatim matrix phrase. Do not append sample/specimen/site words not in the span.
 
 **中文**
 
-WHU_HASNAME 必须使用文本中的逐字物质短语。不得附加原文未出现的 sample、specimen 或 site 等词。
+使用文本中的逐字基质短语。不得附加原文未出现的 sample、specimen 或 site 等词。
 
 
 #### Relations / 关系
 
 **English**
 
-`whu_EnvironmentFeature -> bfo_has_part -> envo_EnvironmentMaterial`; Specimen may `prov_wasDerivedFrom` EnvironmentMaterial; EnvironmentMaterial may `bfo_has_part` ChemicalEntity.
+Primary: `whu_EnvironmentFeature -> bfo_has_part -> envo_EnvironmentMaterial`. Specimen may `prov_wasDerivedFrom` Material **only when the source is a matrix** (soil/water/air…). EnvironmentMaterial may `bfo_has_part` ChemicalEntity when presence in that matrix is stated.
 
 **中文**
 
-`whu_EnvironmentFeature -> bfo_has_part -> envo_EnvironmentMaterial`；Specimen 可 `prov_wasDerivedFrom` EnvironmentMaterial；EnvironmentMaterial 可 `bfo_has_part` ChemicalEntity。
+主路径：`whu_EnvironmentFeature -> bfo_has_part -> envo_EnvironmentMaterial`。Specimen 仅在来源为基质（土/水/气…）时可 `prov_wasDerivedFrom` Material；EnvironmentMaterial 可在基质中存在陈述时 `bfo_has_part` ChemicalEntity。
 
 
 #### Example / 示例
 
 **English**
 
-“Surface soil was collected from the paddy field.” -> EnvironmentMaterial[surface soil]; EnvironmentFeature[paddy field] only if the field is named as a place.
+“Surface soil was collected from the SWU paddy field.” -> EnvironmentMaterial[surface soil]; EnvironmentFeature[SWU paddy field]; Feature -bfo_has_part→ Material when co-text supports containment. “Rice samples from supermarket/wet market/catering” -> Specimen + EnvironmentFeature[venue]—**do not** create EnvironmentMaterial[supermarket].
 
 **中文**
 
-“Surface soil was collected from the paddy field.” → EnvironmentMaterial[surface soil]；仅当田地作为地点被命名时才建 EnvironmentFeature[paddy field]。
+“Surface soil was collected from the SWU paddy field.” → EnvironmentMaterial[surface soil]；EnvironmentFeature[SWU paddy field]；共现支撑时可 Feature -bfo_has_part→ Material。“超市/农贸市场/餐饮的大米样品” → Specimen + EnvironmentFeature[场所]—**不要**建 EnvironmentMaterial[超市]。
 
 
 ### 属性 Properties 属性描述
@@ -458,7 +491,7 @@ WHU_HASNAME 必须使用文本中的逐字物质短语。不得附加原文未�
 
 **English**
 
-Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span.
+Return a short matrix/medium name grounded only in the source text (e.g. surface soil, river water, sediment, air). Do NOT use place or venue names (supermarket, market, restaurant, field-as-site, station, 超市, 农贸市场, 餐饮). Do not return a full sentence. No semantic expansion.
 
 **中文**
 
@@ -486,6 +519,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 | 属性数量 Property count | 2 |
 
 ### Entity Description 实体描述
+
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
 
 #### Definition / 定义
 
@@ -565,6 +609,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 | 属性数量 Property count | 5 |
 
 ### Entity Description 实体描述
+
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
 
 #### Definition / 定义
 
@@ -677,6 +732,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 | 属性数量 Property count | 4 |
 
 ### Entity Description 实体描述
+
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
 
 #### Definition / 定义
 
@@ -974,6 +1040,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 
 ### Entity Description 实体描述
 
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Argumentation node: extract within the WHU_HASORIGINALTEXT of a parent mid-level SupportGraph / ScienceEvidence during low-level expansion—not as a mid-level co-created container.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
+
 #### Definition / 定义
 
 **English**
@@ -1015,7 +1092,7 @@ May receive mp_supports/mp_challenges from SupportGraph only (never directly fro
 
 **中文**
 
-可接收 mp_supports/mp_challenges；与 SupportGraph 共创建时须经 SupportGraph → mp_supports/mp_challenges → Claim 链接（不用 prov_hadMember）。
+可接收 mp_supports/mp_challenges；与 SupportGraph 共创建时须经 SupportGraph → mp_supports/mp_challenges → Claim 链接（不用 prov_hadMember）。**禁止** ScienceEvidence 直连 Claim。
 
 
 #### Example / 示例
@@ -1068,7 +1145,7 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 
 **English**
 
-Mid-level adjunct (dependent on Experiment). Never extract as an isolated node.
+Low-level (foundational). Dependent on a parent mid-level Experiment; never extract as an isolated node.
 
 **中文**
 
@@ -1090,7 +1167,7 @@ A `whu_Goal` is an explicitly stated scientific objective of a BioChemical or Co
 
 **English**
 
-Create **only when** (1) a `whu_BioChemical_Experiment` or `whu_Computational_Experiment` is created in the **same extraction pass**, and (2) the text contains explicit objective language (to quantify, to assess, to compare, to determine, to predict, aimed to, in order to). The Goal **must** be linked by `whu_hasGoal` from that Experiment.
+Create **only when** (1) a parent `whu_BioChemical_Experiment` or `whu_Computational_Experiment` already exists (or is established in the same overall extraction context) with a defined WHU_HASORIGINALTEXT, (2) the text contains explicit objective language (to quantify, to assess, to compare, to determine, to predict, aimed to, in order to), and (3) the Goal is linked by mid2low `whu_hasGoal` from that Experiment. Do not create an orphan Goal.
 
 **中文**
 
@@ -1101,7 +1178,7 @@ Create **only when** (1) a `whu_BioChemical_Experiment` or `whu_Computational_Ex
 
 **English**
 
-- no parent Experiment exists in the same pass
+- no parent Experiment exists
 - only background motivation or significance is stated
 - the objective is inferred rather than linguistically explicit
 
@@ -1116,7 +1193,7 @@ Create **only when** (1) a `whu_BioChemical_Experiment` or `whu_Computational_Ex
 
 **English**
 
-The objective clause itself. TargetVariable children only when the objective clause contains a verbatim measurement-quantity phrase.
+The objective clause itself (must fall within or align to the parent Experiment span). TargetVariable children only when the objective clause contains a verbatim measurement-quantity phrase.
 
 **中文**
 
@@ -1127,7 +1204,7 @@ The objective clause itself. TargetVariable children only when the objective cla
 
 **English**
 
-Experiment -> `whu_hasGoal` -> Goal; Goal -> `whu_hasTarget` -> TargetVariable only with lexical support in the Goal span.
+Experiment -> `whu_hasGoal` -> Goal (mid2low); Goal -> `whu_hasTarget` -> TargetVariable only with lexical support in the Goal span (low).
 
 **中文**
 
@@ -1162,11 +1239,11 @@ Return a concise canonical name for this entity, grounded only in the source tex
 
 **English**
 
-Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Mid-level: the span must cover the full contiguous evidence needed to establish this mid-level entity.
+Copy the smallest contiguous source-text span that explicitly supports creation of this entity. Preserve the wording verbatim, including symbols, numbers, and units. Do not paraphrase, summarize, normalize, or combine non-contiguous spans. Low-level: the span must fall within the WHU_HASORIGINALTEXT of the parent mid-level Experiment from which this Goal is expanded.
 
 **中文**
 
-复制支持创建该实体的最小连续原文片段，逐字保留符号、数字与单位；不得改写、概括、规范化或合并非连续片段。中层：片段须覆盖建立该中层实体所需的完整连续证据。
+复制支持创建该实体的最小连续原文片段，逐字保留符号、数字与单位；不得改写、概括、规范化或合并非连续片段。基层：片段须落在所属中层实体 WHU_HASORIGINALTEXT 范围内。
 
 
 ---
@@ -1179,6 +1256,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 | 属性数量 Property count | 2 |
 
 ### Entity Description 实体描述
+
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Argumentation node: extract within the WHU_HASORIGINALTEXT of a parent mid-level SupportGraph / ScienceEvidence during low-level expansion—not as a mid-level co-created container.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
 
 #### Definition / 定义
 
@@ -1329,7 +1417,7 @@ Do not create BioChemical_Experiment; treat as incomplete mid-level extraction r
 
 **English**
 
-ResearchStep(s); optional Goal; Method/Device/Reagent via declaredUsed; Specimen/ProcessedSpecimen/DataSet via declaredInput/Output—all from this Experiment's original_text only.
+ResearchStep(s); optional low-level Goal (via mid2low hasGoal); Method/Device/Reagent via declaredUsed; Specimen/ProcessedSpecimen/DataSet via declaredInput/Output—all from this Experiment's original_text only.
 
 **中文**
 
@@ -1403,6 +1491,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 | 属性数量 Property count | 5 |
 
 ### Entity Description 实体描述
+
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
 
 #### Definition / 定义
 
@@ -1531,22 +1630,22 @@ Mid-level (site/context). Establish at mid-level extraction with a defined WHU_H
 
 **English**
 
-A `whu_EnvironmentFeature` is a named, locatable environmental place or geographic-ecological unit (field, wetland, river reach, sampling station, experimental site). It denotes **WHERE** something occurs or is sampled, not **WHAT** was collected.
+A `whu_EnvironmentFeature` is a named, locatable **place or geographic-ecological / sampling-context unit** (field, wetland, river reach, sampling station, experimental site, district, supermarket, wet market, catering venue when used as sampling/sales location). It denotes **WHERE** something occurs or is sampled, not **WHAT** matrix was collected.
 
 **中文**
 
-`whu_EnvironmentFeature` 是具名、可定位的环境地点或地理–生态单元（田地、湿地、河段、采样站、实验站点）。表示**在何处**发生或采样，而非**采集了什么**。
+`whu_EnvironmentFeature` 是具名、可定位的**地点或采样/销售语境单元**（田地、湿地、河段、采样站、实验站点、区县，以及作为采样/销售地点的超市、农贸市场、餐饮场所）。表示**在何处**发生或采样，而非**采集了什么基质**。
 
 
 #### Extract when / 何时抽取
 
 **English**
 
-Create one when the text names a site/place/location and uses it as the environmental setting for sampling, organism location, or a recorded field ResearchStep. Coordinates may be captured as properties when explicit.
+Create one when the text names a site/place/location/venue and uses it as the environmental or collection setting for sampling, organism location, or a recorded field ResearchStep. Coordinates may be captured as properties when explicit.
 
 **中文**
 
-当文本命名站点/地点/位置，并将其作为采样、生物体位置或已记录野外 ResearchStep 的环境背景时创建一个。坐标可在原文明确时作为属性捕获。
+当文本命名站点/地点/场所，并将其作为采样、生物体位置或已记录野外 ResearchStep 的环境/采集背景时创建一个。坐标可在原文明确时作为属性捕获。
 
 
 #### Do not extract when / 何时不抽取
@@ -1554,60 +1653,60 @@ Create one when the text names a site/place/location and uses it as the environm
 **English**
 
 - The phrase refers to a **collected individual sample** → use `whu_Specimen` or `whu_ProcessedSpecimen`.
-- The phrase names an **environmental matrix/substance** without an independent place name (soil, water, sediment) → use `envo_EnvironmentMaterial`.
+- The phrase names an **environmental matrix/substance** without an independent place name (soil, water, sediment, air) → use `envo_EnvironmentMaterial`.
 - The phrase refers to a **living organism** → use `obi_organism`.
 - The text only says material was collected (e.g. “soil was collected”) without a distinct place name → use Specimen + EnvironmentMaterial, **not** EnvironmentFeature, unless a separate site name is explicit (e.g. “from the SWU paddy field”).
 
 **中文**
 
 - 短语指**已采集的单个样本** → 用 `whu_Specimen` 或 `whu_ProcessedSpecimen`
-- 短语命名**环境基质/物质**而无独立地名（soil、water、sediment）→ 用 `envo_EnvironmentMaterial`
+- 短语命名**环境基质/物质**而无独立地名（soil、water、sediment、air）→ 用 `envo_EnvironmentMaterial`
 - 短语指**生物体** → 用 `obi_organism`
-- 文本仅说采集了材料（如“soil was collected”）而无 distinct 地名 → 用 Specimen + EnvironmentMaterial，**不要**建 EnvironmentFeature，除非另有明确站点名（如“from the SWU paddy field”）
+- 文本仅说采集了材料（如“soil was collected”）而无 distinct 地名 → 用 Specimen + EnvironmentMaterial，**不要**建 EnvironmentFeature，除非另有明确站点名
 
 
 #### Decision test / 判定测试
 
 **English**
 
-Can the phrase replace X in “at/from the [X]” where X remains a place? If not, do not use EnvironmentFeature.
+Can the phrase replace X in “at/from the [X]” where X remains a place/venue? If yes → Feature. If X is only a matrix (soil/water/air) → Material. Never label a supermarket/market/restaurant as EnvironmentMaterial.
 
 **中文**
 
-该短语能否替换 X 于“at/from the [X]”且 X 仍为地点？若不能，则不要用 EnvironmentFeature。
+短语能否替换 X 于“at/from the [X]”且 X 仍为地点/场所？是 → Feature。若 X 仅为基质（土/水/气）→ Material。绝不可把超市/市场/餐饮标为 EnvironmentMaterial。
 
 
-#### Expected low-level children / 预期基层子件
+#### Expected low-level children / 预期基层子实体
 
 **English**
 
-`envo_EnvironmentMaterial` via `bfo_has_part` from this Feature's original_text; Step/organism `prov_atLocation` and Specimen `prov_wasDerivedFrom` attach in mid2low/low expansion.
+`envo_EnvironmentMaterial` via `bfo_has_part` **only when a matrix phrase appears** in this Feature's original_text (soil/water/air…). Step/organism `prov_atLocation` and Specimen `prov_wasDerivedFrom` attach in mid2low/low expansion.
 
 **中文**
 
-本 Feature original_text 内经 `bfo_has_part` 展开 `envo_EnvironmentMaterial`；Step/organism 的 `prov_atLocation` 与 Specimen 的 `prov_wasDerivedFrom` 在 mid2low/low 扩展中挂接。
+仅当本 Feature original_text 中出现基质短语时，经 `bfo_has_part` 展开 `envo_EnvironmentMaterial`；Step/organism 的 `prov_atLocation` 与 Specimen 的 `prov_wasDerivedFrom` 在 mid2low/low 扩展中挂接。
 
 
 #### Relations / 关系
 
 **English**
 
-EnvironmentFeature -> `bfo_has_part` -> EnvironmentMaterial expresses site-level containment of a material phase, not sampling provenance. SpecimenCollection -> `whu_hasContext` -> EnvironmentFeature; organism/ResearchStep may -> `prov_atLocation` -> EnvironmentFeature. A Specimen may `prov_wasDerivedFrom` EnvironmentFeature only when the site itself is stated as the provenance source and no more specific material or organism source is supported.
+EnvironmentFeature -> `bfo_has_part` -> EnvironmentMaterial expresses site-level containment of a material phase, not sampling provenance. SpecimenCollection -> `whu_hasContext` -> EnvironmentFeature; organism/ResearchStep may -> `prov_atLocation` -> EnvironmentFeature. A Specimen may `prov_wasDerivedFrom` EnvironmentFeature when the **named place/venue** is the stated provenance source and no matrix/organism source is more specific.
 
 **中文**
 
-EnvironmentFeature → `bfo_has_part` → EnvironmentMaterial 表示站点级物质相包含，而非采样溯源。SpecimenCollection → `whu_hasContext` → EnvironmentFeature；organism/ResearchStep 可 → `prov_atLocation` → EnvironmentFeature。仅当站点本身被陈述为溯源来源且无更具体的物质/生物来源支撑时，Specimen 可 `prov_wasDerivedFrom` EnvironmentFeature。
+EnvironmentFeature → `bfo_has_part` → EnvironmentMaterial 表示站点级物质相包含，而非采样溯源。SpecimenCollection → `whu_hasContext` → EnvironmentFeature；organism/ResearchStep 可 → `prov_atLocation` → EnvironmentFeature。当**命名场所**被陈述为溯源且无更具体基质/生物来源时，Specimen 可 `prov_wasDerivedFrom` EnvironmentFeature。
 
 
 #### Example / 示例
 
 **English**
 
-“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” -> EnvironmentFeature[SWU paddy field]; Specimen[topsoil] wasDerivedFrom EnvironmentMaterial[surface soil] or EnvironmentFeature as text supports.
+“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” -> EnvironmentFeature[SWU paddy field]; EnvironmentMaterial[surface soil/topsoil]; prefer Specimen wasDerivedFrom Material when matrix is explicit. “Rice samples collected from supermarket / wet market / catering venues.” -> EnvironmentFeature[venue] (+ Specimen)—**not** EnvironmentMaterial[venue].
 
 **中文**
 
-“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” → EnvironmentFeature[SWU paddy field]；Specimen[topsoil] wasDerivedFrom EnvironmentMaterial[surface soil] 或 EnvironmentFeature，依文本支撑。
+“Topsoil was sampled from the SWU paddy field (29.8°N, 106.4°E).” → EnvironmentFeature[SWU paddy field]；EnvironmentMaterial[surface soil/topsoil]；基质明确时优先 Specimen wasDerivedFrom Material。“超市/农贸市场/餐饮的大米样品” → EnvironmentFeature[场所]（+ Specimen）—**不要** EnvironmentMaterial[场所]。
 
 
 ### 属性 Properties 属性描述
@@ -1660,7 +1759,7 @@ Extract explicit longitude as a decimal numeric value when present in the text.
 
 **English**
 
-Return a concise canonical name for this entity, grounded only in the source text. Prefer a short noun phrase (typically 2–12 words), preserve meaningful scientific abbreviations and identifiers, and do not add information that is not stated or unambiguously recoverable from the text. Do not return a full sentence. No semantic expansion: do not add concentration, content, sample, site, or organism words not present in the span.
+Return a concise place/venue name grounded only in the source text (site, field, station, district, supermarket, market). Do NOT use bare matrix words alone (soil, water, sediment, air) as the Feature name—those belong to envo_EnvironmentMaterial. Do not return a full sentence.
 
 **中文**
 
@@ -1675,7 +1774,7 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 
 **中文**
 
-复制支持创建该实体的最小连续原文片段，逐字保留符号、数字与单位；不得改写、概括、规范化或合并非连续片段。中层：片段须覆盖确立该中层实体所需的全部连续证据。
+复制支持创建该实体的最小连续原文片段，逐字保留符号、数字与单位；不得改写、概括、规范化或合并非连续片段。中层：片段须覆盖建立该中层实体所需的完整连续证据。
 
 
 ---
@@ -1688,6 +1787,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 | 属性数量 Property count | 2 |
 
 ### Entity Description 实体描述
+
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
 
 #### Definition / 定义
 
@@ -1974,6 +2084,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 
 ### Entity Description 实体描述
 
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
+
 #### Definition / 定义
 
 **English**
@@ -2254,7 +2375,7 @@ Create only when **all** hold in the same argumentative original_text:
 
 **English**
 
-Do not create ScienceEvidence first and add SupportGraph later. Do not hallucinate members to complete evidence. Do not use SupportGraph -> `prov_hadMember` -> ScienceEvidence.
+Do not create ScienceEvidence first and add SupportGraph later. Do not hallucinate members to complete evidence. Do not use SupportGraph -> `prov_hadMember` -> ScienceEvidence. **Never** emit ScienceEvidence -> `mp_supports`/`mp_challenges` -> Claim.
 
 **中文**
 
@@ -2425,7 +2546,7 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 
 **English**
 
-Assign exactly one value: 'SpecimenCollection', 'SpecimenProcessing', 'BioChemical', or 'Computational'. Must be consistent with the p_plan_isStepOfPlan target Plan type. Choose from the described operation in the step's original_text, not from section title alone.
+Assign exactly one value: 'SpecimenCollection', 'SpecimenProcessing', 'BioChemical', or 'Computational'. Must be consistent with the p_plan_isStepOfPlan target Plan type. Choose from the described operation in the step's original_text, not from section title alone. HARD: BioChemical may only link to BioChemical_Experiment; Computational may only link to Computational_Experiment. Never cross-link BioChemical↔Computational even if both experiments appear in the same Chunk.
 
 **中文**
 
@@ -2710,7 +2831,7 @@ Create only when:
 2. 存在至少一个额外论证参与者（Statement、经 mp_supports/mp_challenges 链接的 ScienceEvidence、Reference、Attribution）
 
 
-#### Mandatory members / 必选成员
+#### Mandatory focal link / Mandatory focal link
 
 **English**
 
@@ -2718,7 +2839,7 @@ SupportGraph -> `mp_supports`/`mp_challenges` -> Claim (required when co-created
 
 **中文**
 
-SupportGraph → `mp_supports`/`mp_challenges` → Claim（共创建时必需）。ScienceEvidence **不是** SupportGraph 的 `prov_hadMember`；应使用 `mp_supports`/`mp_challenges` 挂接。
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
 
 
 #### Do not extract when / 何时不抽取
@@ -2801,6 +2922,17 @@ Copy the smallest contiguous source-text span that explicitly supports creation 
 | 属性数量 Property count | 2 |
 
 ### Entity Description 实体描述
+
+#### Tier / 层级
+
+**English**
+
+Low-level (foundational). Extract from the WHU_HASORIGINALTEXT of a parent ResearchStep, Experiment, or DataSet during low-level expansion.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
 
 #### Definition / 定义
 

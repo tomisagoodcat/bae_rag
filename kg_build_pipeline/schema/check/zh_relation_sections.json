@@ -1,9 +1,10 @@
 {
   "mp_supports": {
-    "Definition": "正向论证关系：支持方 Representation → 被支持方 Representation。",
+    "Definition": "正向论证关系：支持方 Representation → 被支持方 Representation。这是**默认**论证极性。",
     "Extract when": "当明确正向支撑语言（supports、demonstrates、confirms、provides evidence for、consistent with、论证性使用的 indicates/suggests）出现在与链接节点**相同的 original_text** 中时抽取。",
     "Do not infer from": "不要从共现、单独引用、方法使用或数据产出推断。引用支撑需除 `cito_isCitedBy` 外另有独立 mp_supports 证据。",
-    "ScienceEvidence/SupportGraph": "当 ScienceEvidence mp_supports/challenges SupportGraph 时，连接词必须出现在共享论证片段中。禁止 ScienceEvidence 直连 Claim。"
+    "ScienceEvidence/SupportGraph": "当 ScienceEvidence mp_supports/challenges SupportGraph 时，连接词必须出现在共享论证片段中。禁止 ScienceEvidence 直连 Claim。两端 WHU_HASORIGINALTEXT 不得相同。",
+    "SupportGraph/focal Claim": "当 SupportGraph mp_supports 焦点 Claim 时，连接词须出现在共享片段。Claim 原文必须是 SupportGraph 原文的严格更短子串。焦点 Claim 链接不用 prov_hadMember。"
   },
   "whu_declaredUsed": {
     "Definition": "将 ResearchStep 链接到**该步骤**中明确使用的 Method、Device、Reagent 或 Software。",
@@ -74,9 +75,9 @@
   "prov_wasDerivedFrom": {
     "Definition": "`prov_wasDerivedFrom` 记录结果实体与其来源实体之间的物质/溯源派生。",
     "Allowed schema patterns": "- Specimen → EnvironmentFeature\n- Specimen → envo_EnvironmentMaterial\n- Specimen → obi_organism\n- ProcessedSpecimen → Specimen",
-    "Type-selection order": "选择文本明确支持的**最具体**来源：**organism > EnvironmentMaterial > EnvironmentFeature**。勿仅因提及采集而将样本名或基质标为 EnvironmentFeature。",
-    "Extraction rule": "对“soil samples from the paddy field”：基质明确时 Specimen[soil samples] wasDerivedFrom EnvironmentMaterial[surface soil]；仅当**命名地点**被陈述为来源且无更具体物质/organism 时 wasDerivedFrom EnvironmentFeature。勿用 wasDerivedFrom 为误标来源节点辩护。",
-    "Examples": "“Soil samples were taken from surface soil.” → Specimen wasDerivedFrom EnvironmentMaterial[surface soil]。\n“Rice grain was sampled from rice plants.” → Specimen wasDerivedFrom organism[rice plant]。\n“Samples were collected from the SWU paddy field.” → 仅站点明确时 Specimen wasDerivedFrom EnvironmentFeature[SWU paddy field]。"
+    "Type-selection order": "选择文本明确支持的**最具体**来源：**organism > EnvironmentMaterial > EnvironmentFeature**。勿仅因提及采集而将样本名或基质标为 EnvironmentFeature。**禁止**为了给 wasDerivedFrom 找目标而把场所建成 EnvironmentMaterial。",
+    "Extraction rule": "对“soil samples from the paddy field”：基质明确时 Specimen wasDerivedFrom EnvironmentMaterial[surface soil]；仅当**命名地点**为来源且无更具体物质/organism 时 wasDerivedFrom EnvironmentFeature。对“超市/农贸市场/餐饮的大米样品”：Specimen wasDerivedFrom **EnvironmentFeature[场所]**（或 Collection hasContext）—**绝不要** EnvironmentMaterial[超市/市场/餐饮]。勿用 wasDerivedFrom 为误标来源节点辩护。",
+    "Examples": "“Soil samples were taken from surface soil.” → Specimen wasDerivedFrom EnvironmentMaterial[surface soil]。\n“Rice grain was sampled from rice plants.” → Specimen wasDerivedFrom organism[rice plant]。\n“Samples were collected from the SWU paddy field.” → 仅站点明确时 Specimen wasDerivedFrom EnvironmentFeature[SWU paddy field]。\n“Rice samples from supermarket and wet market.” → Specimen wasDerivedFrom EnvironmentFeature[venue]—不是 Material。"
   },
   "dcterms_hasPart": {
     "Definition": "用 `dcterms:hasPart` 表示 DataSet 包含一个或多个 `iao_DataItem` 记录。",
@@ -84,10 +85,11 @@
     "Extraction note": "`iao_ScalarMeasurementDatum` 是 DataItem 子类型。若运行时将会员具体类型为 ScalarMeasurementDatum，不要仅为满足此关系再建重复通用 DataItem 节点。"
   },
   "mp_challenges": {
-    "Definition": "负向论证关系：挑战方 Representation → 被挑战方 Representation。",
-    "Extract when": "在同一 original_text 中出现明确挑战语言（contradicts、refutes、inconsistent with、undermines、fails to confirm）。",
-    "Do not infer": "缺乏支持不等于挑战。",
-    "ScienceEvidence/SupportGraph": "与 mp_supports 相同的共文本要求。"
+    "Definition": "负向论证关系：挑战方 Representation → 被挑战方 Representation。**不是**默认极性。",
+    "Extract when": "同一 original_text 中出现明确反驳语言（contradicts、refutes、inconsistent with、undermines、fails to confirm、反驳、未能证实、相矛盾）。单独的 challenge/挑战（风险、尚存困难、未来工作）**不够**。",
+    "Do not infer": "缺乏支持不等于挑战。不要为补全 SupportGraph 或因论文讨论局限而臆造 mp_challenges。",
+    "Empty pass": "若本轮 `{schema}` 关系是 `mp_challenges` 且片段无明确反驳线索，不发出任何边（空 JSON）。",
+    "ScienceEvidence/SupportGraph": "与 mp_supports 相同的共文本要求。禁止 ScienceEvidence 直连 Claim。仅在有明确反驳语言时用 mp_challenges。"
   },
   "iao_is_about": {
     "Definition": "`iao_is_about` 表达信息内容实体与其所描述实体或变量之间的 aboutness。",
@@ -113,8 +115,8 @@
     "Definition": "BFO 部分论关系：一实体物理包含另一实体作为组成部分。",
     "Allowed schema patterns": "- EnvironmentFeature → EnvironmentMaterial\n- Specimen → ChemicalEntity\n- organism → ChemicalEntity\n- EnvironmentMaterial → ChemicalEntity",
     "Extract when": "仅对文本中明确的 part/constituent 关系发出。",
-    "Do not use for": "- 采样地点或溯源（用 wasDerivedFrom、atLocation、hasContext）\n- 分析 aboutness（用 iao_is_about）\n- Specimen → EnvironmentFeature（禁止）",
-    "Example": "“Paddy soil contains elevated Hg.” → 当存在性被陈述时 EnvironmentMaterial[paddy soil] has_part ChemicalEntity[Hg]。"
+    "Do not use for": "- 采样地点或溯源（用 wasDerivedFrom、atLocation、hasContext）\n- 分析 aboutness（用 iao_is_about）\n- Specimen → EnvironmentFeature（禁止）\n- 把场所/销售渠道建成 Material",
+    "Examples": "“Surface soil in the SWU paddy field …” → 地点与基质共现时 EnvironmentFeature[SWU paddy field] -bfo_has_part→ EnvironmentMaterial[surface soil]。\n“Paddy soil contains elevated Hg.” → 当存在性被陈述时 EnvironmentMaterial[paddy soil] has_part ChemicalEntity[Hg]。"
   },
   "whu_declaredInput": {
     "Definition": "将 ResearchStep 链接到作为该步骤输入的 Specimen、ProcessedSpecimen 或 DataSet。",
@@ -129,8 +131,8 @@
   "whu_hasContext": {
     "Definition": "将 SpecimenCollection Plan 链接到提供其明确采样语境的 EnvironmentFeature。",
     "Direction": "SpecimenCollection → `whu_hasContext` → EnvironmentFeature。",
-    "Extract when": "采集的 WHU_HASORIGINALTEXT 明确命名与采集程序绑定的有界站点/地点。地名必须出现在文本中——不能仅从样本材料推断。",
-    "Do not extract when": "仅出现基质或样本名词而无 distinct 地名时。",
-    "Example": "“Topsoil samples were collected from the SWU paddy field.” → SpecimenCollection hasContext EnvironmentFeature[SWU paddy field]。"
+    "Extract when": "采集的 WHU_HASORIGINALTEXT 明确命名与采集程序绑定的有界站点/地点/场所（田块、采样站、区县、超市、农贸市场、餐饮场所）。地名必须出现在文本中——不能仅从样本材料推断。",
+    "Do not extract when": "仅出现基质或样本名词而无 distinct 地名时。不要为规避 Feature 而臆造 EnvironmentMaterial 表示场所。",
+    "Example": "“Topsoil samples were collected from the SWU paddy field.” → SpecimenCollection hasContext EnvironmentFeature[SWU paddy field]。\n“超市/农贸市场/餐饮的大米样品” → SpecimenCollection hasContext EnvironmentFeature[场所]。"
   }
 }

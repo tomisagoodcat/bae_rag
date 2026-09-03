@@ -27,6 +27,102 @@ SHARED_ENTITY_LABELS = {
     "whu_TargetVariable",
 }
 
+# Matrix tokens: if present, name is treated as environmental material (not place-only).
+_MATRIX_TOKENS = (
+    "soil",
+    "sediment",
+    "water",
+    "air",
+    "pm2.5",
+    "pm10",
+    "pore",
+    "sludge",
+    "dust",
+    "土壤",
+    "沉积物",
+    "底泥",
+    "河水",
+    "水体",
+    "孔隙水",
+    "空气",
+    "颗粒物",
+    "表层土",
+    "稻田土",
+)
+
+# Place / venue markers that must not be EnvironmentMaterial names (unless matrix token also present).
+_PLACE_VENUE_MARKERS = (
+    "supermarket",
+    "marketplace",
+    "restaurant",
+    "catering",
+    "hotel",
+    "shopping mall",
+    "sampling site",
+    "sampling station",
+    "monitoring station",
+    "超市",
+    "农贸市场",
+    "菜市场",
+    "餐饮",
+    "饭店",
+    "宾馆",
+    "商场",
+    "商店",
+    "采样点",
+    "监测点",
+    "监测站",
+    "采样站",
+)
+
+# Standalone market/venue words (avoid flagging chemical "marketplace" noise; keep short ZH/EN venue stems).
+_PLACE_VENUE_MARKERS_LOOSE = (
+    "market",
+    "市场",
+)
+
+
+def material_name_looks_like_place(name: str) -> bool:
+    """True when WHU_HASNAME is a place/venue, not an ENVO environmental matrix."""
+    raw = (name or "").strip()
+    if not raw:
+        return False
+    lower = raw.lower()
+    if any(tok in lower or tok in raw for tok in _MATRIX_TOKENS):
+        return False
+    if any(m in lower or m in raw for m in _PLACE_VENUE_MARKERS):
+        return True
+    if any(m in lower or m in raw for m in _PLACE_VENUE_MARKERS_LOOSE):
+        return True
+    return False
+
+
+def check_h14_material_not_place(
+    materials: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """H14 HARD: envo_EnvironmentMaterial must not be named as a place/venue."""
+    issues: List[Dict[str, Any]] = []
+    for m in materials:
+        name = m.get("name")
+        if not material_name_looks_like_place(str(name or "")):
+            continue
+        issues.append(
+            _issue(
+                "H14",
+                "Violation",
+                m.get("id"),
+                (
+                    "H14: envo_EnvironmentMaterial name looks like a place/venue "
+                    f"({name!r}); use whu_EnvironmentFeature for sites "
+                    "(supermarket/market/restaurant/采样点…), not Material."
+                ),
+                entity_name=name,
+                labels=m.get("labels") or ["envo_EnvironmentMaterial"],
+                bucket="hard_violations",
+            )
+        )
+    return issues
+
 
 def _issue(
     rule_id: str,
@@ -874,4 +970,20 @@ def _final_only(driver: Driver, database: str, filename: str) -> Dict[str, Any]:
                     bucket="hard_violations",
                 )
             )
+        material_rows = session.run(
+            """
+            MATCH (m:envo_EnvironmentMaterial)
+            WHERE coalesce(m.whu_rejected, false) = false
+              AND (
+                m.source_doc = $source_doc
+                OR EXISTS {
+                  MATCH (c:Chunk)-[:FROM_CHUNK]-(m) WHERE c.filename = $filename
+                }
+              )
+            RETURN elementId(m) AS id, m.WHU_HASNAME AS name, labels(m) AS labels
+            """,
+            filename=filename,
+            source_doc=source_doc,
+        ).data()
+        issues.extend(check_h14_material_not_place(material_rows))
     return _report_from_issues(issues)

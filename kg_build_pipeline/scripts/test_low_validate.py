@@ -4,7 +4,9 @@ from __future__ import annotations
 from kg_build_pipeline.src.stages.low_validate import (
     check_h04_research_steps,
     check_h09_evidence,
+    check_h14_material_not_place,
     check_schema_type_violation,
+    material_name_looks_like_place,
 )
 
 
@@ -106,8 +108,43 @@ def test9_orphan_goal_hard() -> None:
         ],
         shared_entities=[],
         parent_corpus="measure X in samples",
+        parent_labels=["whu_BioChemical_Experiment"],
     )
     assert any("orphan" in i["message"].lower() for i in _hard(issues))
+
+
+def test9b_orphan_goal_not_hard_for_collection() -> None:
+    issues = check_h09_evidence(
+        research_steps=[],
+        goals=[
+            {
+                "id": "g1",
+                "name": "G",
+                "labels": ["whu_Goal"],
+                "original_text": "measure X",
+                "orphan": True,
+            }
+        ],
+        shared_entities=[],
+        parent_corpus="measure X in samples",
+        parent_labels=["whu_SpecimenCollection"],
+    )
+    assert _hard(issues) == []
+
+
+def test11_material_place_name_hard() -> None:
+    for name in ("大型超市", "农贸市场", "餐饮企业", "wet market"):
+        assert material_name_looks_like_place(name), name
+    for name in ("表层土", "河水", "surface soil", "river water"):
+        assert not material_name_looks_like_place(name), name
+    issues = check_h14_material_not_place(
+        [{"id": "m1", "name": "超市", "labels": ["envo_EnvironmentMaterial"]}]
+    )
+    assert any(i.get("rule_id") == "H14" for i in _hard(issues))
+    issues_ok = check_h14_material_not_place(
+        [{"id": "m2", "name": "河水", "labels": ["envo_EnvironmentMaterial"]}]
+    )
+    assert _hard(issues_ok) == []
 
 
 def test10_comp_exp_reagent_schema_hard() -> None:
@@ -131,8 +168,10 @@ def main() -> None:
     test6_cross_parent_hard()
     test8_shared_method_neighbor_not_hard()
     test9_orphan_goal_hard()
+    test9b_orphan_goal_not_hard_for_collection()
     test10_comp_exp_reagent_schema_hard()
-    print("test_low_validate: OK (1-6,8-10)")
+    test11_material_place_name_hard()
+    print("test_low_validate: OK (1-6,8-11,9b)")
 
 
 if __name__ == "__main__":

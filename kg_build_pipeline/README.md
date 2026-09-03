@@ -220,6 +220,7 @@ print(results.get("summary"))
 | `mid_quality_gate.reject_mode` | `mark` | `mark`（`whu_rejected`）或 `delete`（物理删除 mid 节点） |
 | `mid_quality_gate.reject_rules` | `[M13, M06]` | 参与 pre-reject 的规则 |
 | `mid_quality_gate.merge_validator_issues` | `true` | repair 队列合并 validator 违规（不仅 reviewer 子集） |
+| `mid_quality_gate.merge_rules` | 含 **M14** | 原文克隆（SG/Claim 或 SE/SG 相同 OT）参与定向补抽 |
 | `mid_quality_gate.max_reextract_issues_per_iter` | `15` | 每轮 reextract issue 上限 |
 | `mid_quality_gate.early_stop_on_unchanged_hard` | `true` | hard 连续不变时跳过后续 reextract |
 | `build_kg.perform_entity_resolution` | false | 与原版 Notebook 一致，抽取阶段不做实体消解 |

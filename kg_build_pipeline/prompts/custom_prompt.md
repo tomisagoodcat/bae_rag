@@ -11,8 +11,9 @@ Extract **entities** and **relationships** from the input text into JSON.
 When the current pass is **mid-level** (`schema_tiers: [mid]`):
 
 - Extract only mid Plans / site / argumentation containers present in `{schema}`.
-- **Argumentation (mid):** `whu_ScienceEvidence` —`mp_supports`/`mp_challenges`→ `whu_SupportGraph` only; `whu_SupportGraph` —`mp_supports`/`mp_challenges`→ focal `mp_Claim`. **Never** `ScienceEvidence` → `mp_Claim` directly.
-- Focal `mp_Claim` may be co-created with `whu_SupportGraph` when the text supports a focal proposition; link Claim only from SupportGraph (not `prov_hadMember`, not from ScienceEvidence).
+- **Argumentation (mid):** default polarity is `mp_supports`: `whu_ScienceEvidence` —`mp_supports`→ `whu_SupportGraph`; `whu_SupportGraph` —`mp_supports`→ focal `mp_Claim`. **Never** `ScienceEvidence` → `mp_Claim` directly. Emit `mp_challenges` only when `{schema}` is that relation **and** the same span has explicit refute language (contradicts, refutes, inconsistent with, 反驳, 未能证实). If `{schema}` is `mp_challenges` but the text has no such language, return empty JSON.
+- Focal `mp_Claim` may be co-created with `whu_SupportGraph` **only** when Claim `WHU_HASORIGINALTEXT` is a strictly shorter verbatim substring of SupportGraph `WHU_HASORIGINALTEXT` (the concluding clause, not the whole sentence). Never copy the same span onto both nodes. SupportGraph `WHU_HASNAME` is a container/topic name, never the Claim proposition. Link Claim only from SupportGraph (not `prov_hadMember`, not from ScienceEvidence).
+- If `{schema}` is `mp_challenges`, do **not** create a new SupportGraph+Claim (or ScienceEvidence+SupportGraph) pair just to emit the edge. Return empty JSON unless the text explicitly refutes **and** the two nodes have distinct original-text spans.
 - Create `whu_ScienceEvidence` only when a co-created `whu_SupportGraph` (and focal Claim when applicable) can be grounded in the same argumentative span; do not create orphan ScienceEvidence.
 - Optional mid provenance: `whu_ScienceEvidence` —`prov_wasDerivedFrom`→ `whu_Computational_Experiment` when `{schema}` allows and text supports it.
 - `prov_hadMember` on ScienceEvidence or SupportGraph is **not** a mid-pass pattern; emit only when that relation appears in `{schema}` (typically mid2low/low passes).
@@ -50,7 +51,7 @@ Reason internally, but output **JSON only**.
 - `mp_Statement`: a complete scientific assertion, observation, interpretation, or intermediate proposition.
 - `mp_Claim`: a central, testable conclusion, hypothesis, or focal proposition in an argument.
 - Do not promote an ordinary observation to `mp_Claim` merely because it is important.
-- Argumentative polarity uses `mp_supports` / `mp_challenges`. Allowed source/target combinations and direction must always follow the current `{schema}`.
+- Argumentative polarity: default `mp_supports`. `mp_challenges` only with explicit refute language in the same span. Allowed signatures always follow `{schema}`.
 
 ## B. Plans, ResearchSteps, and workflow
 
@@ -88,12 +89,30 @@ Additional workflow rules:
 - Do not substitute deleted plan-level IO/used relation names; emit only labels present in `{schema}`.
 - **WHU_RESEARCHTYPE ↔ isStepOfPlan consistency (HARD):** WHU_RESEARCHTYPE must be consistent with the experiment linked by `p_plan_isStepOfPlan`. A ResearchStep with WHU_RESEARCHTYPE = BioChemical may only be linked to a BioChemicalExperiment. A ResearchStep with WHU_RESEARCHTYPE = Computational may only be linked to a ComputationalExperiment. Never link a BioChemical ResearchStep to a ComputationalExperiment. Never link a Computational ResearchStep to a BioChemicalExperiment. The presence of both experiment types in the same Chunk does not justify cross-linking their ResearchSteps.
 
-## C. EnvironmentFeature (mid-level site/context)
+## C. EnvironmentFeature vs EnvironmentMaterial (do not confuse)
 
-- `whu_EnvironmentFeature` is a **named, locatable place or geographic-ecological unit** (field, wetland, sampling station, experimental site): **WHERE**, not **WHAT**.
+| Role | Label | Meaning | Examples |
+|------|--------|---------|----------|
+| WHERE (place/venue) | `whu_EnvironmentFeature` | Named site or sampling/sales context | field, station, district, **supermarket, wet market, catering venue** |
+| WHAT matrix | `envo_EnvironmentMaterial` | ENVO environmental medium type | soil, sediment, water, air, pore water, PM |
+
+### C1. EnvironmentFeature (mid-level site/context)
+
 - Prefer co-creating with `whu_SpecimenCollection` via `whu_hasContext` when both appear and `{schema}` allows it.
 - Do **not** type a collected sample, organism, or environmental matrix as EnvironmentFeature.
-- Matrix/substance types (soil, water, sediment) → `envo_EnvironmentMaterial` when that label is in `{schema}`.
+- Venues used as collection context (supermarket / 农贸市场 / 餐饮) are **Feature**, never Material.
+
+### C2. EnvironmentMaterial (low-level ENVO matrix)
+
+- Create **only** for environmental matrix phrases when that label is in `{schema}`.
+- **Primary link:** `whu_EnvironmentFeature -[:bfo_has_part]-> envo_EnvironmentMaterial` when both place and matrix appear.
+- Specimen may `prov_wasDerivedFrom` Material **only if** the source is a matrix (soil/water/air…), not a shop/market.
+- **HARD ban:** never name Material as supermarket / market / restaurant / catering / 超市 / 农贸市场 / 餐饮 / sampling station-as-place.
+
+### C3. Quick decision
+
+- “from the SWU paddy field” + “surface soil” → Feature[field] + Material[soil] (+ optional has_part).
+- “rice samples from supermarket / wet market” → Feature[venue] + Specimen—**no** Material[venue].
 
 ## D. Argumentation chain
 
@@ -101,8 +120,8 @@ When `whu_ScienceEvidence` / `whu_SupportGraph` appear in `{schema}`:
 
 **Mid-level argumentative edges (tier `mid`):**
 
-- `whu_ScienceEvidence` —`mp_supports` / `mp_challenges`→ `whu_SupportGraph` only (polarity; **never** `mp_Claim` directly).
-- `whu_SupportGraph` —`mp_supports` / `mp_challenges`→ `mp_Claim` (focal claim link; not `prov_hadMember`).
+- `whu_ScienceEvidence` —`mp_supports`→ `whu_SupportGraph` only (default polarity; **never** `mp_Claim` directly). Evidence original_text must **not** equal SupportGraph original_text. Use `mp_challenges` instead of supports only with explicit refute language.
+- `whu_SupportGraph` —`mp_supports`→ `mp_Claim` (default focal link; not `prov_hadMember`). Claim original_text must be a **strictly shorter substring** of SupportGraph original_text. `mp_challenges` to Claim only with explicit refute language; do not co-create a cloned pair.
 - `whu_ScienceEvidence` —`prov_wasDerivedFrom`→ `whu_Computational_Experiment` when allowed by `{schema}` and text supports analytical provenance.
 
 **Membership / expansion edges (tier `mid2low` or `low`; only when `prov_hadMember` is in `{schema}`):**
@@ -114,9 +133,9 @@ When `whu_ScienceEvidence` / `whu_SupportGraph` appear in `{schema}`:
 
 - **Never** emit `ScienceEvidence -[:mp_supports|mp_challenges]-> Claim`.
 - **Never** emit `SupportGraph -[:prov_hadMember]-> ScienceEvidence` or `SupportGraph -[:prov_hadMember]-> Claim`.
-- ScienceEvidence attaches to SupportGraph only via `mp_supports`/`mp_challenges`; focal Claim attaches only via SupportGraph → `mp_supports`/`mp_challenges` → Claim.
+- ScienceEvidence attaches to SupportGraph via `mp_supports` (default) or `mp_challenges` (refute only); focal Claim attaches only via SupportGraph → same polarity → Claim. Never both polarities on the same pair.
 
-**Polarity:** `mp_supports` = affirms; `mp_challenges` = contradicts/refutes.
+**Polarity:** `mp_supports` = affirms (default). `mp_challenges` = contradicts/refutes; **not** the fallback when a support link is missing. Absence of support language is not a challenge. If this pass's `{schema}` relation is `mp_challenges` and `{text}` has no explicit refute cue, emit no relation. Bare “challenge” / “挑战” (risk, future work) is not refute language.
 
 **Citation:** `cito_isCitedBy` records citation; add `mp_supports` only when the text explicitly uses the cited source as evidential backing and `{schema}` allows it.
 
@@ -128,14 +147,16 @@ This call opens **one** relation pattern in `{schema}` (typically one subject–
 
 - Extract only that pattern from `{text}`.
 - Do **not** invent other node or relation types to “complete” a backbone chain in this pass.
+- If the allowed relation is `mp_challenges` and `{text}` has no explicit refute/contradict language, return empty JSON (no edges).
+- If the allowed relation is `mp_challenges`, do not invent new SupportGraph/Claim/ScienceEvidence nodes whose original_text is copied from one sentence.
 - Other links are extracted in other passes.
 
 ---
 
 # Quality
 
-- **WHU_HASORIGINALTEXT**: smallest contiguous verbatim span that supports the node or relation (nodes typically ≤50 words; relation evidence ≤100 words when possible).
-- **WHU_HASNAME**: short noun phrase (typically 2–12 words), grounded only in the source text; preserve scientific abbreviations; do not invent dimension words (e.g. do not expand “Sb” to “Sb concentration”).
+- **WHU_HASORIGINALTEXT**: smallest contiguous verbatim span that supports the node or relation (nodes typically ≤50 words; relation evidence ≤100 words when possible). **HARD:** when co-creating `whu_SupportGraph` and `mp_Claim`, Claim original_text = the concluding proposition clause; SupportGraph original_text = that clause plus its immediate evidence (numbers, “表明…”, method cue). They must not be identical. Same ban for ScienceEvidence vs SupportGraph.
+- **WHU_HASNAME**: short noun phrase (typically 2–12 words), grounded only in the source text; preserve scientific abbreviations; do not invent dimension words (e.g. do not expand “Sb” to “Sb concentration”). SupportGraph name is a container label (e.g. topic + 支持图), never equal to the Claim name or the full conclusion sentence.
 - **llm_weight** (0–1): higher for core findings, significant stats, explicit causal language; lower for hedged or speculative text.
 
 ---
@@ -161,26 +182,30 @@ flowchart LR
   SG[whu_SupportGraph]
   CL[mp_Claim]
   SE -->|prov_wasDerivedFrom| CE
-  SE -->|mp_supports or mp_challenges| SG
-  SG -->|mp_supports or mp_challenges| CL
+  SE -->|mp_supports default| SG
+  SG -->|mp_supports default| CL
 ```
+
+`mp_challenges` is not on this default spine; emit it only when `{schema}` is that relation and the span has explicit refute language.
 
 **Methods / site spine** (mid Plans):
 
 ```mermaid
 flowchart LR
   EF[whu_EnvironmentFeature]
+  EM[envo_EnvironmentMaterial]
   SC[whu_SpecimenCollection]
   SP[whu_SpecimenPreprocessing]
   BE[whu_BioChemical_Experiment]
   CE[whu_Computational_Experiment]
   SC -->|whu_hasContext| EF
+  EF -->|bfo_has_part| EM
   SP -->|whu_fellow| SC
   BE -->|whu_fellow| SP
   CE -->|whu_fellow| BE
 ```
 
-`prov_hadMember` links (ScienceEvidence→DataSet/Method; SupportGraph→Statement/Attribution/Reference) belong to **mid2low/low** passes when present in `{schema}`—not shown above.
+`bfo_has_part` Feature→Material is typically **mid2low/low** (emit only when that edge is in `{schema}`). `prov_hadMember` links (ScienceEvidence→DataSet/Method; SupportGraph→Statement/Attribution/Reference) belong to **mid2low/low** passes when present in `{schema}`—not shown above.
 
 Steps link to plans via `p_plan_isStepOfPlan` (ResearchStep → Plan). Specimen flow uses `whu_declaredOutput` / `whu_declaredInput` on ResearchSteps when those relations are in `{schema}`.
 

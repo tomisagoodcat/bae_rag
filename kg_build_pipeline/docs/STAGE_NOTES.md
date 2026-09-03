@@ -11,8 +11,10 @@
 
 ## mid_quality_gate
 
-- After mid `build_kg`: Cypher validator (SHACL `BAE_mid_shapes` M00–M06/M09/M10/**M13**) → Qwen Mid Reviewer → **pre-reject** orphan nodes → targeted single-chunk DeepSeek re-extract.
-- **M13 (HARD):** each `whu_SupportGraph` must have `mp_supports`/`mp_challenges` → `mp_Claim`.
+- After mid `build_kg`: Cypher validator (SHACL `BAE_mid_shapes` M00–M06/M09/M10/**M13–M14**) → Qwen Mid Reviewer → **pre-reject** orphan nodes → targeted single-chunk DeepSeek re-extract.
+- **M13 (HARD):** each `whu_SupportGraph` must have `mp_supports` (default) or `mp_challenges` (explicit refute only) → `mp_Claim`.
+- **M14 (HARD):** SupportGraph/Claim and ScienceEvidence/SupportGraph must not share identical `WHU_HASORIGINALTEXT`. Claim/evidence text must be a strictly shorter substring of the container.
+- **Polarity A+B:** default extract and M06/M13/M14 repair re-extract **only `mp_supports`**. `mp_challenges` stays in `potential_schema`; the LLM is skipped unless the **chunk** itself has explicit refute language (not bare “challenge”/“挑战”). After extract, cloned OT edges and challenges without refute cues are **deleted**.
 - **Pre-reject:** before each re-extract, nodes named in validator violations (`reject_rules`, default M13+M06) are marked `whu_rejected` or deleted (`reject_mode`). Validation and reviewer graph summary exclude rejected nodes.
 - **Repair queue:** reviewer issues ∪ validator violations (`merge_validator_issues`), deduped by `(rule_id, entity)`.
 - **Early-stop:** if `hard_count` unchanged vs previous iteration, skip further re-extract loops (`early_stop_on_unchanged_hard`).
@@ -51,6 +53,16 @@
 - Exact match on `WHU_HASNAME` via neo4j_graphrag resolver.
 - Optional WCC + `AttributionMaster` / `HAS_REFERENCE` for `mp_Attribution`.
 - Embedding-based merge **not** included in v1.
+- **Superseded for concept dedup by `entity_normalize`** (use `entity_merge: false`).
+
+## entity_normalize
+
+- Runs after `chunk_merge`, before `pagerank` / `metapath`.
+- **Hard merge** (same `source_doc` + `WHU_HASORIGINALTEXT`): `whu_ChemicalEntity`, `envo_EnvironmentMaterial`, `whu_Reagent`. Groups by distinct node id (pattern comprehension for missing `source_doc`); never deletes a node because it is linked to multiple Chunks.
+- **ExternalConcept**: exact SQLite lookup for the whitelist; then constrained LLM (CheBI) for `whu_ChemicalEntity` / `whu_Reagent` only — model picks from index candidates or abstains. `whu_normalizedTo.matchType` is `exact` or `llm`. Specimen types skip direct ontology.
+- Excluded: `whu_EnvironmentFeature`, `whu_Device`. Alignment edges do not enter MetaPath.
+- Build indexes: `python kg_build_pipeline/scripts/build_ontology_index.py --ontology all`
+- Index fields: `rdfs:label`, `hasExactSynonym`, `hasRelatedSynonym`, empirical `formula`. Lookup is exact; ambiguous strings (same text, multiple IDs) are skipped.
 
 ## pagerank (1_2_1_2 E segment)
 

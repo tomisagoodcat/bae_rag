@@ -1,0 +1,2 @@
+# SQLite indexes produced by scripts/build_ontology_index.py
+*.sqlite

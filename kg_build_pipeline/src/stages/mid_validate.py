@@ -80,7 +80,7 @@ def validate_mid_document(
     database: str,
     filename: str,
 ) -> Dict[str, Any]:
-    """Run active mid rules M00–M06, M09, M10, M13 for one document. Read-only."""
+    """Run active mid rules M00–M06, M09, M10, M13–M14 for one document. Read-only."""
     source_doc = filename.replace(".md", "") if filename.endswith(".md") else filename
     params = {"filename": filename, "source_doc": source_doc}
 
@@ -323,6 +323,34 @@ def validate_mid_document(
                     _node_key(rec),
                     "M13: SupportGraph has no mp_supports/mp_challenges to Claim (missing focal Claim link)",
                     entity_name=rec.get("name"),
+                    bucket="hard_violations",
+                )
+            )
+
+        # M14 — SupportGraph/Claim or ScienceEvidence/SupportGraph must not share the same original_text
+        q_m14 = f"""
+        MATCH (a)-[r:mp_supports|mp_challenges]->(b)
+        WHERE {_scope_where("a")}
+          AND (
+            ('whu_SupportGraph' IN labels(a) AND 'mp_Claim' IN labels(b))
+            OR ('whu_ScienceEvidence' IN labels(a) AND 'whu_SupportGraph' IN labels(b))
+          )
+          AND trim(toString(coalesce(a.WHU_HASORIGINALTEXT, ''))) <> ''
+          AND trim(toString(a.WHU_HASORIGINALTEXT))
+              = trim(toString(coalesce(b.WHU_HASORIGINALTEXT, '')))
+        RETURN elementId(a) AS element_id, a.WHU_HASNAME AS name,
+               labels(a) AS a_labels, labels(b) AS b_labels, type(r) AS rel
+        """
+        for rec in session.run(q_m14, **params):
+            hard.append(
+                _issue(
+                    "M14",
+                    "Violation",
+                    _node_key(rec),
+                    "M14: argument nodes must not share identical WHU_HASORIGINALTEXT "
+                    f"(Claim/evidence span must be a strictly shorter substring of the container)",
+                    entity_name=rec.get("name"),
+                    labels=rec.get("a_labels"),
                     bucket="hard_violations",
                 )
             )

@@ -11,6 +11,11 @@ from neo4j.exceptions import ServiceUnavailable, SessionExpired, TransientError
 from neo4j import Driver
 from tqdm import tqdm
 
+from kg_build_pipeline.src.argument_cleanup import scrub_cloned_argument_spans
+from kg_build_pipeline.src.argument_polarity import (
+    filter_nodes_with_challenge_language,
+    should_skip_challenges_extract,
+)
 from kg_build_pipeline.src.chunk_roles import canonical_section, enrich_nodes_with_bae_roles
 from kg_build_pipeline.src.config import PipelineConfig
 from kg_build_pipeline.src.neo4j_util import (
@@ -354,6 +359,20 @@ async def extract_document_schemas(
                 matching_chunk_count=0,
             )
             return None
+        if str(r).strip() == "mp_challenges":
+            challenge_chunks = filter_nodes_with_challenge_language(selected)
+            if not challenge_chunks or should_skip_challenges_extract(
+                str(r), join_nodes_text(challenge_chunks)
+            ):
+                _schema_emit(
+                    "skip",
+                    triple,
+                    "no explicit challenge language",
+                    allowed_sections=allowed_list,
+                    matching_chunk_count=len(selected),
+                )
+                return None
+            selected = challenge_chunks
         text = join_nodes_text(selected)
         if not text.strip():
             _schema_emit(
@@ -667,6 +686,7 @@ async def _process_document_once(
 
     if update_metadata_batch(neo4j_driver, filename, dc_metadata):
         enhance_relations(neo4j_driver, filename, dc_metadata, weight_llm)
+    scrub_cloned_argument_spans(neo4j_driver, cfg.neo4j_database, filename)
     return processed
 
 

@@ -43,11 +43,11 @@
 
 **English**
 
-Positive argumentative relation: supporting Representation -> supported Representation.
+Positive argumentative relation: supporting Representation -> supported Representation. This is the **default** argumentative polarity.
 
 **中文**
 
-正向论证关系：支持方 Representation → 被支持方 Representation。
+正向论证关系：支持方 Representation → 被支持方 Representation。这是**默认**论证极性。
 
 
 #### Extract when / 何时抽取
@@ -65,11 +65,11 @@ Explicit positive backing language (supports, demonstrates, confirms, provides e
 
 **English**
 
-Co-occurrence, citation alone, method use, or data production. Citation backing requires separate mp_supports evidence beyond cito_isCitedBy.
+Co-occurrence, citation alone, method use, or data production. Citation backing requires separate mp_supports evidence beyond cito_isCitedBy. Do not emit mp_challenges merely because support language is weak or absent.
 
 **中文**
 
-不要从共现、单独引用、方法使用或数据产出推断。引用支撑需除 `cito_isCitedBy` 外另有独立 mp_supports 证据。
+不要从共现、单独引用、方法使用或数据产出推断。引用支撑需除 `cito_isCitedBy` 外另有独立 mp_supports 证据。不要仅因支撑语言偏弱或缺失而改发 mp_challenges。
 
 
 #### ScienceEvidence/SupportGraph / ScienceEvidence / SupportGraph
@@ -81,6 +81,17 @@ When ScienceEvidence mp_supports SupportGraph, the connector must appear in the 
 **中文**
 
 当 ScienceEvidence mp_supports/challenges SupportGraph 时，连接词必须出现在共享论证片段中。禁止 ScienceEvidence 直连 Claim。
+
+
+#### SupportGraph/focal Claim / SupportGraph/focal Claim
+
+**English**
+
+When SupportGraph mp_supports focal Claim, the argumentative connector must appear in the shared span. Claim WHU_HASORIGINALTEXT must be a strictly shorter substring of SupportGraph WHU_HASORIGINALTEXT. Do not use prov_hadMember for the focal Claim link.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
 
 
 ---
@@ -728,7 +739,7 @@ Emit only when the text directly supports that the entity is an output of the co
 
 **English**
 
-`prov_wasDerivedFrom` records material/provenance derivation between a resulting entity and its source entity.
+`prov_wasDerivedFrom` records provenance derivation between a resulting entity and its source entity (material sample provenance, or evidential package provenance from a computational experiment).
 
 **中文**
 
@@ -743,6 +754,7 @@ Emit only when the text directly supports that the entity is an output of the co
 - Specimen -> envo_EnvironmentMaterial
 - Specimen -> obi_organism
 - ProcessedSpecimen -> Specimen
+- ScienceEvidence -> Computational_Experiment
 
 **中文**
 
@@ -752,26 +764,37 @@ Emit only when the text directly supports that the entity is an output of the co
 - ProcessedSpecimen → Specimen
 
 
-#### Type-selection order / 类型选择顺序
+#### Type-selection order (material samples) / Type-selection order (material samples)
 
 **English**
 
-Choose the **most specific** source explicitly supported: **organism > EnvironmentMaterial > EnvironmentFeature**. Do not label a sample name or matrix as EnvironmentFeature solely because collection is mentioned.
+Choose the **most specific** source explicitly supported: **organism > EnvironmentMaterial > EnvironmentFeature**. Do not label a sample name or matrix as EnvironmentFeature solely because collection is mentioned. Do **not** create EnvironmentMaterial for places/venues so that wasDerivedFrom can point to them.
 
 **中文**
 
-选择文本明确支持的**最具体**来源：**organism > EnvironmentMaterial > EnvironmentFeature**。勿仅因提及采集而将样本名或基质标为 EnvironmentFeature。
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
 
 
-#### Extraction rule / 抽取规则
+#### Extraction rule (material samples) / Extraction rule (material samples)
 
 **English**
 
-For “soil samples from the paddy field”: Specimen[soil samples] wasDerivedFrom EnvironmentMaterial[surface soil] when matrix is explicit; wasDerivedFrom EnvironmentFeature only when the **named place** is the stated source and no more specific material/organism is given. Do not use wasDerivedFrom to justify mis-typing the source node.
+For “soil samples from the paddy field”: Specimen[soil samples] wasDerivedFrom EnvironmentMaterial[surface soil] when matrix is explicit; wasDerivedFrom EnvironmentFeature only when the **named place** is the stated source and no more specific material/organism is given. For “rice samples from supermarket / wet market / catering”: Specimen wasDerivedFrom **EnvironmentFeature[venue]** (or hasContext on Collection)—**never** invent EnvironmentMaterial[supermarket/market/restaurant]. Do not use wasDerivedFrom to justify mis-typing the source node.
 
 **中文**
 
-对“soil samples from the paddy field”：基质明确时 Specimen[soil samples] wasDerivedFrom EnvironmentMaterial[surface soil]；仅当**命名地点**被陈述为来源且无更具体物质/organism 时 wasDerivedFrom EnvironmentFeature。勿用 wasDerivedFrom 为误标来源节点辩护。
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
+
+#### Extraction rule (ScienceEvidence) / Extraction rule (ScienceEvidence)
+
+**English**
+
+Emit ScienceEvidence -> Computational_Experiment only when the text explicitly ties the evidential package (data/results + method in an argumentative role) to a computational/statistical/modeling experiment as its generating source. Do not infer from DataSet membership alone.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
 
 
 #### Examples / 示例
@@ -781,12 +804,15 @@ For “soil samples from the paddy field”: Specimen[soil samples] wasDerivedFr
 “Soil samples were taken from surface soil.” -> Specimen wasDerivedFrom EnvironmentMaterial[surface soil].
 “Rice grain was sampled from rice plants.” -> Specimen wasDerivedFrom organism[rice plant].
 “Samples were collected from the SWU paddy field.” -> Specimen wasDerivedFrom EnvironmentFeature[SWU paddy field] when only the site is explicit.
+“Rice samples from supermarket and wet market.” -> Specimen wasDerivedFrom EnvironmentFeature[supermarket/market]—not Material.
+“PCA-based evidence from the computational analysis supported the clustering claim.” -> ScienceEvidence wasDerivedFrom Computational_Experiment when both are co-identified.
 
 **中文**
 
 “Soil samples were taken from surface soil.” → Specimen wasDerivedFrom EnvironmentMaterial[surface soil]。
 “Rice grain was sampled from rice plants.” → Specimen wasDerivedFrom organism[rice plant]。
 “Samples were collected from the SWU paddy field.” → 仅站点明确时 Specimen wasDerivedFrom EnvironmentFeature[SWU paddy field]。
+“Rice samples from supermarket and wet market.” → Specimen wasDerivedFrom EnvironmentFeature[venue]—不是 Material。
 
 
 ---
@@ -848,44 +874,66 @@ DataSet → `dcterms_hasPart` → DataItem。
 
 **English**
 
-Negative argumentative relation: challenging Representation -> challenged Representation.
+Negative argumentative relation: challenging Representation -> challenged Representation. This is **not** the default polarity.
 
 **中文**
 
-负向论证关系：挑战方 Representation → 被挑战方 Representation。
+负向论证关系：挑战方 Representation → 被挑战方 Representation。**不是**默认极性。
 
 
 #### Extract when / 何时抽取
 
 **English**
 
-Explicit challenge language (contradicts, refutes, inconsistent with, undermines, fails to confirm) in the same original_text.
+Explicit refute language in the same original_text (contradicts, refutes, inconsistent with, undermines, fails to confirm, 反驳, 未能证实, 相矛盾). Bare “challenge” / “挑战” (risk, remaining difficulties, future work) is **not** enough.
 
 **中文**
 
-在同一 original_text 中出现明确挑战语言（contradicts、refutes、inconsistent with、undermines、fails to confirm）。
+同一 original_text 中出现明确反驳语言（contradicts、refutes、inconsistent with、undermines、fails to confirm、反驳、未能证实、相矛盾）。单独的 challenge/挑战（风险、尚存困难、未来工作）**不够**。
 
 
 #### Do not infer / 禁止推断
 
 **English**
 
-Absence of support is not a challenge.
+Absence of support is not a challenge. Do not invent a challenges edge to complete a SupportGraph or because a paper discusses limitations.
 
 **中文**
 
-缺乏支持不等于挑战。
+缺乏支持不等于挑战。不要为补全 SupportGraph 或因论文讨论局限而臆造 mp_challenges。
+
+
+#### Empty pass / 空轮次
+
+**English**
+
+If this extraction pass's `{schema}` relation is `mp_challenges` and the span has no explicit refute cue, emit no relation (empty JSON).
+
+**中文**
+
+若本轮 `{schema}` 关系是 `mp_challenges` 且片段无明确反驳线索，不发出任何边（空 JSON）。
 
 
 #### ScienceEvidence/SupportGraph / ScienceEvidence / SupportGraph
 
 **English**
 
-Same co-text requirement as mp_supports.
+Same co-text requirement as mp_supports. ScienceEvidence must not mp_challenges Claim directly.
 
 **中文**
 
-与 mp_supports 相同的共文本要求。
+与 mp_supports 相同的共文本要求。禁止 ScienceEvidence 直连 Claim。仅在有明确反驳语言时用 mp_challenges。
+
+
+#### SupportGraph/focal Claim / SupportGraph/focal Claim
+
+**English**
+
+SupportGraph may mp_challenges focal Claim only with explicit refute language in the shared span. Do not use prov_hadMember for the focal Claim link.
+
+**中文**
+
+SupportGraph 仅在共享片段有明确反驳语言时才可 mp_challenges 焦点 Claim。焦点 Claim 链接不用 prov_hadMember。
 
 
 ---
@@ -1030,6 +1078,17 @@ Do not emit isStepOfPlan without co-created Step and Plan nodes.
 没有共创建的 Step 与 Plan 节点时不要发出 isStepOfPlan。
 
 
+#### HARD cross-link ban / HARD cross-link ban
+
+**English**
+
+WHU_RESEARCHTYPE must be consistent with the experiment linked by p_plan_isStepOfPlan. BioChemical → only BioChemical_Experiment; Computational → only Computational_Experiment. Never BioChemical→Computational_Experiment or Computational→BioChemical_Experiment. Same-Chunk co-occurrence of both experiment types does not justify cross-linking.
+
+**中文**
+
+（本节中文对照见 `zh_sections.json`，或对照上方 English 审阅。）
+
+
 ---
 
 ## 17. `prov_hadMember` {#17-prov-hadmember}
@@ -1166,22 +1225,26 @@ Emit only for explicit part/constituent relations in the text.
 - sampling location or provenance (use wasDerivedFrom, atLocation, hasContext)
 - analytical aboutness (use iao_is_about)
 - Specimen -> EnvironmentFeature (forbidden)
+- linking a place/venue into Material (Material must be soil/water/air…)
 
 **中文**
 
 - 采样地点或溯源（用 wasDerivedFrom、atLocation、hasContext）
 - 分析 aboutness（用 iao_is_about）
 - Specimen → EnvironmentFeature（禁止）
+- 把场所/销售渠道建成 Material
 
 
-#### Example / 示例
+#### Examples / 示例
 
 **English**
 
+“Surface soil in the SWU paddy field …” -> EnvironmentFeature[SWU paddy field] -bfo_has_part→ EnvironmentMaterial[surface soil] when both place and matrix are stated.
 “Paddy soil contains elevated Hg.” -> EnvironmentMaterial[paddy soil] has_part ChemicalEntity[Hg] when presence is stated.
 
 **中文**
 
+“Surface soil in the SWU paddy field …” → 地点与基质共现时 EnvironmentFeature[SWU paddy field] -bfo_has_part→ EnvironmentMaterial[surface soil]。
 “Paddy soil contains elevated Hg.” → 当存在性被陈述时 EnvironmentMaterial[paddy soil] has_part ChemicalEntity[Hg]。
 
 
@@ -1310,22 +1373,22 @@ SpecimenCollection → `whu_hasContext` → EnvironmentFeature。
 
 **English**
 
-The collection's WHU_HASORIGINALTEXT explicitly names a bounded site/place tied to the collection procedure. The place name must appear in the text—not inferred from sample material alone.
+The collection's WHU_HASORIGINALTEXT explicitly names a bounded site/place/venue tied to the collection procedure (field, station, district, supermarket, wet market, catering venue). The place name must appear in the text—not inferred from sample material alone.
 
 **中文**
 
-采集的 WHU_HASORIGINALTEXT 明确命名与采集程序绑定的有界站点/地点。地名必须出现在文本中——不能仅从样本材料推断。
+采集的 WHU_HASORIGINALTEXT 明确命名与采集程序绑定的有界站点/地点/场所（田块、采样站、区县、超市、农贸市场、餐饮场所）。地名必须出现在文本中——不能仅从样本材料推断。
 
 
 #### Do not extract when / 何时不抽取
 
 **English**
 
-Only matrix or sample nouns appear without a distinct place name.
+Only matrix or sample nouns appear without a distinct place name. Do not invent EnvironmentMaterial for venues just to avoid Feature.
 
 **中文**
 
-仅出现基质或样本名词而无 distinct 地名时。
+仅出现基质或样本名词而无 distinct 地名时。不要为规避 Feature 而臆造 EnvironmentMaterial 表示场所。
 
 
 #### Example / 示例
@@ -1333,10 +1396,12 @@ Only matrix or sample nouns appear without a distinct place name.
 **English**
 
 “Topsoil samples were collected from the SWU paddy field.” -> SpecimenCollection hasContext EnvironmentFeature[SWU paddy field].
+“Rice samples from supermarket / wet market / catering.” -> SpecimenCollection hasContext EnvironmentFeature[venue].
 
 **中文**
 
 “Topsoil samples were collected from the SWU paddy field.” → SpecimenCollection hasContext EnvironmentFeature[SWU paddy field]。
+“超市/农贸市场/餐饮的大米样品” → SpecimenCollection hasContext EnvironmentFeature[场所]。
 
 
 ---

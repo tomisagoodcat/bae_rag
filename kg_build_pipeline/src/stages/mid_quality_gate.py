@@ -9,6 +9,7 @@ from llama_index.core import Document
 from neo4j import Driver
 
 from kg_build_pipeline.src.agents.mid_reviewer import review_mid_document
+from kg_build_pipeline.src.argument_cleanup import scrub_cloned_argument_spans
 from kg_build_pipeline.src.chunk_roles import enrich_nodes_with_bae_roles
 from kg_build_pipeline.src.config import PipelineConfig
 from kg_build_pipeline.src.schema_loader import load_schema, load_table3_section_bae
@@ -73,9 +74,9 @@ You are re-extracting **mid-level** schema patterns only for this text span.
 Constraints:
 - Ground every entity and relation in the provided text. Do **not** invent nodes solely because a reviewer suggested them.
 - Use reviewer/validator notes only as hypotheses to check against the text.
-- Focal `mp_Claim` may be co-created with `whu_SupportGraph` when the text supports a focal proposition; link SupportGraph → Claim via `mp_supports`/`mp_challenges` (not `prov_hadMember`).
-- `whu_ScienceEvidence` links to `whu_SupportGraph` only via `mp_supports`/`mp_challenges` (never directly to `mp_Claim`).
-- If the text does not support a fix, omit the relation rather than fabricating it.
+- Default polarity is `mp_supports`. Focal `mp_Claim` may be co-created with `whu_SupportGraph` only when Claim `WHU_HASORIGINALTEXT` is a **strictly shorter substring** of SupportGraph `WHU_HASORIGINALTEXT` (never copy the same span onto both). Link SupportGraph → Claim via `mp_supports` (not `prov_hadMember`). Use `mp_challenges` only if the same span has explicit refute language.
+- `whu_ScienceEvidence` links to `whu_SupportGraph` via `mp_supports` by default (never directly to `mp_Claim`). Evidence original_text must not equal SupportGraph original_text. `mp_challenges` only with explicit refute language.
+- If the text does not support a fix, omit the relation rather than fabricating it. Do not invent `mp_challenges` to satisfy M06/M13/M14. Do not clone one sentence onto two argument nodes.
 
 Reviewer / validator context:
 {repair_context}
@@ -285,6 +286,17 @@ async def run_mid_quality_gate_async(
         prev_hard: Optional[int] = None
 
         for iteration in range(1, max_iter + 1):
+            scrub_stats = scrub_cloned_argument_spans(
+                driver, cfg.neo4j_database, filename
+            )
+            _emit(
+                {
+                    "type": "mid_gate_scrub",
+                    "filename": filename,
+                    "iteration": iteration,
+                    **scrub_stats,
+                }
+            )
             _emit(
                 {
                     "type": "mid_gate_phase",
@@ -418,7 +430,7 @@ async def run_mid_quality_gate_async(
                 merged_issues = merge_repair_issues(
                     review.get("issues") or [],
                     report,
-                    merge_rules=gate.get("merge_rules", ["M13", "M06", "M01", "M02", "M03", "M04", "M05", "M09"]),
+                    merge_rules=gate.get("merge_rules", ["M14", "M13", "M06", "M01", "M02", "M03", "M04", "M05", "M09"]),
                     max_issues=int(gate.get("max_reextract_issues_per_iter", 15)),
                 )
             else:
@@ -475,6 +487,7 @@ async def run_mid_quality_gate_async(
             }
             update_metadata_batch(driver, filename, dc_metadata)
             enhance_relations(driver, filename, dc_metadata, weight_llm)
+            scrub_cloned_argument_spans(driver, cfg.neo4j_database, filename)
             prev_hard = hard
 
         _emit(

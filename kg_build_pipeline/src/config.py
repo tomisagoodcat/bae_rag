@@ -57,6 +57,7 @@ class PipelineConfig:
     build_kg: Dict[str, Any] = field(default_factory=dict)
     metapath: Dict[str, Any] = field(default_factory=dict)
     entity_merge: Dict[str, Any] = field(default_factory=dict)
+    entity_normalize: Dict[str, Any] = field(default_factory=dict)
     raw: Dict[str, Any] = field(default_factory=dict)
 
     @classmethod
@@ -91,6 +92,7 @@ class PipelineConfig:
             build_kg=data.get("build_kg", {}),
             metapath=data.get("metapath", {}),
             entity_merge=data.get("entity_merge", {}),
+            entity_normalize=data.get("entity_normalize", {}),
             raw=data,
         )
 

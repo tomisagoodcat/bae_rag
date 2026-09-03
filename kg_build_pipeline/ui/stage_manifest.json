@@ -44,16 +44,22 @@
     "order": 6
   },
   {
+    "id": "entity_normalize",
+    "title": "Entity Normalize",
+    "destructive": false,
+    "order": 7
+  },
+  {
     "id": "entity_merge",
     "title": "Entity Merge",
     "destructive": false,
-    "order": 7
+    "order": 8
   },
   {
     "id": "pagerank",
     "title": "PageRank Scoring",
     "destructive": false,
-    "order": 8,
+    "order": 9,
     "incompatible_extract_modes": ["mid"],
     "incompatible_reason": "PageRank feeds MetaPath maxPageRank; not used in mid-only extraction."
   },
@@ -61,7 +67,7 @@
     "id": "metapath",
     "title": "MetaPath Enrichment",
     "destructive": false,
-    "order": 9,
+    "order": 10,
     "incompatible_extract_modes": ["mid"],
     "incompatible_reason": "Requires full low-level graph for F1 MetaPath templates."
   }

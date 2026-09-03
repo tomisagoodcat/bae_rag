@@ -34,13 +34,18 @@ def main() -> None:
         ],
     ]
     f = filter_potential_schema_by_rule({"rule_id": "M06"}, ps)
-    assert len(f) == 2, f
+    assert len(f) == 1, f
+    assert f[0][1] == "mp_supports", f
     ps_m13 = ps + [
         ["whu_SupportGraph", "mp_supports", "mp_Claim", ["All"], "mid"],
         ["whu_SupportGraph", "mp_challenges", "mp_Claim", ["All"], "mid"],
     ]
     f13 = filter_potential_schema_by_rule({"rule_id": "M13"}, ps_m13)
-    assert len(f13) == 2, f13
+    assert len(f13) == 1, f13
+    assert f13[0][1] == "mp_supports", f13
+    f14 = filter_potential_schema_by_rule({"rule_id": "M14"}, ps_m13)
+    assert len(f14) == 2, f14
+    assert {row[1] for row in f14} == {"mp_supports"}
     f1 = filter_potential_schema_by_rule({"rule_id": "M01"}, ps)
     assert len(f1) == 1, f1
     unknown = filter_potential_schema_by_rule({"rule_id": "M99"}, ps)

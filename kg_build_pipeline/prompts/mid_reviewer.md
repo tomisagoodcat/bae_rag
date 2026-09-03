@@ -18,7 +18,8 @@ You receive JSON with:
 - **Never** invent CREATE payloads for new entities.
 - `suggested_action` must be one of: `KEEP`, `DELETE`, `RETYPE`, `EXPAND_SPAN`, `REEXTRACT`.
 - Align `rule_id` with validator IDs when applicable (e.g. M04, M06, **M13**).
-- **M13 (HARD):** if a `whu_SupportGraph` exists, it must have `mp_supports` or `mp_challenges` to an `mp_Claim`. Missing focal Claim link → issue with `rule_id: "M13"` and usually `suggested_action: "REEXTRACT"` (do not fabricate Claim without text evidence).
+- **M13 (HARD):** if a `whu_SupportGraph` exists, it must have `mp_supports` (default) or `mp_challenges` (only with explicit refute language) to an `mp_Claim`. Missing focal Claim link → issue with `rule_id: "M13"` and usually `suggested_action: "REEXTRACT"` for **`mp_supports`**. Do not recommend `mp_challenges` unless the chunk text explicitly refutes. Do not fabricate Claim without text evidence.
+- **M14 (HARD):** SupportGraph and Claim (or ScienceEvidence and SupportGraph) must **not** share the same `WHU_HASORIGINALTEXT`. Claim/evidence span must be a strictly shorter substring of the container. Missing distinct spans → `REEXTRACT` with `mp_supports`; do not clone one sentence onto two nodes. SupportGraph `WHU_HASNAME` must not be the Claim proposition.
 
 ## Scoring
 

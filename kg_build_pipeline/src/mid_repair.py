@@ -26,11 +26,13 @@ RULE_TO_TRIPLES: Dict[str, List[Tuple[str, str, str]]] = {
     ],
     "M06": [
         ("whu_ScienceEvidence", "mp_supports", "whu_SupportGraph"),
-        ("whu_ScienceEvidence", "mp_challenges", "whu_SupportGraph"),
     ],
     "M13": [
         ("whu_SupportGraph", "mp_supports", "mp_Claim"),
-        ("whu_SupportGraph", "mp_challenges", "mp_Claim"),
+    ],
+    "M14": [
+        ("whu_SupportGraph", "mp_supports", "mp_Claim"),
+        ("whu_ScienceEvidence", "mp_supports", "whu_SupportGraph"),
     ],
 }
 
@@ -43,6 +45,7 @@ _PREFERRED_SECTIONS = ("Methods_Materials", "Results", "Discussion", "Experiment
 
 # Lower = higher priority in repair queue.
 _RULE_PRIORITY: Dict[str, int] = {
+    "M14": 0,
     "M13": 0,
     "M09": 1,
     "M06": 2,
@@ -54,7 +57,7 @@ _RULE_PRIORITY: Dict[str, int] = {
 }
 
 _DEFAULT_REJECT_RULES = ("M13", "M06")
-_DEFAULT_MERGE_RULES = ("M13", "M06", "M01", "M02", "M03", "M04", "M05", "M09")
+_DEFAULT_MERGE_RULES = ("M14", "M13", "M06", "M01", "M02", "M03", "M04", "M05", "M09")
 
 
 def _row_triple(row: Sequence[Any]) -> Optional[Tuple[str, str, str]]:

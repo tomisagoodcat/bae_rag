@@ -18,6 +18,7 @@ STAGE_ORDER = [
     "low_expand",
     "subgraph_annotate",
     "chunk_merge",
+    "entity_normalize",
     "entity_merge",
     "pagerank",
     "metapath",
@@ -124,6 +125,7 @@ class PipelineRunner:
                 ("low_expand", self._run_low_expand),
                 ("subgraph_annotate", self._run_subgraph_annotate),
                 ("chunk_merge", self._run_chunk_merge),
+                ("entity_normalize", self._run_entity_normalize),
                 ("entity_merge", self._run_entity_merge),
                 ("pagerank", self._run_pagerank),
                 ("metapath", self._run_metapath),
@@ -168,6 +170,41 @@ class PipelineRunner:
 
             if driver and not cancelled:
                 self.results["summary"] = self._summary(driver, start_time, planned, completed)
+                extract_done = [
+                    s for s in planned if s != "clear_neo4j" and s in self.results
+                ]
+                if extract_done:
+                    try:
+                        from kg_build_pipeline.judgement import run_judgement
+
+                        self._log("\n=== judgement (read-only) ===")
+                        self.results["judgement"] = run_judgement(
+                            self.cfg,
+                            driver,
+                            stages_run=[s for s in planned if s in self.results],
+                        )
+                        log_path = (self.results.get("judgement") or {}).get("log_path")
+                        if log_path:
+                            self._log(f"judgement log: {log_path}")
+                    except Exception as jexc:
+                        self._log(f"[judgement] fail-soft: {jexc}")
+                        log_path = None
+                        try:
+                            from kg_build_pipeline.judgement.run import write_fail_soft_log
+
+                            log_path = write_fail_soft_log(
+                                self.cfg,
+                                str(jexc),
+                                stages_run=[s for s in planned if s in self.results],
+                            )
+                            self._log(f"judgement log: {log_path}")
+                        except Exception as log_exc:
+                            self._log(f"[judgement] could not write error log: {log_exc}")
+                        self.results["judgement"] = {
+                            "ok": False,
+                            "error": str(jexc),
+                            "log_path": log_path,
+                        }
         finally:
             if driver:
                 driver.close()
@@ -226,6 +263,12 @@ class PipelineRunner:
 
         assert driver is not None
         return run_chunk_merge(driver)
+
+    def _run_entity_normalize(self, driver: Driver | None) -> Dict[str, Any]:
+        from kg_build_pipeline.src.stages.entity_normalize import run_entity_normalize_stage
+
+        assert driver is not None
+        return run_entity_normalize_stage(self.cfg, driver)
 
     def _run_entity_merge(self, driver: Driver | None) -> Dict[str, Any]:
         from kg_build_pipeline.src.stages.entity_merge import run_entity_merge
